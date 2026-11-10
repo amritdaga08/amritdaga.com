@@ -442,3 +442,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .lb-prev { left: calc(16px + env(safe-area-inset-left, 0px)); top: 50%; margin-top: -24px; }
 .lb-next { right: calc(16px + env(safe-area-inset-right, 0px)); top: 50%; margin-top: -24px; }
 @media (max-width: 719px) { .lb-prev, .lb-next { top: auto; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); margin-top: 0; } .lb-prev { left: calc(50% - 60px); } .lb-next { right: calc(50% - 60px); } .lightbox figure { margin-bottom: 56px; } }
+
+/* embedded prototypes */
+.tryit { display: grid; justify-items: center; gap: 4px; width: 100%; margin-top: 8px; }
+.tw-watch { width: 460px; max-width: 100%; height: 560px; border: 0; background: transparent; color-scheme: normal; }
+@media (max-width: 480px) { .tw-watch { height: calc((100vw - 32px) * 560 / 460); } }
+.tw-phone { width: min(100%, 390px); height: 760px; max-height: 80vh; border-radius: 44px; padding: 10px; background: #121110; box-shadow: 0 0 0 2px #2A2622, 0 40px 80px -30px rgba(0, 0, 0, .5); }
+.tw-phone iframe { display: block; width: 100%; height: 100%; border: 0; border-radius: 34px; background: #F2F2F7; }

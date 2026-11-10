@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Trim Workout prototype</title>
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;scrollbar-width:none}
+*::-webkit-scrollbar{display:none}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+[hidden]{display:none!important}
+.num{font-variant-numeric:tabular-nums}
+
+/* ================= WATCH ================= */
+body.watch{background:transparent;display:grid;place-items:center;min-height:100%;padding:12px}
+.case{position:relative;width:432px;height:520px;max-width:100%;border-radius:110px;background:linear-gradient(145deg,#3a3a3c,#1c1c1e 40%,#0b0b0c);padding:18px;box-shadow:0 14px 22px -16px rgba(0,0,0,.55),inset 0 0 0 2px #4a4a4c}
+.case::after{content:"";position:absolute;right:-12px;top:120px;width:14px;height:64px;border-radius:6px;background:linear-gradient(90deg,#2c2c2e,#5a5a5c);box-shadow:0 120px 0 -2px #2c2c2e}
+.screen{position:relative;width:396px;height:484px;border-radius:94px;background:#000;color:#fff;overflow:hidden;touch-action:none}
+.scale{transform-origin:center}
+.w{position:absolute;inset:0;padding:30px 30px 26px;display:flex;flex-direction:column}
+.clock{position:absolute;top:26px;right:40px;font-size:30px;font-weight:500}
+.wicon{width:62px;height:62px;border-radius:50%;background:#1f3a12;display:grid;place-items:center;flex:none}
+.wicon svg{width:38px;height:38px}
+.dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:7px}
+.dots i{width:8px;height:8px;border-radius:50%;background:#555}
+.dots i.on{background:#fff}
+.hint{position:absolute;left:50%;bottom:36px;transform:translateX(-50%);font-size:17px;color:#9DC394;white-space:nowrap;display:flex;gap:6px;align-items:center}
+@media (prefers-reduced-motion:no-preference){.hint.nudge{animation:nudge 1.8s ease-in-out infinite}@keyframes nudge{50%{transform:translateX(calc(-50% - 10px))}}}
+
+/* running */
+.run .big{margin-top:70px;font-size:66px;font-weight:600;color:#FFD60A;letter-spacing:-1px}
+.run .row{display:flex;align-items:baseline;gap:10px;font-size:54px;font-weight:600;line-height:1.08}
+.run .row small{font-size:20px;line-height:1;font-weight:600}
+.run .row.hr span{color:#FF375F;font-size:40px}
+/* controls */
+.ctl{padding-top:72px}
+.ctl h2{position:absolute;top:66px;left:0;right:40px;text-align:right;font-size:22px;font-weight:600;color:#9EF01A}
+.grid{margin-top:46px;display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.grid button{display:grid;justify-items:center;gap:6px;font-size:21px}
+.grid .pad{width:150px;height:96px;border-radius:48px;display:grid;place-items:center}
+.grid .pad svg{width:44px;height:44px}
+.grid button:active .pad{transform:scale(.95)}
+.end .pad{background:#4a1515;color:#FF453A}.pause .pad{background:#3d3a10;color:#FFD60A}
+.trimb .pad{background:#3d1636;color:#FF6BD6}.seg .pad{background:#1f3a12;color:#9EF01A}
+@media (prefers-reduced-motion:no-preference){.trimb.glow .pad{animation:glow 1.6s ease-in-out infinite}@keyframes glow{50%{box-shadow:0 0 0 6px rgba(255,107,214,.35)}}}
+/* trim */
+.trim{padding:24px 26px 20px}
+.thead{display:flex;align-items:center;justify-content:space-between;height:66px}
+.round{width:58px;height:58px;border-radius:50%;background:#2c2c2e;display:grid;place-items:center}
+.round svg{width:26px;height:26px}
+.round.ok{background:#fff;color:#000}
+.round.ok:disabled{background:#2c2c2e;color:#777}
+.ttl{text-align:center;font-size:21px;line-height:1.15}
+.ttl b{display:block;font-size:26px;font-weight:500}
+.graph{position:relative;margin-top:16px;height:150px}
+.graph svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.tag{position:absolute;top:-4px;transform:translateX(-50%);background:#FFD60A;color:#000;font-size:17px;font-weight:600;padding:2px 7px;border-radius:7px;white-space:nowrap}
+.handle{position:absolute;bottom:-14px;width:44px;height:44px;margin-left:-22px;border-radius:50%;display:grid;place-items:center;touch-action:none;cursor:ew-resize}
+.handle::before{content:"";width:20px;height:20px;border-radius:50%;border:3px solid #FFD60A;background:#000}
+.handle:focus-visible::before{box-shadow:0 0 0 4px rgba(255,214,10,.5)}
+.drag{margin-top:22px;text-align:center;font-size:17px;color:#FFD60A}
+.stats{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;font-size:18px;color:#ddd}
+.stats b{display:block;font-size:30px;font-weight:600}
+.y{color:#FFD60A}.b{color:#5AC8FA}.r{color:#FF453A}
+/* summary */
+.sum{padding-top:96px}
+.sum h2{position:absolute;top:66px;right:40px;font-size:24px;font-weight:600}
+.sum .wt{display:flex;align-items:center;gap:10px;font-size:23px;font-weight:600}
+.sum .wt small{display:block;color:#9EF01A;font-size:20px}
+.sum dl{margin-top:16px;display:grid;gap:8px}
+.sum dl div{border-top:1px solid #333;padding-top:8px}
+.sum dt{font-size:18px;color:#bbb;text-transform:uppercase;letter-spacing:.02em}
+.sum dd{font-size:42px;font-weight:600;line-height:1.1}
+.again{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);background:#2c2c2e;border-radius:24px;padding:10px 20px;font-size:18px;white-space:nowrap}
+.note{font-size:16px;color:#FF9F0A;margin-top:6px}
+.pane{transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.pane.off{opacity:0;pointer-events:none}
+
+/* ================= PHONE ================= */
+body.phone{background:#F2F2F7;color:#111;font-size:16px}
+.ph{max-width:430px;margin:0 auto;padding:14px 16px 40px}
+.nav{display:flex;align-items:center;justify-content:space-between;height:44px;color:#30A14E;font-size:17px}
+.nav span{display:flex;align-items:center;gap:2px}
+.nav svg{width:22px;height:22px}
+.h1{font-size:30px;font-weight:700;letter-spacing:-.4px;margin-top:6px}
+.sub{color:#6E6E73;font-size:15px;margin-top:2px}
+.card{background:#fff;border-radius:16px;padding:14px;margin-top:14px}
+.sug{background:#FFF8E1;border:1px solid #F5D37A}
+.sug p{font-size:15px;line-height:1.4}
+.sug .acts{display:flex;gap:8px;margin-top:10px}
+.pill{border-radius:999px;padding:9px 14px;font-size:15px;font-weight:600}
+.pill.pri{background:#111;color:#fff}.pill.sec{background:#fff;border:1px solid #ddd}
+.map{position:relative;height:230px;border-radius:12px;overflow:hidden;background:#E8F0E3}
+.map svg{width:100%;height:100%;display:block}
+.legend{display:flex;gap:14px;font-size:13px;color:#6E6E73;margin-top:10px}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.tl{position:relative;height:120px;margin-top:4px;touch-action:none}
+.tl svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.tl .ph-h{position:absolute;top:0;bottom:18px;width:36px;margin-left:-18px;display:grid;place-items:center;touch-action:none;cursor:ew-resize}
+.tl .ph-h::before{content:"";width:12px;height:100%;border-radius:6px;background:#FFD60A;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.tl .ph-h:focus-visible::before{outline:3px solid #111}
+.tlab{display:flex;justify-content:space-between;font-size:13px;color:#6E6E73}
+.cap{font-size:13px;color:#6E6E73;margin-bottom:6px;display:flex;justify-content:space-between}
+.pst{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.pst div{font-size:13px;color:#6E6E73}
+.pst b{display:block;font-size:24px;font-weight:600;color:#111}
+.pst b.cut{color:#30A14E}
+.save{display:block;width:100%;margin-top:16px;background:#111;color:#fff;border-radius:14px;padding:15px;font-size:17px;font-weight:600}
+.save:disabled{background:#c7c7cc}
+.done{background:#E9F6EC;border:1px solid #9FD5AE}
+.done b{display:block;font-size:17px;margin-bottom:4px}
+.reset{margin-top:10px;color:#30A14E;font-weight:600;font-size:15px}
+</style>
+</head>
+<body>
+<!-- WATCH -->
+<div id="watch" hidden>
+  <div class="case"><div class="screen" id="screen">
+    <section class="w run pane" id="wRun">
+      <span class="wicon"><svg viewBox="0 0 24 24" fill="none" stroke="#9EF01A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="4" r="2"/><path d="M8 21l3-6 3 2 1 4M6 12l3-3 4 1 3 3M11 10l-2 5"/><circle cx="19" cy="20" r="1.6" fill="#9EF01A"/></svg></span>
+      <span class="clock num" id="wClock">8:51</span>
+      <div class="big num" id="wElapsed">1:51:33.00</div>
+      <div class="row num"><span id="wKcal">1561</span><small>ACTIVE<br>KCAL</small></div>
+      <div class="row num"><span id="wKm" class="b">13.30</span><small class="b">KM</small></div>
+      <div class="row hr num"><span style="color:#fff;font-size:54px" id="wHr">98</span><span>&#9829;</span></div>
+      <div class="hint nudge" id="swipeHint">Swipe to see controls <span aria-hidden="true">&#8594;</span></div>
+      <div class="dots"><i></i><i class="on"></i><i></i></div>
+    </section>
+
+    <section class="w ctl pane off" id="wCtl">
+      <span class="clock num">8:51</span>
+      <h2>Outdoor Football</h2>
+      <div class="grid">
+        <button class="end" data-act="end"><span class="pad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>End</button>
+        <button class="pause" data-act="pause"><span class="pad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M9 5v14M15 5v14"/></svg></span>Pause</button>
+        <button class="trimb glow" data-act="trim"><span class="pad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg></span>Trim</button>
+        <button class="seg" data-act="seg"><span class="pad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M11 9l2-1v8" stroke-linecap="round"/></svg></span>Segment</button>
+      </div>
+      <div class="dots"><i class="on"></i><i></i><i></i></div>
+    </section>
+
+    <section class="w trim pane off" id="wTrim">
+      <div class="thead">
+        <button class="round" data-act="back" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="ttl"><b class="num">8:51</b>Trim Workout</div>
+        <button class="round ok" id="wOk" data-act="ok" aria-label="Confirm trim" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></button>
+      </div>
+      <div class="graph" id="wGraph">
+        <svg id="wSvg" viewBox="0 0 344 150" preserveAspectRatio="none"></svg>
+        <span class="tag num" id="wTagA">0:00:00</span><span class="tag num" id="wTagB">1:51:33</span>
+        <span class="handle" id="wHA" tabindex="0" role="slider" aria-label="Workout start"></span>
+        <span class="handle" id="wHB" tabindex="0" role="slider" aria-label="Workout end"></span>
+      </div>
+      <p class="drag" id="wDrag">Drag the end back to where the match ended</p>
+      <div class="stats num">
+        <div>Duration<b class="y" id="wDur">1:51:33</b></div>
+        <div>Distance<b class="b" id="wDist">13.30 km</b></div>
+        <div style="grid-column:1/-1">Heart rate <span class="r" id="wAvg">Average 154 bpm</span></div>
+      </div>
+    </section>
+
+    <section class="w sum pane off" id="wSum">
+      <span class="clock num">8:52</span>
+      <h2>Summary</h2>
+      <div class="wt"><span class="wicon" style="width:44px;height:44px"><svg viewBox="0 0 24 24" fill="none" stroke="#9EF01A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px"><circle cx="15" cy="4" r="2"/><path d="M8 21l3-6 3 2 1 4M6 12l3-3 4 1 3 3M11 10l-2 5"/></svg></span><span>Outdoor Football<small>Open Goal</small></span></div>
+      <dl class="num">
+        <div><dt>Total time</dt><dd class="y" id="sDur">1:39:33</dd></div>
+        <div><dt>Total distance</dt><dd class="b" id="sDist">5.30 km</dd></div>
+      </dl>
+      <p class="note" id="sNote"></p>
+      <button class="again" data-act="again">Try again</button>
+    </section>
+  </div></div>
+</div>
+
+<!-- PHONE -->
+<div id="phone" class="ph" hidden>
+  <div class="nav"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Summary</span><span>Edit</span></div>
+  <h1 class="h1">Outdoor Football</h1>
+  <p class="sub">Sunday · 7:00–8:51 AM · Open goal</p>
+
+  <div class="card sug" id="pSug">
+    <p><b>Still playing after 8:39?</b> Your speed jumped to 40 km/h and your heart rate dropped. Looks like the drive home was recorded too.</p>
+    <div class="acts"><button class="pill pri" id="pSugYes">Trim from 8:39</button><button class="pill sec" id="pSugNo">Keep everything</button></div>
+  </div>
+
+  <div class="card">
+    <div class="map"><svg id="pMap" viewBox="0 0 360 230" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div class="legend"><span><i style="background:#30A14E"></i>Kept</span><span><i style="background:#C7C7CC"></i>Trimmed</span></div>
+  </div>
+
+  <div class="card">
+    <div class="cap"><span>Heart rate and speed</span><span class="num" id="pRange">7:00 – 8:51 AM</span></div>
+    <div class="tl" id="pTl">
+      <svg id="pSvg" viewBox="0 0 330 102" preserveAspectRatio="none"></svg>
+      <span class="ph-h" id="pHA" tabindex="0" role="slider" aria-label="Workout start"></span>
+      <span class="ph-h" id="pHB" tabindex="0" role="slider" aria-label="Workout end"></span>
+    </div>
+    <div class="tlab num"><span>7:00</span><span>7:30</span><span>8:00</span><span>8:30</span><span>8:51</span></div>
+  </div>
+
+  <div class="card pst num">
+    <div>Workout time<b id="pDur">1:51:33</b></div>
+    <div>Distance<b id="pDist">13.30 km</b></div>
+    <div>Avg heart rate<b id="pHr">149 bpm</b></div>
+    <div>Top speed<b id="pTop">41 km/h</b></div>
+  </div>
+
+  <button class="save" id="pSave" disabled>Save trim</button>
+  <div class="card done" id="pDone" hidden><b>Workout trimmed</b>Activity rings, awards and Health now use the trimmed workout. Your trim overrides what the watch recorded.</div>
+  <button class="reset" id="pReset" hidden>Try again</button>
+</div>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), mode = q.get('device') === 'phone' ? 'phone' : 'watch';
+  document.body.className = mode;
+  document.getElementById(mode).hidden = false;
+  var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- shared data: a 99.55 min match, then a 12 min drive ---------- */
+  var MATCH = 99.55, TOTAL = 111.55, STEP = 0.25, N = Math.round(TOTAL / STEP) + 1;
+  var seed = 7; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  var S = [];
+  for (var i = 0; i < N; i++) {
+    var t = i * STEP, inMatch = t <= MATCH;
+    var hr = inMatch ? 150 + 18 * Math.sin(t / 3.1) + 12 * (rnd() - .5) + (t < 5 ? (t - 5) * 8 : 0) : 98 + 6 * (rnd() - .5) + Math.max(0, 30 - (t - MATCH) * 12);
+    var spd = inMatch ? Math.max(0, 3 + 9 * rnd() * (rnd() > .7 ? 2 : 1)) : Math.min(44, 8 + (t - MATCH) * 22) * (0.85 + .3 * rnd());
+    S.push({ t: t, hr: Math.round(hr), spd: spd });
+  }
+  var KM_MATCH = 5.30, KM_DRIVE = 8.0;
+  function distAt(t) { return t <= MATCH ? KM_MATCH * t / MATCH : KM_MATCH + KM_DRIVE * Math.min(1, (t - MATCH) / (TOTAL - MATCH)); }
+  function avgHr(a, b) { var s = 0, n = 0; S.forEach(function (p) { if (p.t >= a && p.t <= b) { s += p.hr; n++; } }); return n ? Math.round(s / n) : 0; }
+  function topSpd(a, b) { var m = 0; S.forEach(function (p) { if (p.t >= a && p.t <= b) m = Math.max(m, p.spd); }); return Math.round(m); }
+  function hms(min) { var s = Math.round(min * 60), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60; return h + ':' + (m < 10 ? '0' : '') + m + ':' + (ss < 10 ? '0' : '') + ss; }
+  function clock(min) { var tot = 7 * 60 + Math.floor(min), h = Math.floor(tot / 60), m = tot % 60; return (h > 12 ? h - 12 : h) + ':' + (m < 10 ? '0' : '') + m; }
+  function snap(t) { return Math.max(0, Math.min(TOTAL, Math.round(t / STEP) * STEP)); }
+
+  /* generic two-handle slider */
+  function slider(track, hA, hB, onChange, minGap) {
+    var st = { a: 0, b: TOTAL };
+    function pos() { var w = track.clientWidth; hA.style.left = (st.a / TOTAL * w) + 'px'; hB.style.left = (st.b / TOTAL * w) + 'px';
+      hA.setAttribute('aria-valuetext', hms(st.a)); hB.setAttribute('aria-valuetext', hms(st.b)); onChange(st); }
+    function drag(h, key) {
+      h.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); h.setPointerCapture(e.pointerId);
+        function mv(ev) { var r = track.getBoundingClientRect(); var t = snap((ev.clientX - r.left) / r.width * TOTAL);
+          if (key === 'a') st.a = Math.min(t, st.b - minGap); else st.b = Math.max(t, st.a + minGap); pos(); }
+        function up() { h.removeEventListener('pointermove', mv); h.removeEventListener('pointerup', up); h.removeEventListener('pointercancel', up); }
+        h.addEventListener('pointermove', mv); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up);
+      });
+      h.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : 0; if (!d) return;
+        e.preventDefault(); var step = e.shiftKey ? 5 : STEP * 2;
+        if (key === 'a') st.a = Math.max(0, Math.min(st.a + d * step, st.b - minGap)); else st.b = Math.min(TOTAL, Math.max(st.b + d * step, st.a + minGap)); pos();
+      });
+    }
+    drag(hA, 'a'); drag(hB, 'b');
+    window.addEventListener('resize', pos);
+    return { st: st, pos: pos, set: function (a, b) { st.a = a; st.b = b; pos(); } };
+  }
+
+  if (mode === 'watch') {
+    /* fit the watch to the frame */
+    var cs = document.querySelector('.case');
+    function fit() { var s = Math.min(1, (innerWidth - 24) / 432, (innerHeight - 24) / 520); cs.style.transform = 'scale(' + s + ')'; }
+    fit(); addEventListener('resize', fit);
+
+    var panes = { run: wRun, ctl: wCtl, trim: wTrim, sum: wSum }, cur = 'run';
+    function go(name, dir) {
+      var a = panes[cur], b = panes[name]; if (a === b) return;
+      b.classList.remove('off'); a.classList.add('off');
+      if (!still && b.animate) b.animate([{ transform: 'translateX(' + (dir || 1) * 60 + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 380, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      cur = name;
+    }
+    /* running timer keeps ticking: the problem */
+    var t0 = Date.now(), base = TOTAL * 60;
+    setInterval(function () { if (cur !== 'run') return; var s = base + (Date.now() - t0) / 1000; var cs2 = Math.floor((s % 1) * 100);
+      wElapsed.textContent = hms(s / 60) + '.' + (cs2 < 10 ? '0' : '') + cs2; }, 50);
+    /* swipe or tap to open controls */
+    var sx = null;
+    wRun.addEventListener('pointerdown', function (e) { sx = e.clientX; });
+    wRun.addEventListener('pointerup', function (e) { if (sx === null) return; go('ctl', Math.sign(e.clientX - sx) || -1); sx = null; });
+    var sl = slider(wGraph, wHA, wHB, function (st) {
+      var w = wGraph.clientWidth;
+      wTagA.textContent = hms(st.a); wTagB.textContent = hms(st.b);
+      function cl(el, x) { var hw = el.offsetWidth / 2; el.style.left = Math.max(hw, Math.min(w - hw, x)) + 'px'; }
+      cl(wTagA, st.a / TOTAL * w); cl(wTagB, st.b / TOTAL * w);
+      wDur.textContent = hms(st.b - st.a);
+      wDist.textContent = (distAt(st.b) - distAt(st.a)).toFixed(2) + ' km';
+      wAvg.textContent = 'Average ' + avgHr(st.a, st.b) + ' bpm';
+      var changed = st.a > 0 || st.b < TOTAL; wOk.disabled = !changed;
+      wDrag.textContent = st.b > MATCH + 1 ? 'Drag the end back to where the match ended' : 'Looks right. Tap ✓ to confirm';
+      drawW(st);
+    }, 5);
+    function drawW(st) {
+      var W = 344, H = 150, pts = S.map(function (p) { return (p.t / TOTAL * W).toFixed(1) + ',' + (H - 22 - (p.hr - 80) / 110 * (H - 50)).toFixed(1); }).join(' ');
+      var xa = st.a / TOTAL * W, xb = st.b / TOTAL * W;
+      wSvg.innerHTML = '<defs><clipPath id="k"><rect x="' + xa + '" y="0" width="' + (xb - xa) + '" height="' + H + '"/></clipPath></defs>'
+        + '<polyline points="' + pts + '" fill="none" stroke="#5a2a2a" stroke-width="2"/>'
+        + '<polyline points="' + pts + '" fill="none" stroke="#FF453A" stroke-width="2.4" clip-path="url(#k)"/>'
+        + '<line x1="0" x2="' + W + '" y1="' + (H - 6) + '" y2="' + (H - 6) + '" stroke="#444" stroke-width="2"/>'
+        + '<line x1="' + xa + '" x2="' + xb + '" y1="' + (H - 6) + '" y2="' + (H - 6) + '" stroke="#FFD60A" stroke-width="3"/>'
+        + '<line x1="' + xa + '" x2="' + xa + '" y1="24" y2="' + (H - 6) + '" stroke="#FFD60A" stroke-dasharray="3 4"/>'
+        + '<line x1="' + xb + '" x2="' + xb + '" y1="24" y2="' + (H - 6) + '" stroke="#FFD60A" stroke-dasharray="3 4"/>';
+    }
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-act]'); if (!b) return;
+      var a = b.getAttribute('data-act');
+      if (a === 'trim') { go('trim', 1); requestAnimationFrame(function () { sl.set(0, TOTAL); }); }
+      if (a === 'back') go('ctl', -1);
+      if (a === 'pause' || a === 'seg') go('run', -1);
+      if (a === 'end') { sDur.textContent = hms(TOTAL); sDist.textContent = (KM_MATCH + KM_DRIVE).toFixed(2) + ' km'; sNote.textContent = 'This is today: the drive is counted. Try Trim instead.'; go('sum', 1); }
+      if (a === 'ok') { sDur.textContent = hms(sl.st.b - sl.st.a); sDist.textContent = (distAt(sl.st.b) - distAt(sl.st.a)).toFixed(2) + ' km'; sNote.textContent = sl.st.b <= MATCH + 1 ? 'Trimmed. Only the match counts.' : 'Still includes some of the drive.'; sNote.style.color = sl.st.b <= MATCH + 1 ? '#9EF01A' : '#FF9F0A'; go('sum', 1); }
+      if (a === 'again') { t0 = Date.now(); go('run', -1); }
+    });
+  } else {
+    /* ---------- phone: map + timeline ---------- */
+    var pitch = { x: 40, y: 50, w: 150, h: 110 }, gate = { x: 190, y: 105 };
+    var road = [[190, 105], [230, 105], [250, 70], [300, 60], [330, 20], [370, 10]];
+    var path = S.map(function (p, i) {
+      if (p.t <= MATCH) { var u = i * 0.37, v = i * 0.23;
+        return [pitch.x + 10 + (pitch.w - 20) * (0.5 + 0.45 * Math.sin(u) * Math.cos(v * 0.7)), pitch.y + 8 + (pitch.h - 16) * (0.5 + 0.45 * Math.cos(u * 1.3) * Math.sin(v))]; }
+      var f = (p.t - MATCH) / (TOTAL - MATCH), segs = road.length - 1, k = Math.min(segs - 1, Math.floor(f * segs)), r = f * segs - k;
+      return [road[k][0] + (road[k + 1][0] - road[k][0]) * r, road[k][1] + (road[k + 1][1] - road[k][1]) * r];
+    });
+    function line(a, b, color, w, dash) {
+      var pts = path.filter(function (_, i) { return S[i].t >= a && S[i].t <= b; }).map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ');
+      return pts ? '<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + '/>' : '';
+    }
+    var base = '<rect width="360" height="230" fill="#E8F0E3"/>'
+      + '<path d="M0 190 C80 180 140 200 220 185 S330 170 360 175" stroke="#fff" stroke-width="14" fill="none"/>'
+      + '<path d="M190 105 L230 105 L250 70 L300 60 L330 20 L370 10" stroke="#fff" stroke-width="12" fill="none" stroke-linejoin="round"/>'
+      + '<rect x="' + pitch.x + '" y="' + pitch.y + '" width="' + pitch.w + '" height="' + pitch.h + '" rx="4" fill="#BFDDB0" stroke="#fff" stroke-width="2"/>'
+      + '<line x1="' + (pitch.x + pitch.w / 2) + '" x2="' + (pitch.x + pitch.w / 2) + '" y1="' + pitch.y + '" y2="' + (pitch.y + pitch.h) + '" stroke="#fff" stroke-width="2"/>'
+      + '<circle cx="' + (pitch.x + pitch.w / 2) + '" cy="' + (pitch.y + pitch.h / 2) + '" r="14" fill="none" stroke="#fff" stroke-width="2"/>';
+    function drawMap(st) {
+      var e = path[Math.round(st.b / STEP)], s = path[Math.round(st.a / STEP)];
+      pMap.innerHTML = base + line(0, st.a, '#C7C7CC', 2.5, '4 4') + line(st.b, TOTAL, '#C7C7CC', 3, '5 5') + line(st.a, st.b, '#30A14E', 2.5)
+        + '<circle cx="' + s[0] + '" cy="' + s[1] + '" r="6" fill="#30A14E" stroke="#fff" stroke-width="2"/>'
+        + '<circle cx="' + e[0] + '" cy="' + e[1] + '" r="7" fill="#FF453A" stroke="#fff" stroke-width="2"/>';
+    }
+    function drawTl(st) {
+      var W = 330, H = 102, hrp = S.map(function (p) { return (p.t / TOTAL * W).toFixed(1) + ',' + (H - 4 - (p.hr - 80) / 110 * (H - 20)).toFixed(1); }).join(' ');
+      var sp = S.map(function (p) { return (p.t / TOTAL * W).toFixed(1) + ',' + (H - 4 - p.spd / 46 * (H - 20)).toFixed(1); }).join(' ');
+      var xa = st.a / TOTAL * W, xb = st.b / TOTAL * W;
+      pSvg.innerHTML = '<rect x="0" y="0" width="' + xa + '" height="' + H + '" fill="#F2F2F7"/><rect x="' + xb + '" y="0" width="' + (W - xb) + '" height="' + H + '" fill="#F2F2F7"/>'
+        + '<polyline points="' + sp + '" fill="none" stroke="#5AC8FA" stroke-width="1.6"/>'
+        + '<polyline points="' + hrp + '" fill="none" stroke="#FF375F" stroke-width="1.6"/>'
+        + '<rect x="' + xa + '" y="0" width="' + (xb - xa) + '" height="' + H + '" fill="none" stroke="#FFD60A" stroke-width="3" rx="4"/>';
+    }
+    var sl2 = slider(pTl, pHA, pHB, function (st) {
+      drawMap(st); drawTl(st);
+      pRange.textContent = clock(st.a) + ' – ' + clock(st.b) + ' AM';
+      pDur.textContent = hms(st.b - st.a); pDist.textContent = (distAt(st.b) - distAt(st.a)).toFixed(2) + ' km';
+      pHr.textContent = avgHr(st.a, st.b) + ' bpm'; pTop.textContent = topSpd(st.a, st.b) + ' km/h';
+      var changed = st.a > 0 || st.b < TOTAL; pSave.disabled = !changed;
+      [pDur, pDist, pTop].forEach(function (el) { el.classList.toggle('cut', changed); });
+    }, 5);
+    pSugYes.onclick = function () {
+      var from = sl2.st.b, to = MATCH, t0 = performance.now();
+      function step(now) { var k = Math.min(1, (now - t0) / 600), e = 1 - Math.pow(1 - k, 3); sl2.set(0, from + (to - from) * e); if (k < 1) requestAnimationFrame(step); }
+      if (still) sl2.set(0, to); else requestAnimationFrame(step);
+      pSug.hidden = true;
+    };
+    pSugNo.onclick = function () { pSug.hidden = true; };
+    pSave.onclick = function () { pSave.hidden = true; pDone.hidden = false; pReset.hidden = false; };
+    pReset.onclick = function () { sl2.set(0, TOTAL); pSug.hidden = false; pSave.hidden = false; pDone.hidden = true; pReset.hidden = true; };
+    requestAnimationFrame(function () { sl2.set(0, TOTAL); });
+  }
+})();
+</script>
+</body>
+</html>
