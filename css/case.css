@@ -597,3 +597,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   .js-bars .tbar.in .tbar-track i { transform: none; }
   .js-bars .tbar.in .tbar-row + .tbar-row .tbar-track i { transition-delay: .25s; }
 }
+
+/* paired figures share one frame size */
+@media (min-width: 760px) {
+  .pair { align-items: stretch; }
+  .pair > .shot { display: grid; grid-template-rows: auto 1fr; align-content: start; }
+  .pair > .shot img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: contain; background: #fff; }
+}
