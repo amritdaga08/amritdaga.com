@@ -570,20 +570,16 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 .contact .eyebrow { color: var(--sage); }
 .contact .wrap { position: relative; overflow: hidden; isolation: isolate; }
 .contact canvas.fest { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-.fest-wish { position: relative; overflow: hidden; margin: 0 0 -6px; display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 999px; font-family: var(--font-display); font-size: clamp(1.375rem, 3.6vw, 1.875rem); line-height: 1.15; color: var(--wish); background: color-mix(in srgb, var(--paper) 12%, transparent); border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--paper) 28%, transparent), 0 12px 32px -16px rgba(0, 0, 0, .45); -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%); opacity: 0; transform: translateY(10px) scale(.96); transition: opacity .8s ease, transform .9s cubic-bezier(.34, 1.56, .64, 1); }
-.fest-wish::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, color-mix(in srgb, var(--paper) 30%, transparent) 50%, transparent 65%); transform: translateX(-120%); pointer-events: none; }
+.fest-wish { margin: 0 0 -10px; font-size: 1rem; font-weight: 600; letter-spacing: .01em; line-height: 1.2; padding: 8px 18px; border-radius: 999px; color: var(--wish); background: color-mix(in srgb, var(--paper) 12%, transparent); border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent); -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%); opacity: 0; transform: translateY(8px); transition: opacity .7s ease, transform .8s cubic-bezier(.34, 1.56, .64, 1); }
 .seen .fest-wish { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: no-preference) { .seen .fest-wish::after { animation: wishSheen 5s 1s ease-in-out infinite; } @keyframes wishSheen { 0% { transform: translateX(-120%); } 30%, 100% { transform: translateX(120%); } } }
 @media (prefers-reduced-motion: reduce) { .fest-wish { opacity: 1; transform: none; } }
 .f-diwali { --wish: #F2C14E; }
-.f-holi { --wish: #F4A6C0; }
+.f-holi { --wish: #F7B3CB; }
 .f-durga { --wish: #F7B0A6; }
 .f-christmas { --wish: #CFE3C9; }
 .f-newyear { --wish: #E8C987; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .f-diwali { --wish: #7A4E00; } :root:not([data-theme="light"]) .f-holi { --wish: #9B2C57; } :root:not([data-theme="light"]) .f-durga { --wish: #9A2E26; } :root:not([data-theme="light"]) .f-christmas { --wish: #2D6136; } :root:not([data-theme="light"]) .f-newyear { --wish: #6E5212; } }
-:root[data-theme="dark"] .f-diwali { --wish: #7A4E00; } :root[data-theme="dark"] .f-holi { --wish: #9B2C57; } :root[data-theme="dark"] .f-durga { --wish: #9A2E26; } :root[data-theme="dark"] .f-christmas { --wish: #2D6136; } :root[data-theme="dark"] .f-newyear { --wish: #6E5212; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fest-wish { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--paper) 28%, transparent), 0 12px 32px -18px rgba(59, 47, 37, .35); } }
-:root[data-theme="dark"] .fest-wish { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--paper) 28%, transparent), 0 12px 32px -18px rgba(59, 47, 37, .35); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .f-diwali { --wish: #6E4600; } :root:not([data-theme="light"]) .f-holi { --wish: #8C2650; } :root:not([data-theme="light"]) .f-durga { --wish: #8C2922; } :root:not([data-theme="light"]) .f-christmas { --wish: #285830; } :root:not([data-theme="light"]) .f-newyear { --wish: #634A10; } }
+:root[data-theme="dark"] .f-diwali { --wish: #6E4600; } :root[data-theme="dark"] .f-holi { --wish: #8C2650; } :root[data-theme="dark"] .f-durga { --wish: #8C2922; } :root[data-theme="dark"] .f-christmas { --wish: #285830; } :root[data-theme="dark"] .f-newyear { --wish: #634A10; }
 .contact .wrap.f-christmas { padding-top: clamp(120px, 12vw, 150px); }
 @media (prefers-reduced-motion: no-preference) { .seen .fest-wish { animation: wishShine 6s linear infinite; } @keyframes wishShine { to { background-position: -200% 0; } } }
 @media (prefers-reduced-motion: reduce) { .fest-wish { opacity: 1; transform: none; } }
