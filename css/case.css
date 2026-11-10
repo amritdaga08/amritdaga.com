@@ -616,3 +616,19 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .time { display: grid; gap: 6px; justify-items: start; }
 .time b { color: var(--moss); }
 .time span { font-size: var(--step-0); font-weight: 500; color: var(--bark); }
+
+/* step-by-step journeys */
+.subhead p:empty { display: none; }
+.sflow-wrap { display: grid; justify-items: center; gap: 14px; width: 100%; }
+.sflow { list-style: none; margin: 0; padding: 8px 4px 4px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 210px); gap: clamp(20px, 3vw, 44px); justify-content: center; max-width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.sflow::-webkit-scrollbar { display: none; }
+.sflow li { position: relative; display: grid; justify-items: center; gap: 12px; scroll-snap-align: center; }
+.sflow li + li::before { content: ""; position: absolute; top: 14px; right: calc(50% + 22px); width: calc(100% + clamp(20px, 3vw, 44px) - 44px); border-top: 1.5px dashed var(--sage); }
+.sf-n { position: relative; z-index: 1; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--moss); color: #FFFDF8; font-size: .8125rem; font-weight: 600; }
+.sflow img { width: 100%; height: auto; border-radius: 22px; border: 1px solid var(--rule); box-shadow: 0 20px 36px -24px rgba(0, 0, 0, .45); background: #fff; }
+.sflow p { font-size: var(--step--1); line-height: var(--lh--1); color: var(--bark); text-align: center; max-width: 16ch; }
+.sf-total { font-size: var(--step--1); color: var(--bark-soft); }
+.sf-total b { display: inline-block; padding: 5px 12px; border-radius: 999px; background: var(--linen); color: var(--moss); font-weight: 600; }
+@media (max-width: 859px) {
+  .sflow { justify-content: start; grid-auto-columns: 62vw; width: calc(100% + 2 * max(16px, env(safe-area-inset-left, 0px))); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+}
