@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>try{Object.defineProperty(window,"claude",{value:undefined,configurable:true,writable:true})}catch(e){try{window.claude=undefined}catch(_){}}</script><meta name="robots" content="noindex"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}html,body,*{scrollbar-width:none;-ms-overflow-style:none}*::-webkit-scrollbar{display:none;width:0;height:0}</style>
+<title>Kuchh bhi chalega</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Hind:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+/* Layout: one turmeric page, a single slot window as the hero, the menu list underneath. */
+:root{
+  --bg:#F3BC36; --surface:#FFF4D6; --fg:#45101C; --muted:#7A4A35; --accent:#B81D38; --on-accent:#FFF4D6;
+  --ok:#1C7355; --line:#45101C33;
+  --display:"Rozha One","Georgia",serif; --body:"Hind","Segoe UI",system-ui,sans-serif;
+  --row:92px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#260B12; --surface:#3A131D; --fg:#FBE7B4; --muted:#D3A98A; --accent:#F3BC36; --on-accent:#260B12;
+  --ok:#6FD3A8; --line:#FBE7B433; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#260B12; --surface:#3A131D; --fg:#FBE7B4; --muted:#D3A98A; --accent:#F3BC36; --on-accent:#260B12;
+  --ok:#6FD3A8; --line:#FBE7B433; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45}
+.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2.2rem,10vw,3.4rem);line-height:1;margin:0;text-wrap:balance}
+.sub{margin:8px 0 0;color:var(--muted)}
+h2{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+
+.machine{background:var(--surface);border:3px solid var(--fg);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:14px;box-shadow:6px 6px 0 var(--fg)}
+.window{height:var(--row);overflow:hidden;border-radius:12px;border:2px solid var(--fg);background:var(--bg);position:relative}
+.reel{will-change:transform}
+.reel div{height:var(--row);display:flex;align-items:center;justify-content:center;text-align:center;padding:0 12px;
+  font-family:var(--display);font-size:clamp(1.25rem,5.6vw,1.8rem);line-height:1.1;overflow-wrap:anywhere}
+.reel.spin{transition:transform 2.4s cubic-bezier(.12,.72,.12,1)}
+.window.blur .reel div{filter:blur(1.2px)}
+.pull{background:var(--accent);color:var(--on-accent);border:2px solid var(--fg);border-radius:14px;padding:14px 16px;
+  font-family:var(--display);font-size:1.35rem;width:100%}
+.pull:active{transform:translateY(2px)}
+.pull:disabled{opacity:.6;cursor:default}
+
+.detail{display:flex;flex-direction:column;gap:12px}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.stats li{border:1.5px solid var(--line);border-radius:999px;padding:3px 12px;font-variant-numeric:tabular-nums}
+.stats b{font-weight:600}
+.note{color:var(--muted);margin:0;font-size:.95rem}
+.ings{display:flex;flex-wrap:wrap;gap:8px}
+.ing{background:transparent;border:1.5px solid var(--fg);border-radius:10px;padding:6px 12px}
+.ing[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.ing[aria-pressed="true"]::before{content:"✓ "}
+.have{font-weight:600}
+.have.all{color:var(--ok)}
+
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ghost{background:transparent;border:2px solid var(--fg);border-radius:10px;padding:7px 14px;font-weight:600}
+.list{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--line)}
+.list li{border-bottom:1.5px solid var(--line);display:flex;align-items:center;gap:8px}
+.list li.g{font-family:var(--display);font-size:1.15rem;padding:16px 2px 6px;justify-content:space-between}
+.list li.g small{font-family:var(--body);font-size:.85rem;color:var(--muted)}
+.list .item{flex:1;min-width:0}
+.x{background:transparent;border:1.5px solid var(--line);border-radius:8px;padding:4px 10px;color:var(--accent);font-weight:600;white-space:nowrap}
+.x.sure{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.tabs{display:flex;gap:8px}
+.tab{flex:1;min-width:0;background:transparent;border:2px solid var(--fg);border-radius:999px;padding:7px 4px;font-weight:600}
+.tab[aria-pressed="true"]{background:var(--fg);color:var(--surface)}
+select{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--fg);border-radius:8px;padding:9px 10px;width:100%}
+.item{display:flex;align-items:baseline;gap:10px;width:100%;background:none;border:0;padding:12px 2px;text-align:left}
+.item .n{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.item .m{color:var(--muted);font-size:.9rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tag{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--muted)}
+
+form{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;font-weight:600;min-width:0}
+label small{font-weight:400;color:var(--muted)}
+input,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--fg);border-radius:8px;padding:9px 10px;width:100%}
+textarea{resize:vertical;min-height:64px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:440px){.grid{grid-template-columns:repeat(2,1fr)}}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.save{background:var(--fg);color:var(--surface);border:2px solid var(--fg);border-radius:10px;padding:8px 18px;font-weight:600}
+.del{margin-left:auto;color:var(--accent);border-color:var(--accent)}
+.err{color:var(--accent);margin:0;font-weight:600}
+@media (prefers-reduced-motion: reduce){.reel.spin{transition:none}.window.blur .reel div{filter:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Kuchh bhi chalega</h1>
+    <p class="sub">Aaj kya khaana hai? Let the machine decide.</p>
+  </header>
+
+  <section class="machine" aria-label="Meal picker">
+    <div class="tabs" id="tabs" role="group" aria-label="Meal type"></div>
+    <div class="window" id="window"><div class="reel" id="reel"><div>Menu khul raha hai…</div></div></div>
+    <button class="pull" id="pull" disabled>Kuchh bhi chalega</button>
+    <div class="detail" id="detail" aria-live="polite" hidden></div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Hamara menu <span class="note" id="count"></span></h2>
+      <button class="ghost" id="addBtn">+ Add a meal</button>
+    </div>
+    <p class="note" id="status" style="margin-top:6px" hidden></p>
+    <form id="form" hidden style="margin-top:14px">
+      <label>Meal name <input id="f-name" required maxlength="80" autocomplete="off" placeholder="Rajma chawal"></label>
+      <label>Category <select id="f-cat"><option>Brunch</option><option>Dinner</option><option>Dessert</option></select></label>
+      <div class="grid">
+        <label>Calories <small>optional</small><input id="f-cal" type="number" min="0" inputmode="decimal" placeholder="kcal"></label>
+        <label>Protein <small>optional</small><input id="f-p" type="number" min="0" step="any" inputmode="decimal" placeholder="g"></label>
+        <label>Carbs <small>optional</small><input id="f-c" type="number" min="0" step="any" inputmode="decimal" placeholder="g"></label>
+        <label>Fat <small>optional</small><input id="f-f" type="number" min="0" step="any" inputmode="decimal" placeholder="g"></label>
+      </div>
+      <label>Ingredients <small>optional, separated by commas</small><textarea id="f-ing" placeholder="rajma, rice, onion, tomato"></textarea></label>
+      <p class="err" id="f-err" hidden></p>
+      <div class="actions">
+        <button class="save" type="submit">Save meal</button>
+        <button class="ghost" type="button" id="cancel">Cancel</button>
+        <button class="ghost del" type="button" id="del" hidden>Delete</button>
+      </div>
+    </form>
+    <ul class="list" id="list" style="margin-top:14px"></ul>
+  </section>
+</div>
+
+<script>
+(function(){
+  var M=[
+    ['Poha','Brunch',330,9,52,9,'poha, onion, peanuts, curry leaves, lemon'],
+    ['Paneer bhurji toast','Brunch',420,26,34,18,'paneer, bread, onion, tomato, green chilli'],
+    ['Besan chilla','Brunch',310,16,36,10,'besan, onion, coriander, green chilli'],
+    ['Masala oats','Brunch',290,11,44,7,'oats, mixed veg, masala'],
+    ['Greek yogurt bowl','Brunch',260,20,30,6,'yogurt, berries, honey, nuts'],
+    ['Rajma chawal','Dinner',520,19,86,9,'rajma, rice, onion, tomato'],
+    ['Dal khichdi','Dinner',430,17,70,8,'moong dal, rice, ghee, cumin'],
+    ['Palak paneer with roti','Dinner',560,28,48,26,'spinach, paneer, roti, garlic'],
+    ['Chole with brown rice','Dinner',510,18,82,11,'chickpeas, brown rice, onion, tomato'],
+    ['Veg pulao and raita','Dinner',470,13,74,12,'rice, mixed veg, yogurt, cucumber'],
+    ['Idli sambar','Brunch',350,12,62,5,'idli, sambar, coconut chutney'],
+    ['Masala dosa','Brunch',410,9,64,13,'dosa batter, potato, onion, mustard seeds'],
+    ['Upma','Brunch',300,8,48,9,'semolina, onion, peas, curry leaves'],
+    ['Aloo paratha with curd','Brunch',480,13,62,19,'wheat flour, potato, curd, butter'],
+    ['Moong dal cheela','Brunch',290,17,34,8,'moong dal, ginger, coriander, green chilli'],
+    ['Sabudana khichdi','Brunch',380,6,62,12,'sabudana, peanuts, potato, green chilli'],
+    ['Tofu scramble wrap','Brunch',360,22,36,13,'tofu, wholewheat wrap, capsicum, onion'],
+    ['Paneer tikka','Dinner',450,30,14,30,'paneer, capsicum, onion, yogurt, tikka masala'],
+    ['Kadhi chawal','Dinner',480,14,76,12,'besan, yogurt, rice, cumin'],
+    ['Veg biryani','Dinner',540,13,84,16,'basmati rice, mixed veg, fried onion, saffron'],
+    ['Soya chunk curry with roti','Dinner',500,32,58,12,'soya chunks, roti, onion, tomato'],
+    ['Baingan bharta with roti','Dinner',420,11,58,15,'brinjal, roti, onion, tomato'],
+    ['Pav bhaji','Dinner',560,14,80,20,'pav, potato, mixed veg, butter'],
+    ['Mushroom matar with rice','Dinner',470,15,74,11,'mushroom, peas, rice, onion'],
+    ['Thai green curry','Dinner',520,16,68,20,'tofu, coconut milk, jasmine rice, green curry paste'],
+    ['Paneer quinoa bowl','Dinner',480,30,46,18,'paneer, quinoa, chickpeas, cucumber'],
+    ['Gajar halwa','Dessert',320,6,44,14,'carrot, milk, sugar, ghee, cardamom'],
+    ['Shrikhand','Dessert',260,10,36,8,'hung curd, sugar, saffron, cardamom'],
+    ['Rasgulla','Dessert',190,4,38,2,'chenna, sugar'],
+    ['Dark chocolate and almonds','Dessert',220,6,14,16,'dark chocolate, almonds'],
+    ['Kheer','Dessert',280,8,42,8,'milk, rice, sugar, cardamom'],
+    ['Fruit chaat','Dessert',150,2,34,1,'apple, banana, pomegranate, chaat masala']
+  ].map(function(m,k){return {id:'x'+k,name:m[0],category:m[1],calories:m[2],protein:m[3],carbs:m[4],fat:m[5],ingredients:m[6].split(', '),example:true}});
+  window.__KBC_SEED__ = M;
+  try{ if(!localStorage.getItem('kbc-demo-meals-v2')) localStorage.setItem('kbc-demo-meals-v2', JSON.stringify(M)); }catch(e){}
+})();
+</script>
+<script>
+const $ = id => document.getElementById(id);
+const LS = 'kbc-demo-meals-v2';
+let db = null, meals = [], ready = false, spinning = false;
+let lastId = null, current = null, seen = [], editing = null, confirmDel = false;
+const have = {}; // mealId -> Set of ingredients ticked as "at home"
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num = v => (v === '' || v == null || isNaN(+v)) ? null : +v;
+const rowH = () => $('window').clientHeight;
+
+function loadLocal(){ var m; try{ m = JSON.parse(localStorage.getItem(LS)) }catch(e){} return (m && m.length) ? m : (window.__KBC_SEED__ || []).slice() }
+function saveLocal(){ try{ localStorage.setItem(LS, JSON.stringify(meals)) }catch(e){} }
+
+function setMeals(list){
+  meals = list.slice().sort((a,b) => a.name.localeCompare(b.name));
+  ready = true;
+  if (current) current = meals.find(m => m.id === current.id) || null;
+  renderList();
+  if (!spinning){ renderIdle(); renderDetail(); }
+}
+
+const CATS = ['Brunch','Dinner','Dessert'];
+let cat = new Date().getHours() < 16 ? 'Brunch' : 'Dinner', delId = null;
+const inCat = () => meals.filter(m => m.category === cat);
+
+function renderIdle(){
+  $('tabs').innerHTML = CATS.map(c => '<button class="tab" data-c="' + c + '" aria-pressed="' + (c === cat) + '">' + c + '</button>').join('');
+  const n = inCat().length;
+  $('pull').disabled = n === 0;
+  if (current) return;
+  $('reel').className = 'reel'; $('reel').style.transform = 'none';
+  $('reel').innerHTML = '<div>' + (n ? '?  ?  ?' : 'No ' + cat.toLowerCase() + ' meals yet') + '</div>';
+  $('pull').textContent = 'Kuchh bhi chalega';
+}
+
+function renderList(){
+  $('count').textContent = meals.length ? '· ' + meals.length : '';
+  if (!meals.length){ $('list').innerHTML = '<li class="note" style="padding:14px 2px">No meals yet. Add the things you usually eat and the machine will pick from them.</li>'; return; }
+  const row = m => {
+    const bits = [];
+    if (m.calories != null) bits.push(m.calories + ' kcal');
+    if (m.protein != null) bits.push(m.protein + 'g P');
+    return '<li><button class="item" data-id="' + esc(m.id) + '"><span class="n">' + esc(m.name) +
+      (m.example ? ' <span class="tag">example</span>' : '') + '</span><span class="m">' + esc(bits.join(' · ')) + '</span></button>' +
+      '<button class="x' + (delId === m.id ? ' sure' : '') + '" data-del="' + esc(m.id) + '" aria-label="Delete ' + esc(m.name) + '">' +
+      (delId === m.id ? 'Delete?' : '✕') + '</button></li>';
+  };
+  const groups = CATS.map(c => [c, meals.filter(m => m.category === c)]);
+  const rest = meals.filter(m => !CATS.includes(m.category));
+  if (rest.length) groups.push(['Uncategorised', rest]);
+  $('list').innerHTML = groups.map(g => '<li class="g"><span>' + g[0] + '</span><small>' +
+    (g[0] === 'Uncategorised' ? 'tap a meal to set its category' : g[1].length || 'none yet') + '</small></li>' + g[1].map(row).join('')).join('');
+}
+
+async function removeMeal(id){
+  if (db) await db.collection('meals').doc(id).delete();
+  else { setMeals(meals.filter(m => m.id !== id)); saveLocal(); }
+  if (current && current.id === id){ current = null; renderIdle(); renderDetail(); }
+}
+
+function renderDetail(){
+  const d = $('detail'), m = current;
+  if (!m){ d.hidden = true; return; }
+  let h = '';
+  const st = [['calories','kcal',''],['protein','g','Protein '],['carbs','g','Carbs '],['fat','g','Fat ']]
+    .filter(x => m[x[0]] != null).map(x => '<li>' + x[2] + '<b>' + m[x[0]] + '</b> ' + x[1] + '</li>');
+  h += st.length ? '<ul class="stats">' + st.join('') + '</ul>' : '<p class="note">Macros not tracked for this one.</p>';
+  const ings = m.ingredients || [];
+  if (ings.length){
+    const set = have[m.id] || (have[m.id] = new Set());
+    const n = ings.filter(i => set.has(i)).length;
+    h += '<p class="have' + (n === ings.length ? ' all' : '') + '">' + (n === ings.length ? 'Sab kuchh hai. Bana lo!' :
+      'Tap what you have at home · ' + n + ' of ' + ings.length) + '</p><div class="ings">' +
+      ings.map((i,k) => '<button class="ing" data-k="' + k + '" aria-pressed="' + set.has(i) + '">' + esc(i) + '</button>').join('') + '</div>';
+  } else h += '<p class="note">No ingredients listed.</p>';
+  d.innerHTML = h; d.hidden = false;
+}
+
+function pick(){
+  const menu = inCat();
+  let pool = menu.filter(m => !seen.includes(m.id));
+  if (!pool.length){ seen = seen.filter(id => !menu.some(m => m.id === id)); if (lastId) seen.push(lastId); pool = menu.filter(m => m.id !== lastId); }
+  if (!pool.length) pool = menu; // only one meal in this category
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function spin(){
+  const meals = inCat();
+  if (spinning || !meals.length) return;
+  const choice = pick();
+  const reel = $('reel'), H = rowH(), N = meals.length > 1 ? 26 : 1;
+  const names = [current ? current.name : '?  ?  ?'];
+  for (let i = 1; i < N; i++){
+    let m; do { m = meals[Math.floor(Math.random() * meals.length)] } while (meals.length > 2 && m.name === names[i-1]);
+    names.push(m.name);
+  }
+  names.push(choice.name);
+  spinning = true; $('pull').disabled = true; $('detail').hidden = true;
+  reel.className = 'reel'; reel.style.transform = 'translateY(0)';
+  reel.innerHTML = names.map(n => '<div>' + esc(n) + '</div>').join('');
+  void reel.offsetHeight;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  reel.className = 'reel spin'; $('window').classList.add('blur');
+  reel.style.transform = 'translateY(' + (-(names.length - 1) * H) + 'px)';
+  setTimeout(() => $('window').classList.remove('blur'), 1500);
+  setTimeout(() => {
+    spinning = false; current = choice; lastId = choice.id; seen.push(choice.id);
+    reel.className = 'reel'; reel.style.transform = 'none';
+    reel.innerHTML = '<div>' + esc(choice.name) + '</div>';
+    $('pull').disabled = false; $('pull').textContent = 'Nahi. Kuchh aur';
+    renderDetail();
+    if (db) db.doc('state/last').set({ mealId: choice.id }).catch(() => {});
+    else { try{ localStorage.setItem('kbc-demo-last', choice.id) }catch(e){} }
+  }, reduce ? 50 : 2500);
+}
+
+function openForm(m){
+  editing = m || null; confirmDel = false;
+  $('f-name').value = m ? m.name : ''; $('f-cal').value = m && m.calories != null ? m.calories : '';
+  $('f-p').value = m && m.protein != null ? m.protein : ''; $('f-c').value = m && m.carbs != null ? m.carbs : '';
+  $('f-f').value = m && m.fat != null ? m.fat : ''; $('f-ing').value = m ? (m.ingredients || []).join(', ') : '';
+  $('f-cat').value = m && CATS.includes(m.category) ? m.category : cat;
+  $('del').hidden = !m; $('del').textContent = 'Delete'; $('f-err').hidden = true;
+  $('form').hidden = false; $('f-name').focus(); $('form').scrollIntoView({ block:'nearest', behavior:'smooth' });
+}
+function fail(e){ $('f-err').textContent = e && e.code === 'invalid_argument' ? "You can view this menu but can't change it." : "Couldn't save. Try again."; $('f-err').hidden = false; }
+
+$('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = $('f-name').value.trim(); if (!name) return;
+  const data = { name, category: $('f-cat').value, calories: num($('f-cal').value), protein: num($('f-p').value), carbs: num($('f-c').value), fat: num($('f-f').value),
+    ingredients: [...new Set($('f-ing').value.split(/[,\n]/).map(s => s.trim()).filter(Boolean))] };
+  try{
+    if (db){
+      const ref = editing ? db.collection('meals').doc(editing.id) : db.collection('meals').doc();
+      await ref.set(data);
+    } else {
+      const id = editing ? editing.id : 'm' + Date.now();
+      setMeals(meals.filter(m => m.id !== id).concat([{ id, ...data }])); saveLocal();
+    }
+    $('form').hidden = true;
+  }catch(err){ fail(err); }
+});
+$('del').addEventListener('click', async () => {
+  if (!confirmDel){ confirmDel = true; $('del').textContent = 'Tap again to delete'; return; }
+  try{
+    await removeMeal(editing.id);
+    $('form').hidden = true;
+  }catch(err){ fail(err); }
+});
+$('cancel').addEventListener('click', () => { $('form').hidden = true; });
+$('addBtn').addEventListener('click', () => openForm(null));
+$('pull').addEventListener('click', spin);
+$('tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if (!b || spinning || b.dataset.c === cat) return;
+  cat = b.dataset.c; current = null; renderIdle(); renderDetail();
+});
+$('list').addEventListener('click', e => {
+  const x = e.target.closest('.x'); if (!x) return;
+  const id = x.dataset.del;
+  if (delId !== id){ delId = id; renderList(); return; }
+  delId = null;
+  removeMeal(id).catch(() => { $('status').textContent = "Couldn't delete that meal."; $('status').hidden = false; renderList(); });
+});
+$('list').addEventListener('click', e => { const b = e.target.closest('.item'); if (b) openForm(meals.find(m => m.id === b.dataset.id)); });
+$('detail').addEventListener('click', e => {
+  const b = e.target.closest('.ing'); if (!b || !current) return;
+  const i = current.ingredients[+b.dataset.k], set = have[current.id];
+  set.has(i) ? set.delete(i) : set.add(i); renderDetail();
+});
+
+function goLocal(msg){
+  db = null; try{ lastId = localStorage.getItem('kbc-demo-last') }catch(e){}
+  $('status').textContent = msg; $('status').hidden = false; setMeals(loadLocal());
+}
+(async () => {
+  const d = window.claude && window.claude.use ? await window.claude.use('db') : null;
+  if (!d) return goLocal('Demo menu with sample meals. Changes stay on this device.');
+  db = d;
+  db.doc('state/last').get().then(s => { if (s.exists && !lastId) lastId = s.data().mealId; }).catch(() => {});
+  db.collection('meals').onSnapshot(
+    snap => setMeals(snap.docs.map(x => ({ id: x.id, ...x.data() })).filter(m => m.name)),
+    () => { if (!ready) goLocal('Could not reach the shared menu. Meals are saved on this device only.'); }
+  );
+})();
+</script>
+</body>
+</html>

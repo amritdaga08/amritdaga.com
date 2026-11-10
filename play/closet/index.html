@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>try{Object.defineProperty(window,"claude",{value:undefined,configurable:true,writable:true})}catch(e){try{window.claude=undefined}catch(_){}}</script><meta name="robots" content="noindex"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}html,body,*{scrollbar-width:none;-ms-overflow-style:none}*::-webkit-scrollbar{display:none;width:0;height:0}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Closet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F4F0;--card:#FFFFFF;--tile:#E8EAE3;--ink:#18202E;--muted:#5D6574;--line:#D8DBD2;
+  --tag:#E8C46A;--tag-ink:#3A2E0F;--thread:#B5432F;--ok:#2F6B4F;--shade:rgba(24,32,46,.08);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#11151C;--card:#1A1F29;--tile:#232A36;--ink:#ECEEE8;--muted:#9AA1AE;--line:#2B3240;
+  --tag:#D6B35C;--tag-ink:#231B06;--thread:#E0735E;--ok:#6CC49A;--shade:rgba(0,0,0,.35)}}
+:root[data-theme="dark"]{--paper:#11151C;--card:#1A1F29;--tile:#232A36;--ink:#ECEEE8;--muted:#9AA1AE;--line:#2B3240;
+  --tag:#D6B35C;--tag-ink:#231B06;--thread:#E0735E;--ok:#6CC49A;--shade:rgba(0,0,0,.35)}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
+[hidden]{display:none!important}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 120px}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:6px 0 18px}
+.brand{font-size:clamp(2.2rem,9vw,3.2rem);font-weight:800;letter-spacing:-.045em;line-height:.9;margin:0}
+.btn{border:0;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer;background:var(--ink);color:var(--paper);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.danger{background:transparent;color:var(--thread);box-shadow:inset 0 0 0 1px var(--thread)}
+.btn.small{padding:7px 12px;font-size:.9rem;font-weight:600}
+.notice{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:12px 14px;color:var(--muted);margin-bottom:16px}
+.notice:empty{display:none}
+
+/* summary */
+.summary{margin-bottom:18px}
+.total{display:flex;align-items:baseline;gap:10px;margin:0 0 10px}
+.total b{font-size:2.6rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.total span{color:var(--muted)}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin}
+.cat{flex:none;min-width:92px;text-align:left;border:0;cursor:pointer;background:var(--card);border-radius:12px;padding:10px 12px;box-shadow:inset 0 0 0 1px var(--line)}
+.cat b{display:block;font-size:1.5rem;font-weight:700;line-height:1.1}
+.cat span{font-size:.85rem;color:var(--muted)}
+.cat[aria-pressed="true"]{background:var(--ink);color:var(--paper);box-shadow:none}
+.cat[aria-pressed="true"] span{color:inherit;opacity:.75}
+
+/* closet grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.item{border:0;padding:0;text-align:left;cursor:pointer;background:none}
+.tilebox{position:relative;aspect-ratio:3/4;border-radius:12px;background:var(--tile);display:grid;place-items:center;overflow:hidden}
+.tilebox img{position:absolute;inset:0;width:100%;height:100%}
+.tilebox img.cut{object-fit:contain;filter:drop-shadow(0 4px 6px var(--shade))}
+.tilebox img.photo{object-fit:cover}
+.swatch{width:44%;aspect-ratio:1;border-radius:50%;box-shadow:inset 0 0 0 1px var(--line)}
+.item .nm{font-size:.84rem;line-height:1.3;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty{text-align:center;padding:36px 16px;background:var(--card);border-radius:16px;box-shadow:0 1px 0 var(--line)}
+.empty p{color:var(--muted);margin:6px auto 16px;max-width:36ch}
+.foot{margin-top:22px;text-align:center}
+.linkbtn{border:0;background:none;padding:4px 0;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* FAB */
+.fab{position:fixed;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:5;
+  border:0;cursor:pointer;background:var(--tag);color:var(--tag-ink);font-weight:800;font-size:1.05rem;
+  padding:15px 22px 15px 40px;clip-path:polygon(18px 0,100% 0,100% 100%,18px 100%,0 50%);
+  filter:drop-shadow(0 6px 14px var(--shade))}
+.fab::before{content:"";position:absolute;left:16px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;background:var(--paper)}
+.fab:disabled{opacity:.5}
+
+/* dialogs */
+dialog{border:0;padding:0;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(10,14,20,.55)}
+dialog.sheet{border-radius:18px;width:min(520px,calc(100% - 20px));max-height:calc(100% - 20px)}
+.sheetin{padding:18px;overflow:auto;max-height:calc(100vh - 20px)}
+.sheetin h2{margin:0 0 4px;font-size:1.3rem}
+.sub{color:var(--muted);margin:0 0 14px;font-size:.92rem}
+.preview{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.preview .tilebox{width:120px;flex:none;cursor:pointer;color:var(--muted);font-size:.85rem;text-align:center;padding:0}
+.toggle{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.92rem;cursor:pointer;margin-bottom:8px}
+.toggle input{width:18px;height:18px;accent-color:var(--ink)}
+.field{margin-bottom:14px}
+.field label,.field .lbl{display:block;font-weight:600;font-size:.92rem;margin-bottom:6px}
+.field input[type=text],.field input[type=date]{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.colrow{display:flex;gap:8px;align-items:center}
+.colrow input{flex:1;min-width:0}
+.cswatch{flex:none;width:40px;height:40px;border-radius:10px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper)}
+.chip{border:0;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;white-space:nowrap;font-size:.9rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);box-shadow:none}
+.actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:6px;position:sticky;bottom:0;background:var(--card);padding-top:10px}
+.err{color:var(--thread);font-size:.9rem;min-height:1.2em;margin:0 0 6px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0 0 12px;font-size:.95rem}
+.facts dt{color:var(--muted)}.facts dd{margin:0}
+.detailimg{width:min(240px,70%);margin:0 auto 14px}
+
+/* Dress me */
+dialog.full{width:100%;height:100%;max-width:100%;max-height:100%;margin:0;border-radius:0}
+@media (min-width:700px){dialog.full{width:min(560px,100%);height:min(900px,calc(100% - 32px));margin:auto;border-radius:20px}}
+.dress{height:100%;display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(14px + env(safe-area-inset-bottom,0px))}
+.dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.dhead h2{margin:0;font-size:1.35rem;letter-spacing:-.02em}
+.iconbtn{border:0;background:var(--paper);width:38px;height:38px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
+.occs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;flex:none}
+.htag{flex:none;position:relative;border:0;cursor:pointer;background:var(--paper);color:var(--ink);padding:8px 14px 8px 28px;font-weight:600;
+  clip-path:polygon(13px 0,100% 0,100% 100%,13px 100%,0 50%);box-shadow:inset 0 0 0 1px var(--line)}
+.htag::before{content:"";position:absolute;left:12px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.htag[aria-pressed="true"]{background:var(--tag);color:var(--tag-ink);box-shadow:none}
+.noteline{display:flex;gap:8px;margin-bottom:12px;flex:none}
+.noteline input{flex:1;min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.stage{flex:1;min-height:0;position:relative}
+.ocard{position:absolute;inset:0;background:var(--paper);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;touch-action:pan-y;user-select:none;will-change:transform}
+.ocard.anim{transition:transform .28s ease,opacity .28s ease}
+.flat{flex:1;min-height:0;display:grid;grid-template-columns:1.55fr 1fr;gap:8px;padding:12px}
+.flat .col{display:flex;flex-direction:column;gap:8px;min-height:0}
+.flat .col.side{justify-content:flex-end}
+.flat .tilebox{aspect-ratio:auto;flex:1;min-height:0;background:var(--card)}
+.flat .col.side .tilebox{flex:0 1 32%}
+.obar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 12px 12px 16px;flex:none}
+.obar h3{margin:0;font-size:1.15rem;letter-spacing:-.01em;line-height:1.25}
+.qbtn{flex:none;width:36px;height:36px;border-radius:50%;border:0;cursor:pointer;background:var(--card);color:var(--ink);font-weight:800;font-size:1.05rem;box-shadow:inset 0 0 0 1px var(--line)}
+.qbtn[aria-expanded="true"]{background:var(--ink);color:var(--paper);box-shadow:none}
+.why{position:absolute;left:10px;right:10px;bottom:62px;max-height:calc(100% - 82px);overflow:auto;background:var(--card);border-radius:14px;padding:14px 16px;box-shadow:0 10px 30px var(--shade),inset 0 0 0 1px var(--line)}
+.why .for{font-weight:700;font-size:.92rem;margin:0 0 2px}
+.why .for~.for{margin-top:12px}
+.why p{margin:0;color:var(--muted)}
+.why ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.9rem}
+.stamp{position:absolute;top:18px;padding:4px 12px;border-radius:8px;font-weight:800;font-size:1.3rem;opacity:0;pointer-events:none;border:3px solid}
+.stamp.no{right:18px;color:var(--thread);transform:rotate(8deg)}
+.stamp.yes{left:18px;color:var(--ok);transform:rotate(-8deg)}
+.msg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted);background:var(--paper);border-radius:18px}
+.msg h3{color:var(--ink);margin:0 0 6px}
+.dots::after{content:"";animation:dots 1.2s steps(4) infinite}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+.decide{display:flex;justify-content:center;gap:28px;padding-top:14px;flex:none}
+.round{width:64px;height:64px;border-radius:50%;border:0;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 14px var(--shade)}
+.round.no{background:var(--card);color:var(--thread);box-shadow:inset 0 0 0 2px var(--thread),0 4px 14px var(--shade)}
+.round.yes{background:var(--ok);color:#fff}
+.round:disabled{opacity:.4}
+.decide label{display:block;text-align:center;font-size:.8rem;color:var(--muted);margin-top:4px}
+@media (prefers-reduced-motion:reduce){.ocard.anim{transition:none}.dots::after{animation:none;content:"..."}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 class="brand">Closet</h1>
+    <button class="btn" id="addBtn"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Add</button>
+  </header>
+  <div class="notice" id="notice"></div>
+  <section class="summary" id="summary" hidden>
+    <p class="total"><b id="total">0</b><span id="totalLbl">pieces in your closet</span></p>
+    <div class="cats" id="cats"></div>
+  </section>
+  <div id="grid"></div>
+  <div class="foot"><button class="btn ghost small" id="tidyBtn" hidden></button><p class="sub" id="tidyStatus" style="margin:8px 0 14px" aria-live="polite"></p><button class="linkbtn" id="discBtn" hidden></button></div>
+</div>
+
+<button class="fab" id="fab" disabled>Dress me</button>
+<input type="file" id="fileIn" accept="image/*" multiple hidden>
+
+<!-- Add / edit -->
+<dialog class="sheet" id="formSheet"><div class="sheetin">
+  <h2 id="formTitle">Add an item</h2>
+  <p class="sub" id="formSub">Tag it so outfits come out right.</p>
+  <div class="preview">
+    <div class="tilebox" id="photoBox" tabindex="0" role="button" aria-label="Choose photo">Tap to add a photo</div>
+    <div style="flex:1;min-width:0">
+      <label class="toggle" id="bgWrap"><input type="checkbox" id="bgOn" checked>Clean up photo</label>
+      <p class="sub" id="bgStatus" style="margin:0 0 10px"></p>
+      <button type="button" class="btn ghost small" id="autoBtn" hidden>Fill details from photo</button>
+      <p class="sub" id="autoStatus" style="margin-top:8px"></p>
+    </div>
+  </div>
+  <div class="field"><span class="lbl">Type</span><div class="chips" id="catChips"></div></div>
+  <div class="field"><label for="color">Main colour</label><div class="colrow"><span class="cswatch" id="cswatch" aria-hidden="true"></span><input type="text" id="color" list="colors" placeholder="Navy, white, olive…"></div><p class="sub" id="colorStatus" style="margin:6px 0 0"></p></div>
+  <datalist id="colors"><option>White<option>Off-white<option>Cream<option>Light grey<option>Grey<option>Charcoal<option>Black<option>Navy<option>Blue<option>Royal blue<option>Light blue<option>Sky blue<option>Denim blue<option>Light denim<option>Teal<option>Olive<option>Green<option>Bottle green<option>Mint<option>Sage<option>Khaki<option>Beige<option>Tan<option>Camel<option>Brown<option>Dark brown<option>Maroon<option>Burgundy<option>Red<option>Rust<option>Orange<option>Mustard<option>Yellow<option>Pink<option>Dusty pink<option>Rose<option>Lavender<option>Purple</datalist>
+  <div class="field"><span class="lbl">Good for</span><div class="chips" id="styleChips"></div></div>
+  <div class="field"><label for="name">Name (optional)</label><input type="text" id="name" placeholder="e.g. Linen shirt, slim chinos" maxlength="60"></div>
+  <div class="field"><span class="lbl">Fit</span><div class="chips" id="fitChips"></div></div>
+  <div class="field"><span class="lbl">Pattern</span><div class="chips" id="patChips"></div></div>
+  <p class="err" id="formErr"></p>
+  <div class="actions">
+    <button type="button" class="btn ghost" id="skipBtn">Cancel</button>
+    <button type="button" class="btn" id="saveBtn">Save item</button>
+  </div>
+</div></dialog>
+
+<!-- Detail -->
+<dialog class="sheet" id="detailSheet"><div class="sheetin">
+  <div class="tilebox detailimg" id="dImg"></div>
+  <h2 id="dTitle"></h2>
+  <dl class="facts" id="dFacts"></dl>
+  <div class="actions" id="dActions"></div>
+</div></dialog>
+
+<!-- Dress me -->
+<dialog class="full" id="dressSheet"><div class="dress">
+  <div class="dhead"><h2>What's the occasion?</h2>
+    <button class="iconbtn" id="dressClose" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+  <div class="occs" id="occs"></div>
+  <div class="noteline"><input id="note" type="text" maxlength="140" placeholder="Anything else? e.g. rainy, rooftop, want to look sharp"><button class="btn small ghost" id="noteGo">Apply</button></div>
+  <div class="stage" id="stage"><div class="msg"><div><h3>Pick an occasion</h3>Outfits appear here. Swipe right to wear one, left for another.</div></div></div>
+  <div class="decide">
+    <div><button class="round no" id="noBtn" disabled aria-label="Not this one"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button><label>Not this</label></div>
+    <div><button class="round yes" id="yesBtn" disabled aria-label="Wear this"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><label>Wear this</label></div>
+  </div>
+</div></dialog>
+
+<script>
+/* ============ constants ============ */
+const WASM_ID='4f82b562690bc20eb572eba2020f36af', MODEL_ID='4025ad7647f4a2cedddf6aaf0a8a672f';
+const ORT_URL='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.bundle.min.mjs';
+const CATS=[
+ ['shirt','Shirts','Shirt','top'],['tshirt','T-shirts','T-shirt','top'],['polo','Polos','Polo','top'],['kurta','Kurtas','Kurta','top'],
+ ['sweater','Sweaters','Sweater','layer'],['jacket','Jackets','Jacket','layer'],['blazer','Blazers','Blazer','layer'],
+ ['pants','Trousers','Trousers','bottom'],['jeans','Jeans','Jeans','bottom'],['chinos','Chinos','Chinos','bottom'],['shorts','Shorts','Shorts','bottom'],['joggers','Joggers','Joggers','bottom'],
+ ['formal-shoes','Formal shoes','Formal shoes','shoes'],['sneakers','Sneakers','Sneakers','shoes'],['sports-shoes','Sports shoes','Sports shoes','shoes'],['sandals','Sandals','Sandals','shoes'],
+ ['accessory','Accessories','Accessory','acc']
+].map(([id,plural,label,slot])=>({id,plural,label,slot}));
+const CAT=Object.fromEntries(CATS.map(c=>[c.id,c]));
+const STYLES=['Formal','Smart casual','Casual','Sporty','Ethnic'];
+const FITS=['Slim','Regular','Relaxed'],PATTERNS=['Solid','Textured','Striped','Checked','Printed'];
+const OCC=[
+ ['office','Office',['Formal','Smart casual']],['dinner','Dinner',['Smart casual','Casual']],['party','Party',['Smart casual','Casual']],
+ ['date','Date night',['Smart casual']],['gym','Gym',['Sporty']],['casual','Day out',['Casual','Smart casual']],
+ ['travel','Travel',['Casual','Sporty']],['wedding','Wedding / festive',['Ethnic','Formal']]
+].map(([id,label,styles])=>({id,label,styles}));
+const SLOT_ORDER={top:0,layer:1,bottom:2,shoes:3,acc:4};
+const DAY=864e5,STUDIO_V=1;
+const PALETTE=[['White','#F4F4F1'],['Off-white','#E9E4D6'],['Cream','#EADFC6'],['Light grey','#C4C6C8'],['Grey','#8E9195'],['Charcoal','#45484D'],['Black','#1C1C1E'],['Navy','#1F2A44'],['Blue','#2F5DA8'],['Royal blue','#2446A6'],['Light blue','#9DBBDB'],['Sky blue','#7FB6E6'],['Denim blue','#4F6A8C'],['Light denim','#7F95AE'],['Teal','#1F6E70'],['Olive','#6B6B3A'],['Green','#3E7B4E'],['Bottle green','#1F4733'],['Mint','#A9D9C0'],['Sage','#9AAA8C'],['Khaki','#BBA77A'],['Beige','#D6C4A3'],['Tan','#B8915F'],['Camel','#A9794B'],['Brown','#6A4630'],['Dark brown','#3F2A1E'],['Maroon','#5E1F28'],['Burgundy','#6D2233'],['Red','#B3262E'],['Rust','#A4502C'],['Orange','#D9772E'],['Mustard','#C9A02B'],['Yellow','#E5CF4A'],['Pink','#E7A3B5'],['Dusty pink','#C99AA0'],['Rose','#B05A74'],['Lavender','#B6A6D2'],['Purple','#5E3C7E']].map(([name,hex])=>({name,hex,lab:hexLab(hex)}));
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+
+/* ============ state ============ */
+let all=[],itemsCol=null,logRef=null,log=[],assets=null,sample=null,canImages=false,ready=false;
+let filter='all',showDiscarded=false,tidying=false;
+const active=()=>all.filter(i=>!i.discardedAt);
+const slotOf=i=>CAT[i.category]?.slot;
+const catLabel=i=>CAT[i.category]?.label||'Item';
+const title=i=>i.name||[i.color,catLabel(i)].filter(Boolean).join(' ');
+const daysSince=t=>t?Math.floor((Date.now()-t)/DAY):null;
+function notice(t){$('notice').textContent=t||'';}
+
+/* ============ tiles ============ */
+/* demo: draw a garment silhouette when there is no photo */
+function silhouette(i){
+  const slot=slotOf(i),cat=i.category,col=cssColor(i.color),st='rgba(24,32,46,.18)';
+  let p='';
+  if(slot==='top'){const long=cat==='kurta';p=`<path d="M30 18 L42 11 Q50 20 58 11 L70 18 L88 34 L78 47 L70 41 L70 ${long?112:102} L30 ${long?112:102} L30 41 L22 47 L12 34 Z"/>`+(cat==='shirt'||cat==='polo'||cat==='kurta'?`<path d="M50 20 L50 ${cat==='polo'?38:long?70:100}" fill="none" stroke="${st}" stroke-width="1.5"/>`:'');}
+  else if(slot==='layer'){p=`<path d="M30 16 L42 9 Q50 17 58 9 L70 16 L86 30 L92 98 L80 100 L72 46 L72 106 L28 106 L28 46 L20 100 L8 98 L14 30 Z"/>`+(cat==='sweater'?'':`<path d="M50 18 L50 106 M42 10 L50 40 L58 10" fill="none" stroke="${st}" stroke-width="1.5"/>`);}
+  else if(slot==='bottom'){const short=cat==='shorts';p=`<path d="M30 10 L70 10 L${short?76:74} ${short?62:112} L${short?54:56} ${short?62:112} L50 ${short?34:38} L${short?46:44} ${short?62:112} L${short?24:26} ${short?62:112} Z"/><path d="M30 18 L70 18" fill="none" stroke="${st}" stroke-width="1.5"/>`;}
+  else if(slot==='shoes'){p=cat==='sandals'?`<path d="M16 74 Q18 62 34 62 L76 62 Q88 64 88 74 L88 80 L16 80 Z"/><path d="M40 62 Q50 50 60 62" fill="none" stroke="${st}" stroke-width="3"/>`:`<path d="M12 72 Q14 54 30 56 L46 60 Q56 46 68 54 L86 66 Q93 72 89 80 L12 80 Z"/><path d="M12 80 L89 80 L89 86 L12 86 Z" fill="rgba(255,255,255,.75)" stroke="${st}"/>`;}
+  else{p=`<circle cx="50" cy="60" r="22"/><path d="M42 20 L58 20 L58 38 M42 20 L42 38 M42 82 L42 100 L58 100 L58 82" fill="none" stroke="${col}" stroke-width="8"/><circle cx="50" cy="60" r="14" fill="rgba(255,255,255,.85)"/>`;}
+  return `<svg viewBox="0 0 100 120" width="74%" height="74%" aria-hidden="true" style="filter:drop-shadow(0 4px 6px var(--shade))"><g fill="${col}" stroke="${st}" stroke-width="1.2" stroke-linejoin="round">${p}</g></svg>`;
+}
+function tile(i,extra){
+  const d=document.createElement('div');d.className='tilebox'+(extra?' '+extra:'');
+  const id=i.cutout||i.photo;
+  if(id){const im=new Image();im.loading='lazy';im.alt=title(i);im.src='/_blob/'+id;im.className=i.cutout?'cut':'photo';d.append(im);}
+  else{d.insertAdjacentHTML('beforeend',silhouette(i));}
+  return d;
+}
+function cssColor(c){
+  if(!c)return'var(--line)';const k=c.toLowerCase().replace(/[^a-z]/g,'');
+  const m={navy:'#1f2c4d',olive:'#6b6b3a',beige:'#d8c7a6',maroon:'#6a1f2b',tan:'#c19a6b',denimblue:'#48648c',lightblue:'#a9c6e3',khaki:'#bda878',cream:'#efe6d2',charcoal:'#36393f',mustard:'#d0a22a',rust:'#a4502c',burgundy:'#6d2233',offwhite:'#f1efe8'};
+  const pm=PALETTE.find(p=>p.name.toLowerCase().replace(/[^a-z]/g,'')===k);if(pm)return pm.hex;
+  if(m[k])return m[k];const t=document.createElement('span');t.style.color=k;return t.style.color?k:'var(--line)';
+}
+
+/* ============ closet render ============ */
+function render(){
+  const items=active(),disc=all.filter(i=>i.discardedAt);
+  $('fab').disabled=!items.length;
+  $('summary').hidden=!items.length||showDiscarded;
+  $('total').textContent=items.length;$('totalLbl').textContent=items.length===1?'piece in your closet':'pieces in your closet';
+  const counts={};items.forEach(i=>counts[i.category]=(counts[i.category]||0)+1);
+  if(filter!=='all'&&!counts[filter])filter='all';
+  const cats=$('cats');cats.textContent='';
+  const mk=(id,n,label)=>{const b=document.createElement('button');b.className='cat';b.setAttribute('aria-pressed',filter===id);
+    b.innerHTML='<b></b><span></span>';b.firstChild.textContent=n;b.lastChild.textContent=label;b.onclick=()=>{filter=filter===id?'all':id;render();};cats.append(b);};
+  mk('all',items.length,'All');
+  CATS.filter(c=>counts[c.id]).forEach(c=>mk(c.id,counts[c.id],counts[c.id]===1?c.label:c.plural));
+
+  const stale=all.filter(i=>i.photo&&(i.studio||0)<STUDIO_V);
+  const tb=$('tidyBtn');tb.hidden=!stale.length||!assets||tidying||showDiscarded;
+  tb.textContent=`Clean up ${stale.length} older ${stale.length===1?'photo':'photos'}`;
+  const db=$('discBtn');db.hidden=!disc.length&&!showDiscarded;
+  db.textContent=showDiscarded?'Back to closet':`Discarded (${disc.length})`;
+
+  const g=$('grid');g.textContent='';
+  const list=(showDiscarded?disc:items).filter(i=>showDiscarded||filter==='all'||i.category===filter)
+    .sort((a,b)=>(SLOT_ORDER[slotOf(a)]??9)-(SLOT_ORDER[slotOf(b)]??9)||(b.addedAt||0)-(a.addedAt||0));
+  if(!list.length){
+    if(!ready)return;
+    const e=document.createElement('div');e.className='empty';
+    e.innerHTML=showDiscarded?'<h3 style="margin:0">Nothing discarded</h3>':'<h3 style="margin:0">Your closet is empty</h3><p>Add photos of your shirts, trousers, shoes and the rest. Each one is cleaned up automatically.</p>';
+    if(!showDiscarded){const b=document.createElement('button');b.className='btn';b.textContent='Add clothes';b.onclick=startAdd;e.append(b);}
+    g.append(e);return;
+  }
+  const wrap=document.createElement('div');wrap.className='grid';
+  list.forEach(i=>{const b=document.createElement('button');b.className='item';b.append(tile(i));
+    const n=document.createElement('div');n.className='nm';n.textContent=title(i);b.append(n);b.onclick=()=>openDetail(i.id);wrap.append(b);});
+  g.append(wrap);
+}
+$('discBtn').onclick=()=>{showDiscarded=!showDiscarded;render();scrollTo(0,0);};
+
+/* ============ storage (demo: sample pieces in this browser) ============ */
+const CLOSET_SEED=[
+ ['shirt','White',['Formal','Smart casual'],'Slim','Solid','Oxford shirt'],
+ ['shirt','Light blue',['Smart casual','Casual'],'Regular','Solid','Linen shirt'],
+ ['shirt','Navy',['Casual','Smart casual'],'Regular','Checked','Checked shirt'],
+ ['tshirt','Black',['Casual','Sporty'],'Regular','Solid','Crew-neck tee'],
+ ['tshirt','Olive',['Casual'],'Relaxed','Solid','Pocket tee'],
+ ['tshirt','Grey',['Sporty'],'Regular','Solid','Training tee'],
+ ['polo','Navy',['Smart casual','Casual'],'Slim','Textured','Knit polo'],
+ ['kurta','Cream',['Ethnic'],'Regular','Textured','Cotton kurta'],
+ ['blazer','Navy',['Formal','Smart casual'],'Slim','Solid','Unstructured blazer'],
+ ['jacket','Denim blue',['Casual'],'Regular','Solid','Denim jacket'],
+ ['pants','Charcoal',['Formal','Smart casual'],'Slim','Solid','Wool trousers'],
+ ['chinos','Beige',['Smart casual','Casual'],'Slim','Solid','Chinos'],
+ ['jeans','Denim blue',['Casual','Smart casual'],'Slim','Solid','Dark jeans'],
+ ['shorts','Khaki',['Casual'],'Regular','Solid','Shorts'],
+ ['joggers','Black',['Sporty','Casual'],'Relaxed','Solid','Joggers'],
+ ['pants','White',['Ethnic','Smart casual'],'Relaxed','Solid','Linen trousers'],
+ ['formal-shoes','Brown',['Formal','Smart casual'],null,null,'Derby shoes'],
+ ['sneakers','White',['Casual','Smart casual'],null,null,'Leather sneakers'],
+ ['sports-shoes','Grey',['Sporty'],null,null,'Running shoes'],
+ ['sandals','Tan',['Ethnic','Casual'],null,null,'Kolhapuris'],
+ ['accessory','Brown',['Formal','Smart casual'],null,null,'Leather watch']
+].map(([category,color,styles,fit,pattern,name],k)=>({id:'d'+k,category,color,styles,fit,pattern,name,photo:null,cutout:null,studio:0,addedAt:Date.now()-k*36e5,discardedAt:null}));
+(async()=>{
+  const K='closet-demo-items',KL='closet-demo-log';
+  let items=null;try{items=JSON.parse(localStorage.getItem(K)||'null');}catch(e){}
+  if(!Array.isArray(items))items=CLOSET_SEED.map(x=>({...x}));
+  try{log=JSON.parse(localStorage.getItem(KL)||'[]');}catch(e){log=[];}
+  const save=()=>{try{localStorage.setItem(K,JSON.stringify(items));}catch(e){}};
+  const emit=()=>{all=items.map(x=>({...x}));ready=true;render();};
+  itemsCol={
+    add:async d=>{items.push({id:'u'+Date.now().toString(36),...d});save();emit();},
+    doc:id=>({update:async d=>{items=items.map(x=>x.id===id?{...x,...d}:x);save();emit();},delete:async()=>{items=items.filter(x=>x.id!==id);save();emit();}})
+  };
+  logRef={set:async d=>{log=d.entries||[];try{localStorage.setItem(KL,JSON.stringify(log));}catch(e){}}};
+  notice('Demo closet with sample pieces. Outfits are picked by built-in colour and proportion rules.');
+  emit();
+})();
+let writeChain=Promise.resolve();
+const serial=fn=>(writeChain=writeChain.then(fn,fn));
+
+/* ============ background removal ============ */
+let seg=null,runChain=Promise.resolve();
+async function gunzipB64(id){
+  const r=await fetch('/_blob/'+id);if(!r.ok)throw new Error('asset');
+  const bin=Uint8Array.from(atob((await r.text()).trim()),c=>c.charCodeAt(0));
+  return new Uint8Array(await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+}
+function getSeg(){
+  if(!seg){seg=(async()=>{
+    const ort=await import(ORT_URL);
+    const [w,m]=await Promise.all([gunzipB64(WASM_ID),gunzipB64(MODEL_ID)]);
+    ort.env.wasm.wasmBinary=w.buffer;ort.env.wasm.numThreads=1;ort.env.wasm.proxy=false;
+    const sess=await ort.InferenceSession.create(m,{executionProviders:['wasm']});
+    return{ort,sess};
+  })();seg.catch(()=>{seg=null;});}
+  return seg;
+}
+/* ============ studio clean-up ============
+   Same garment, tidier picture: cut out, straighten, even the lighting,
+   trim edge halo, and place on a uniform 3:4 canvas. No pixels are invented. */
+const OUT_W=600,OUT_H=800,PAD=.07;
+function boxBlur(src,w,h,r,out){ // separable box blur, single channel Float32Array
+  const tmp=new Float32Array(w*h),d=2*r+1;out=out||new Float32Array(w*h);
+  for(let y=0;y<h;y++){let s=0;const o=y*w;
+    for(let x=-r;x<=r;x++)s+=src[o+Math.min(w-1,Math.max(0,x))];
+    for(let x=0;x<w;x++){tmp[o+x]=s/d;s+=src[o+Math.min(w-1,x+r+1)]-src[o+Math.max(0,x-r)];}}
+  for(let x=0;x<w;x++){let s=0;
+    for(let y=-r;y<=r;y++)s+=tmp[Math.min(h-1,Math.max(0,y))*w+x];
+    for(let y=0;y<h;y++){out[y*w+x]=s/d;s+=tmp[Math.min(h-1,y+r+1)*w+x]-tmp[Math.max(0,y-r)*w+x];}}
+  return out;
+}
+const blur3=(a,w,h,r)=>boxBlur(boxBlur(boxBlur(a,w,h,r),w,h,r),w,h,r);
+function cleanMask(m,S){ // keep the biggest blob, fill its holes
+  const on=new Uint8Array(S*S);for(let i=0;i<S*S;i++)on[i]=m[i]>.5?1:0;
+  const lab=new Int32Array(S*S),stack=[];let best=0,bestN=0,n=0;
+  for(let i=0;i<S*S;i++){if(!on[i]||lab[i])continue;n++;let c=0;stack.push(i);lab[i]=n;
+    while(stack.length){const p=stack.pop();c++;const x=p%S,y=(p/S)|0;
+      for(const q of [x>0?p-1:-1,x<S-1?p+1:-1,y>0?p-S:-1,y<S-1?p+S:-1])if(q>=0&&on[q]&&!lab[q]){lab[q]=n;stack.push(q);}}
+    if(c>bestN){bestN=c;best=n;}}
+  if(!bestN)return null;
+  const outside=new Uint8Array(S*S);
+  for(let i=0;i<S;i++)for(const p of [i,(S-1)*S+i,i*S,i*S+S-1])if(lab[p]!==best&&!outside[p]){outside[p]=1;stack.push(p);}
+  while(stack.length){const p=stack.pop();const x=p%S,y=(p/S)|0;
+    for(const q of [x>0?p-1:-1,x<S-1?p+1:-1,y>0?p-S:-1,y<S-1?p+S:-1])if(q>=0&&!outside[q]&&lab[q]!==best){outside[q]=1;stack.push(q);}}
+  const r=new Float32Array(S*S);
+  for(let i=0;i<S*S;i++)r[i]=lab[i]===best?m[i]:!outside[i]?1:lab[i]?0:Math.min(m[i],.45);
+  return{mask:r,area:bestN};
+}
+function bestAngle(mask,S){ // rotation (deg) that gives the tightest upright box
+  const pts=[];for(let i=0;i<S*S;i+=2)if(mask[i]>.5)pts.push(i%S,(i/S)|0);
+  const area=a=>{const c=Math.cos(a),s=Math.sin(a);let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+    for(let k=0;k<pts.length;k+=2){const x=pts[k]*c-pts[k+1]*s,y=pts[k]*s+pts[k+1]*c;
+      if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}return(x1-x0)*(y1-y0);};
+  const a0=area(0);let best=0,bestA=a0;
+  for(let d=-15;d<=15;d+=.5){if(!d)continue;const v=area(d*Math.PI/180);if(v<bestA){bestA=v;best=d;}}
+  return bestA<a0*.97?best:0; // only straighten when it clearly helps
+}
+async function studio(blob,{ort,sess}){
+  const bmp=await createImageBitmap(blob);
+  const sc=Math.min(1,1100/Math.max(bmp.width,bmp.height));
+  const W=Math.round(bmp.width*sc),H=Math.round(bmp.height*sc),S=320,N=S*S,P=W*H;
+  // 1. model mask
+  const s=document.createElement('canvas');s.width=S;s.height=S;const sx=s.getContext('2d',{willReadFrequently:true});
+  sx.drawImage(bmp,0,0,S,S);const px=sx.getImageData(0,0,S,S).data;
+  let mx=1;for(let i=0;i<px.length;i+=4)mx=Math.max(mx,px[i],px[i+1],px[i+2]);
+  const f=new Float32Array(3*N),mean=[.485,.456,.406],std=[.229,.224,.225];
+  for(let i=0;i<N;i++)for(let c=0;c<3;c++)f[c*N+i]=(px[i*4+c]/mx-mean[c])/std[c];
+  const out=await sess.run({[sess.inputNames[0]]:new ort.Tensor('float32',f,[1,3,S,S])});
+  const o=out[sess.outputNames[0]].data;let mi=Infinity,ma=-Infinity;for(const v of o){if(v<mi)mi=v;if(v>ma)ma=v;}
+  const raw=new Float32Array(N);for(let i=0;i<N;i++)raw[i]=(o[i]-mi)/((ma-mi)||1);
+  const cm=cleanMask(raw,S);if(!cm||cm.area<N*.02)throw new Error('empty');
+  const angle=bestAngle(cm.mask,S);
+  // 2. full-res mask, tightened slightly to drop the background halo
+  const mc=sx.createImageData(S,S);for(let i=0;i<N;i++){mc.data[i*4+3]=cm.mask[i]*255;}
+  sx.putImageData(mc,0,0);
+  const c=document.createElement('canvas');c.width=W;c.height=H;const cx=c.getContext('2d',{willReadFrequently:true});
+  cx.imageSmoothingQuality='high';cx.drawImage(s,0,0,W,H);
+  const mA=cx.getImageData(0,0,W,H).data;
+  cx.clearRect(0,0,W,H);cx.drawImage(bmp,0,0,W,H);
+  const img=cx.getImageData(0,0,W,H),d=img.data;
+  const A=new Float32Array(P);for(let i=0;i<P;i++){const v=mA[i*4+3]/255;A[i]=Math.max(0,Math.min(1,(v-.42)/.42));}
+  // 3. edge colour: pull halo pixels toward the garment's own colour
+  const core=new Float32Array(P);for(let i=0;i<P;i++)core[i]=A[i]>.98?1:0;
+  const rr=Math.max(3,Math.round(W/120));
+  const cb=blur3(core,W,H,rr),ch=[0,1,2].map(k=>{const a=new Float32Array(P);for(let i=0;i<P;i++)a[i]=d[i*4+k]*core[i];return blur3(a,W,H,rr);});
+  for(let i=0;i<P;i++){if(A[i]>.98||A[i]<.01||cb[i]<.02)continue;const t=Math.min(1,(1-A[i])*1.6);
+    for(let k=0;k<3;k++)d[i*4+k]=d[i*4+k]*(1-t)+ch[k][i]/cb[i]*t;}
+  // 4. even out lighting across the garment (keeps folds, removes phone shadows/hotspots)
+  const L=new Float32Array(P),Lm=new Float32Array(P);let sum=0,cnt=0;
+  for(let i=0;i<P;i++){const l=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];L[i]=l*A[i];Lm[i]=A[i];if(A[i]>.5){sum+=l;cnt++;}}
+  const big=Math.max(8,Math.round(Math.max(W,H)/14));
+  const Lb=blur3(L,W,H,big),Mb=blur3(Lm,W,H,big),avg=sum/Math.max(1,cnt);
+  for(let i=0;i<P;i++){if(A[i]<.01||Mb[i]<.05)continue;const ill=Lb[i]/Mb[i];
+    const g=Math.max(.8,Math.min(1.3,Math.pow(avg/Math.max(1,ill),.5)));for(let k=0;k<3;k++)d[i*4+k]*=g;}
+  // 5. gentle levels on the garment only (same gain on R,G,B so colour stays true)
+  const hist=new Uint32Array(256);for(let i=0;i<P;i++)if(A[i]>.5)hist[Math.min(255,Math.max(0,Math.round(.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2])))]++;
+  const pct=q=>{let acc=0,t=cnt*q;for(let v=0;v<256;v++){acc+=hist[v];if(acc>=t)return v;}return 255;};
+  const lo=pct(.005),hi=pct(.995);
+  const blk=Math.min(lo,20)*.7,wht=Math.max(hi,120);const target=Math.min(250,wht+(255-wht)*.5);
+  const gain=Math.min(1.3,(target-blk)/Math.max(1,wht-blk));
+  for(let i=0;i<P;i++){d[i*4+3]=A[i]*255;if(A[i]<.01)continue;for(let k=0;k<3;k++)d[i*4+k]=Math.max(0,Math.min(255,(d[i*4+k]-blk)*gain+blk*.4));}
+  cx.putImageData(img,0,0);
+  // 6. straighten, crop, and centre on a uniform canvas
+  const rad=angle*Math.PI/180,cos=Math.abs(Math.cos(rad)),sin=Math.abs(Math.sin(rad));
+  const RW=Math.ceil(W*cos+H*sin),RH=Math.ceil(W*sin+H*cos);
+  const r=document.createElement('canvas');r.width=RW;r.height=RH;const rx=r.getContext('2d',{willReadFrequently:true});
+  rx.translate(RW/2,RH/2);rx.rotate(rad);rx.drawImage(c,-W/2,-H/2);
+  const ra=rx.getImageData(0,0,RW,RH).data;let x0=RW,y0=RH,x1=-1,y1=-1;
+  for(let y=0;y<RH;y+=2)for(let x=0;x<RW;x+=2)if(ra[(y*RW+x)*4+3]>60){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
+  const bw=x1-x0+2,bh=y1-y0+2,fit=Math.min(OUT_W*(1-2*PAD)/bw,OUT_H*(1-2*PAD)/bh);
+  const fin=document.createElement('canvas');fin.width=OUT_W;fin.height=OUT_H;const fx=fin.getContext('2d');
+  fx.imageSmoothingQuality='high';
+  fx.drawImage(r,x0,y0,bw,bh,(OUT_W-bw*fit)/2,(OUT_H-bh*fit)/2,bw*fit,bh*fit);
+  let b=await new Promise(res=>fin.toBlob(res,'image/webp',.9));
+  if(!b||b.type!=='image/webp')b=await new Promise(res=>fin.toBlob(res,'image/png'));
+  return b;
+}
+let studioChain=Promise.resolve();
+function cutOut(blob){ // one at a time, the model isn't re-entrant
+  const job=studioChain.catch(()=>{}).then(async()=>studio(blob,await getSeg()));
+  studioChain=job;return job;
+}
+
+/* ============ colour detection ============ */
+function hexLab(h){const n=parseInt(h.slice(1),16);return rgbLab((n>>16)&255,(n>>8)&255,n&255);}
+function rgbLab(r,g,b){
+  const f=v=>{v/=255;return v>.04045?Math.pow((v+.055)/1.055,2.4):v/12.92;};r=f(r);g=f(g);b=f(b);
+  let x=(r*.4124+g*.3576+b*.1805)/.95047,y=r*.2126+g*.7152+b*.0722,z=(r*.0193+g*.1192+b*.9505)/1.08883;
+  const t=v=>v>.008856?Math.cbrt(v):7.787*v+16/116;x=t(x);y=t(y);z=t(z);
+  return[116*y-16,500*(x-y),200*(y-z)];
+}
+const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+/* main colour = biggest cluster of garment pixels (ignores background, shadows and small logos) */
+async function detectColour(blob,isCut){
+  const bmp=await createImageBitmap(blob);const S=96,c=document.createElement('canvas');c.width=S;c.height=S;
+  const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(bmp,0,0,S,S);const d=x.getImageData(0,0,S,S).data;
+  const px=[];
+  for(let yy=0;yy<S;yy++)for(let xx=0;xx<S;xx++){const i=(yy*S+xx)*4;
+    if(isCut?d[i+3]<220:(xx<S*.25||xx>S*.75||yy<S*.2||yy>S*.8))continue;px.push(rgbLab(d[i],d[i+1],d[i+2]));}
+  if(px.length<30)return null;
+  const K=4;let cen=[0,1,2,3].map(k=>px[Math.floor((k+.5)*px.length/K)].slice());let asg=new Array(px.length).fill(0);
+  for(let it=0;it<8;it++){
+    for(let i=0;i<px.length;i++){let b=0,bd=1e9;for(let k=0;k<K;k++){const dd=dist(px[i],cen[k]);if(dd<bd){bd=dd;b=k;}}asg[i]=b;}
+    const sum=cen.map(()=>[0,0,0,0]);for(let i=0;i<px.length;i++){const s=sum[asg[i]];s[0]+=px[i][0];s[1]+=px[i][1];s[2]+=px[i][2];s[3]++;}
+    cen=cen.map((c0,k)=>sum[k][3]?[sum[k][0]/sum[k][3],sum[k][1]/sum[k][3],sum[k][2]/sum[k][3]]:c0);
+  }
+  const cnt=new Array(K).fill(0);asg.forEach(a=>cnt[a]++);
+  // merge clusters that are the same colour in different light, then take the biggest
+  let best=0;for(let k=0;k<K;k++){let tot=0;for(let j=0;j<K;j++){const dd=Math.hypot(cen[k][1]-cen[j][1],cen[k][2]-cen[j][2]);if(dd<10&&Math.abs(cen[k][0]-cen[j][0])<30)tot+=cnt[j];}cnt[k]=tot;}
+  for(let k=1;k<K;k++)if(cnt[k]>cnt[best])best=k;
+  return{lab:cen[best]};
+}
+function nameFor(lab,cat){
+  // jeans: faded or camera-greyed washes still read as denim
+  if(cat==='jeans'&&Math.hypot(lab[1],lab[2])<14&&lab[2]<8){
+    const n=lab[0]<24?'Black':lab[0]<55?'Denim blue':'Light denim';return PALETTE.find(p=>p.name===n);}
+  let m=PALETTE[0],md=1e9;for(const p of PALETTE){const dd=dist(lab,p.lab);if(dd<md){md=dd;m=p;}}
+  return m;
+}
+function setDetected(me,res,final){
+  if(cur!==me||!res)return;me.detected=res;if(final)me.detFinal=true;
+  if(!me.colorTouched){$('color').value=nameFor(res.lab,me.cat).name;updateSwatch();
+    $('colorStatus').textContent=final?'Detected from the photo. Type or pick another if it’s off.':'First guess from the photo; refining after clean-up…';}
+}
+function updateSwatch(){const v=$('color').value.trim();$('cswatch').style.background=v?cssColor(v):'var(--paper)';}
+$('color').addEventListener('input',()=>{if(cur)cur.colorTouched=true;$('colorStatus').textContent='';updateSwatch();});
+
+/* ============ clean up existing photos ============ */
+$('tidyBtn').onclick=async()=>{
+  if(tidying||!assets||!itemsCol)return;
+  const list=all.filter(i=>i.photo&&(i.studio||0)<STUDIO_V);if(!list.length)return;
+  tidying=true;render();const st=$('tidyStatus');let ok=0,fail=0;
+  for(const [n,i] of list.entries()){
+    st.textContent=n?`Cleaning up ${n+1} of ${list.length}…`:'Getting the clean-up ready (first time takes a moment)…';
+    try{
+      const orig=await (await fetch('/_blob/'+i.photo)).blob();
+      const b=await cutOut(orig);
+      const id=(await assets.upload(b,{type:b.type})).id;
+      const extra={};if(!i.color){const c=await detectColour(b,true).catch(()=>null);if(c)extra.color=nameFor(c.lab,i.category).name;}
+      await itemsCol.doc(i.id).update({cutout:id,studio:STUDIO_V,...extra});
+      if(i.cutout&&i.cutout!==id)assets.delete(i.cutout).catch(()=>{});
+      ok++;
+    }catch(e){fail++;}
+  }
+  tidying=false;
+  st.textContent=`Cleaned up ${ok} ${ok===1?'photo':'photos'}.`+(fail?` ${fail} couldn’t be processed; open them and tap Edit to retry, or keep the original.`:'');
+  render();
+};
+
+/* ============ add / edit form ============ */
+let queue=[],qTotal=0,qIndex=0,cur=null;
+function startAdd(){
+  if(!itemsCol){notice('Your closet isn’t connected yet. Reload the page and try again.');return;}
+  if(assets){$('fileIn').value='';$('fileIn').click();}else{queue=[null];qTotal=1;qIndex=0;nextInQueue();}
+}
+$('addBtn').onclick=startAdd;
+$('fileIn').onchange=e=>{const f=[...e.target.files];if(!f.length)return;queue=f;qTotal=f.length;qIndex=0;getSeg().catch(()=>{});nextInQueue();};
+function resetForm(){
+  $('color').value='';$('name').value='';$('formErr').textContent='';$('autoStatus').textContent='';$('bgStatus').textContent='';$('colorStatus').textContent='';$('cswatch').style.background='var(--paper)';
+  $('bgOn').checked=true;
+}
+async function nextInQueue(){
+  if(!queue.length){if($('formSheet').open)$('formSheet').close();return;}
+  const f=queue.shift();qIndex++;
+  cur={mode:'add',orig:null,cut:null,cutJob:null,cat:null,styles:new Set()};
+  resetForm();
+  $('formTitle').textContent=qTotal>1?`Item ${qIndex} of ${qTotal}`:'Add an item';
+  $('skipBtn').textContent=queue.length?'Skip':'Cancel';$('saveBtn').textContent='Save item';
+  drawChips();showPreview();
+  if(!$('formSheet').open)$('formSheet').showModal();
+  if(f)await takePhoto(f);
+}
+async function takePhoto(file){
+  try{const me=cur;me.orig=await shrink(file);me.cut=null;me.origChanged=true;showPreview();
+    if(!$('bgOn').checked||!seg)detectColour(me.orig,false).then(r=>setDetected(me,r,!$('bgOn').checked)).catch(()=>{});
+    runCut();}
+  catch{$('formErr').textContent='That photo couldn’t be read. Pick a JPG or PNG.';}
+}
+function runCut(){
+  const me=cur;if(!me||!$('bgOn').checked)return;
+  const st=$('bgStatus');
+  const src=me.orig?Promise.resolve(me.orig):(me.photo?fetch('/_blob/'+me.photo).then(r=>r.blob()):null);
+  if(!src)return;
+  st.textContent=seg?'Cleaning up…':'Getting the clean-up ready (first time takes a moment)…';
+  me.cutJob=src.then(cutOut).then(b=>{if(cur!==me)return;me.cut=b;detectColour(b,true).then(r=>setDetected(me,r,true)).catch(()=>{});st.textContent='Cleaned up: background removed, straightened and evened out.';showPreview();})
+    .catch(e=>{if(cur!==me)return;me.cut=null;if(me.detected&&!me.colorTouched)$('colorStatus').textContent='Detected from the photo. Type or pick another if it’s off.';st.textContent=e.message==='empty'?'Couldn’t find the item in this photo. The original will be used.':'Clean-up isn’t available right now. The original will be used.';showPreview();})
+    .finally(()=>{if(cur===me)me.cutJob=null;});
+}
+$('bgOn').onchange=()=>{if($('bgOn').checked){if(!cur.cut&&(!cur.cutId||(cur.studio||0)<STUDIO_V))runCut();}else{$('bgStatus').textContent='';}showPreview();};
+function showPreview(){
+  const box=$('photoBox');box.textContent='';box.className='tilebox';
+  const useCut=$('bgOn').checked;
+  let src=null,cls='photo';
+  if(useCut&&cur.cut){src=URL.createObjectURL(cur.cut);cls='cut';}
+  else if(useCut&&cur.cutId&&!cur.origChanged){src='/_blob/'+cur.cutId;cls='cut';}
+  else if(cur.orig){src=URL.createObjectURL(cur.orig);}
+  else if(cur.photo){src='/_blob/'+cur.photo;}
+  if(src){const im=new Image();im.src=src;im.alt='';im.className=cls;box.append(im);}
+  else box.textContent=assets?'Tap to add a photo':'Photos are off in this demo';
+  const hasPhoto=!!(cur.orig||cur.photo);
+  $('bgWrap').hidden=!hasPhoto;
+  $('autoBtn').hidden=!(cur.orig&&sample&&canImages);
+}
+$('photoBox').onclick=()=>{if(!assets)return;const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{if(i.files[0])takePhoto(i.files[0]);};i.click();};
+async function shrink(file){
+  const bmp=await createImageBitmap(file,{imageOrientation:'from-image'});
+  const s=Math.min(1,900/Math.max(bmp.width,bmp.height));
+  const c=document.createElement('canvas');c.width=Math.round(bmp.width*s);c.height=Math.round(bmp.height*s);
+  c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(),'image/jpeg',.86));
+}
+function drawChips(){
+  const cc=$('catChips');cc.textContent='';
+  CATS.forEach(c=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=c.label;
+    b.setAttribute('aria-pressed',cur.cat===c.id);b.onclick=()=>{cur.cat=c.id;if(cur.detected)setDetected(cur,cur.detected,!!cur.detFinal);drawChips();};cc.append(b);});
+  const sc=$('styleChips');sc.textContent='';
+  STYLES.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=s;
+    b.setAttribute('aria-pressed',cur.styles.has(s));b.onclick=()=>{cur.styles.has(s)?cur.styles.delete(s):cur.styles.add(s);drawChips();};sc.append(b);});
+  for(const [el,list,key] of [['fitChips',FITS,'fit'],['patChips',PATTERNS,'pattern']]){const box=$(el);box.textContent='';
+    list.forEach(v=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=v;
+      b.setAttribute('aria-pressed',cur[key]===v);b.onclick=()=>{cur[key]=cur[key]===v?null:v;drawChips();};box.append(b);});}
+}
+$('autoBtn').onclick=async()=>{
+  const st=$('autoStatus'),me=cur;st.textContent='Looking at the photo…';$('autoBtn').disabled=true;
+  try{
+    const r=await sample.json(`This photo shows one clothing item, pair of shoes, or accessory belonging to a man. Identify it.
+Reply with only JSON like {"category":"shirt","color":"navy","styles":["Casual","Smart casual"],"fit":"Slim","pattern":"Solid","name":"Oxford button-down"}.
+category must be one of: ${CATS.map(c=>c.id).join(', ')}.
+styles is a subset of: ${STYLES.join(', ')} (occasions it suits).
+fit is one of: ${FITS.join(', ')} (best guess from the cut). pattern is one of: ${PATTERNS.join(', ')}.
+color is the main colour in 1-2 words. name is at most 5 words.`,{images:me.orig,modelTier:'quick'});
+    if(cur!==me)return;
+    if(CAT[r?.category])me.cat=r.category;
+    if(Array.isArray(r?.styles))me.styles=new Set(r.styles.filter(s=>STYLES.includes(s)));
+    if(FITS.includes(r?.fit))me.fit=r.fit;if(PATTERNS.includes(r?.pattern))me.pattern=r.pattern;
+    if(typeof r?.color==='string'){$('color').value=r.color.slice(0,30);me.colorTouched=true;updateSwatch();$('colorStatus').textContent='';}
+    if(typeof r?.name==='string'&&!$('name').value)$('name').value=r.name.slice(0,60);
+    drawChips();st.textContent='Filled in. Check before saving.';
+  }catch(e){if(cur===me)st.textContent=sampleErr(e.code);}
+  finally{$('autoBtn').disabled=false;}
+};
+$('saveBtn').onclick=async()=>{
+  const err=$('formErr'),me=cur;err.textContent='';
+  if(!me.cat){err.textContent='Choose a type first.';return;}
+  if(!me.styles.size){err.textContent='Pick at least one “Good for” tag.';return;}
+  $('saveBtn').disabled=true;
+  try{
+    if(me.cutJob){$('saveBtn').textContent='Finishing clean-up…';await me.cutJob;}
+    $('saveBtn').textContent='Saving…';
+    const useCut=$('bgOn').checked;
+    let photo=me.photo||null,cutout=me.cutId||null;const oldPhoto=me.photo,oldCut=me.cutId;
+    if(me.orig&&me.origChanged&&assets){photo=(await assets.upload(me.orig,{type:'image/jpeg'})).id;cutout=null;}
+    if(useCut&&me.cut&&assets){cutout=(await assets.upload(me.cut,{type:me.cut.type})).id;}
+    if(!useCut)cutout=null;
+    const data={category:me.cat,color:$('color').value.trim(),styles:[...me.styles],name:$('name').value.trim(),photo,cutout,fit:me.fit||null,pattern:me.pattern||null,studio:cutout?(me.cut?STUDIO_V:(me.studio||0)):0};
+    if(me.mode==='add'){await itemsCol.add({...data,addedAt:Date.now(),discardedAt:null});nextInQueue();}
+    else{await itemsCol.doc(me.id).update(data);
+      if(assets){if(oldPhoto&&oldPhoto!==photo)assets.delete(oldPhoto).catch(()=>{});if(oldCut&&oldCut!==cutout)assets.delete(oldCut).catch(()=>{});}
+      $('formSheet').close();}
+  }catch(e){
+    err.textContent=e.code==='quota_exceeded'?'Storage is full. Delete a few discarded items to make room.':'Couldn’t save this item. Try again.';
+  }finally{$('saveBtn').disabled=false;$('saveBtn').textContent='Save item';}
+};
+$('skipBtn').onclick=()=>{if(cur?.mode==='add'&&queue.length)nextInQueue();else $('formSheet').close();};
+$('formSheet').addEventListener('close',()=>{queue=[];cur=null;});
+
+function openEdit(i){
+  cur={mode:'edit',id:i.id,orig:null,cut:null,cutJob:null,photo:i.photo||null,cutId:i.cutout||null,studio:i.studio||0,colorTouched:!!i.color,fit:i.fit||null,pattern:i.pattern||null,cat:i.category,styles:new Set(i.styles||[])};
+  resetForm();$('formTitle').textContent='Edit item';$('skipBtn').textContent='Cancel';
+  $('color').value=i.color||'';updateSwatch();$('name').value=i.name||'';
+  $('bgOn').checked=!!i.cutout||!i.photo;
+  drawChips();showPreview();$('formSheet').showModal();
+}
+
+/* ============ detail ============ */
+function openDetail(id){
+  const i=all.find(x=>x.id===id);if(!i)return;
+  const im=$('dImg');im.replaceWith(Object.assign(tile(i,'detailimg'),{id:'dImg'}));
+  $('dTitle').textContent=title(i);
+  const f=$('dFacts');f.textContent='';
+  const add=(k,v)=>{if(!v)return;const dt=document.createElement('dt');dt.textContent=k;const dd=document.createElement('dd');dd.textContent=v;f.append(dt,dd);};
+  add('Type',catLabel(i));add('Colour',i.color);add('Good for',(i.styles||[]).join(', '));
+  add('Fit',i.fit);add('Pattern',i.pattern);
+  const a=$('dActions');a.textContent='';
+  const btn=(t,cls,fn)=>{const b=document.createElement('button');b.className='btn '+cls;b.textContent=t;b.onclick=fn;a.append(b);return b;};
+  if(i.discardedAt){
+    btn('Delete for good','danger',async()=>{if(!confirm('Delete this item and its photos permanently?'))return;
+      try{await itemsCol.doc(i.id).delete();if(assets){[i.photo,i.cutout].filter(Boolean).forEach(x=>assets.delete(x).catch(()=>{}));}$('detailSheet').close();}catch{alert('Couldn’t delete. Try again.');}});
+    btn('Put back in closet','',async e=>{e.target.disabled=true;try{await itemsCol.doc(i.id).update({discardedAt:null});$('detailSheet').close();}catch{e.target.disabled=false;}});
+  }else{
+    btn('Discard','danger',async e=>{e.target.disabled=true;try{await itemsCol.doc(i.id).update({discardedAt:Date.now()});$('detailSheet').close();}catch{e.target.disabled=false;}});
+    btn('Edit','ghost',()=>{$('detailSheet').close();openEdit(i);});
+    btn('Done','',()=>$('detailSheet').close());
+  }
+  $('detailSheet').showModal();
+}
+function fmtDate(s){const d=new Date(s+'T00:00:00');return isNaN(d)?s:d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});}
+function ago(t){const d=daysSince(t);return d==null?'never':d<1?'today':d===1?'yesterday':`${d} days ago`;}
+$('detailSheet').addEventListener('click',e=>{if(e.target===$('detailSheet'))$('detailSheet').close();});
+
+/* ============ Dress me ============ */
+let gen=null;
+const keyOf=ids=>[...ids].sort().join('|');
+OCC.forEach(o=>{const b=document.createElement('button');b.className='htag';b.textContent=o.label;b.dataset.id=o.id;b.setAttribute('aria-pressed','false');b.onclick=()=>startGen(o);$('occs').append(b);});
+$('fab').onclick=()=>{$('dressSheet').showModal();};
+$('dressClose').onclick=()=>$('dressSheet').close();
+$('noteGo').onclick=()=>{if(gen)startGen(gen.occ);};
+$('note').onkeydown=e=>{if(e.key==='Enter'&&gen)startGen(gen.occ);};
+
+function startGen(o){
+  document.querySelectorAll('.htag').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===o.id));
+  if(gen?.ctl)gen.ctl.abort();
+  gen={occ:o,note:$('note').value.trim(),queue:[],shown:new Set(),fetching:null,ctl:null,exhausted:false};
+  fetchMore();showCard();
+}
+function avoidKeys(){
+  const s=new Set(gen.shown);
+  const now=Date.now();
+  log.forEach(e=>{if((e.verdict==='wore'&&now-e.at<14*DAY)||(e.verdict==='skip'&&e.occasion===gen.occ.id&&now-e.at<60*DAY))s.add(keyOf(e.ids));});
+  return s;
+}
+function valid(ids){
+  const slots=ids.map(id=>slotOf(all.find(i=>i.id===id)));
+  return slots.includes('top')&&slots.includes('bottom')&&(slots.includes('shoes')||!active().some(i=>slotOf(i)==='shoes'));
+}
+function fetchMore(){
+  if(gen.fetching||gen.exhausted)return gen.fetching;
+  const g=gen;
+  g.fetching=(async()=>{
+    let outs=[];
+    if(sample){
+      g.ctl=new AbortController();
+      try{outs=await claudeBatch(g);}catch(e){if(e?.code==='cancelled'||gen!==g){g.cancelled=true;return;}g.lastErr=e?.code||'unknown';}
+    }
+    if(gen!==g)return;
+    const avoid=avoidKeys();
+    outs=outs.filter(o=>!avoid.has(o.key)&&valid(o.ids));
+    if(!outs.length)outs=localBatch(g,avoid);
+    const seen=new Set(g.queue.map(o=>o.key));
+    outs=outs.filter(o=>!seen.has(o.key)&&(seen.add(o.key),true));
+    if(!outs.length)g.exhausted=true;
+    g.queue.push(...outs);
+  })().finally(()=>{g.fetching=null;if(gen===g&&!g.cancelled&&!g.hold&&!g.current)showCard();});
+  return g.fetching;
+}
+async function claudeBatch(g){
+  const inv=active().map(i=>({id:i.id,slot:slotOf(i),type:catLabel(i),color:i.color||'unknown',fit:i.fit||undefined,pattern:i.pattern||undefined,goodFor:i.styles,name:i.name||undefined}));
+  const avoid=[...avoidKeys()].slice(-40).map(k=>k.split('|'));
+  const r=await sample.json(
+`You are a menswear stylist. Build outfits ONLY from the wardrobe below for this occasion: ${g.occ.label}.${g.note?`\nExtra context: ${g.note}`:''}
+Judge every outfit on real styling fundamentals:
+- Colour theory: neutral base vs accent colour, analogous/tonal or complementary pairings, value contrast between top and bottom, saturation balance (one strong colour at most), colour temperature, and shoes that anchor to the bottom or stay neutral.
+- Proportion: silhouette balance (slim with relaxed, or a consistent clean line), visual weight of patterns (one busy piece at most), length and volume of top vs bottom.
+- Formality: every piece matches the occasion's dress code.
+Rules:
+- Each outfit: exactly one top, one bottom and one pair of footwear; add one layer and/or one accessory only when it genuinely improves the look.
+- Re-using a piece across outfits is fine; never return a combination listed in "avoid", and keep the outfits in your answer clearly different from each other.
+- Return up to 5 outfits, best first.
+- "colour": one sentence naming the colour relationship and why it works. "proportion": one sentence on silhouette and balance. Be specific to these pieces; no weather, location or filler.
+Reply with only JSON: {"outfits":[{"title":"2-4 word name","itemIds":["<id>"],"colour":"...","proportion":"..."}]}
+avoid: ${JSON.stringify(avoid)}
+wardrobe: ${JSON.stringify(inv)}`,{cache:false,signal:g.ctl.signal,modelTier:g.shown.size?'default':'quick'});
+  const ids=new Set(active().map(i=>i.id));
+  return (r?.outfits||[]).map(o=>{const list=[...new Set((o.itemIds||[]).filter(id=>ids.has(id)))];return{title:String(o.title||'Outfit'),colour:String(o.colour||''),proportion:String(o.proportion||''),ids:list,key:keyOf(list)};}).filter(o=>o.ids.length);
+}
+/* colour + proportion scoring for offline picks */
+const NEUTRAL_NAMES=/white|black|grey|gray|charcoal|navy|beige|khaki|tan|brown|olive|cream|ivory|denim|stone|camel|off ?white/i;
+const colorCache={};
+function colorInfo(name){
+  const k=(name||'').toLowerCase().trim();if(k in colorCache)return colorCache[k];
+  const c=document.createElement('canvas').getContext('2d');c.fillStyle='#000';c.fillStyle=cssColor(k).startsWith('var')?'#808080':cssColor(k);
+  const hex=c.fillStyle,m=hex.match(/^#(..)(..)(..)$/);let info=null;
+  if(m&&k){const [r,g,b]=m.slice(1).map(x=>parseInt(x,16)/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;
+    const sat=d?d/(1-Math.abs(2*l-1)):0;let h=0;if(d){h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360;}
+    info={h,s:sat,l,neutral:NEUTRAL_NAMES.test(k)||sat<.18,name:k};}
+  return colorCache[k]=info;
+}
+function judgeColour(t,b,sh){
+  const asN=(i,c)=>c&&(i.category==='jeans'||/denim/i.test(i.name||''))?{...c,neutral:true}:c;
+  const A=asN(t,colorInfo(t.color)),B=asN(b,colorInfo(b.color));
+  if(!A||!B)return{score:0,text:'Add colours to these pieces for a proper colour read.'};
+  const contrast=Math.abs(A.l-B.l),hd=Math.min(Math.abs(A.h-B.h),360-Math.abs(A.h-B.h));
+  const cv=contrast>.25?'with clear light-dark contrast':'in a close, tonal value range';
+  let score=0,text;
+  if(A.neutral&&B.neutral){score=contrast>.15?3:1.5;text=`Neutral on neutral ${cv}, so the outfit reads calm and put-together.`;}
+  else if(A.neutral!==B.neutral){score=4;const acc=A.neutral?b:t,base=A.neutral?t:b;text=`With ${base.color.toLowerCase()} ${catLabel(base).toLowerCase()} as the neutral base, the ${acc.color.toLowerCase()} ${catLabel(acc).toLowerCase()} is the single accent.`;}
+  else if(hd<40){score=3;text=`${t.color} and ${b.color.toLowerCase()} sit next to each other on the colour wheel, an analogous pairing ${cv}.`;}
+  else if(hd>150){const muted=Math.min(A.s,B.s)<.45;score=muted?3:-1;text=muted?`${t.color} and ${b.color.toLowerCase()} are near-complementary; one is muted, so they contrast without clashing.`:`${t.color} and ${b.color.toLowerCase()} are complementary and both saturated, which is a bold, high-contrast look.`;}
+  else{score=-2;text=`${t.color} and ${b.color.toLowerCase()} are two competing accents; this is the riskiest colour pairing here.`;}
+  if(sh){const S=colorInfo(sh.color);if(S&&(S.neutral||Math.abs(S.l-B.l)<.2)){score+=.5;text+=` The ${(sh.color||'').toLowerCase()} shoes stay quiet and anchor the look.`;}}
+  return{score,text};
+}
+function judgeProportion(t,b){
+  const busy=x=>['Striped','Checked','Printed'].includes(x.pattern);
+  let score=0;const bits=[];
+  if(busy(t)&&busy(b)){score-=3;bits.push('two patterned pieces compete for attention');}
+  else if(busy(t)||busy(b)){score+=1;bits.push(`one patterned piece against a plain one keeps the visual weight on the ${busy(t)?'top':'bottom'}`);}
+  if(t.fit&&b.fit){
+    if(t.fit==='Relaxed'&&b.fit==='Relaxed'){score-=1.5;bits.push('relaxed on relaxed adds volume everywhere, so it reads loose');}
+    else if((t.fit==='Relaxed')!==(b.fit==='Relaxed')){score+=2;bits.push(`a ${t.fit.toLowerCase()} top over a ${b.fit.toLowerCase()} bottom balances volume with a clean line`);}
+    else{score+=1.5;bits.push(`${t.fit.toLowerCase()} top and ${b.fit.toLowerCase()} bottom give one continuous, streamlined silhouette`);}
+  }
+  const text=bits.length?bits[0][0].toUpperCase()+bits.join('; ').slice(1)+'.':'Tag fit and pattern on these pieces to get a proportion read.';
+  return{score,text};
+}
+function localBatch(g,avoid){
+  const fits=i=>(i.styles||[]).some(x=>g.occ.styles.includes(x));
+  const pool=slot=>active().filter(i=>slotOf(i)===slot&&fits(i));
+  const tops=pool('top'),bots=pool('bottom');let shoes=pool('shoes');if(!shoes.length)shoes=[null];
+  const cands=[];
+  for(const t of tops)for(const b of bots){
+    const base=judgeProportion(t,b);
+    for(const sh of shoes){const ids=[t.id,b.id,sh?.id].filter(Boolean),k=keyOf(ids);if(avoid.has(k))continue;
+      const col=judgeColour(t,b,sh);cands.push({ids,key:k,t,b,col,prop:base,score:col.score+base.score+Math.random()*1.5});}
+  }
+  cands.sort((x,y)=>y.score-x.score);
+  const out=[],usedT=new Set(),usedB=new Set();
+  for(const c of cands){if(out.length>=5)break;if(usedT.has(c.t.id)&&usedB.has(c.b.id))continue;usedT.add(c.t.id);usedB.add(c.b.id);out.push(c);}
+  return out.map(c=>({ids:c.ids,key:c.key,title:`${c.t.color||''} ${catLabel(c.t)}, ${(c.b.color||'').toLowerCase()} ${catLabel(c.b).toLowerCase()}`.trim(),colour:c.col.text,proportion:c.prop.text}));
+}
+
+/* ---- card ---- */
+function setDecide(on){$('noBtn').disabled=!on;$('yesBtn').disabled=!on;}
+function stageMsg(html,btn){
+  if(gen)gen.current=null;
+  const st=$('stage');st.textContent='';const m=document.createElement('div');m.className='msg';const inner=document.createElement('div');inner.innerHTML=html;
+  if(btn){const b=document.createElement('button');b.className='btn';b.style.marginTop='14px';b.textContent=btn[0];b.onclick=btn[1];inner.append(b);}
+  m.append(inner);st.append(m);setDecide(false);
+}
+let loadTimer=null;
+function loadingMsg(){
+  stageMsg(`<h3 class="dots">Putting outfits together</h3><span id="loadSub">Matching colours and proportions.</span>`);
+  clearTimeout(loadTimer);const g=gen;
+  loadTimer=setTimeout(()=>{const el=$('loadSub');if(el&&gen===g&&!g.current)el.textContent='Still working. The first one can take up to a minute; after that, swipes are quick.';},12000);
+}
+function showCard(){
+  if(!gen)return;
+  const o=gen.queue[0];
+  if(!o){
+    if(!gen.exhausted){if(!gen.fetching)fetchMore();loadingMsg();return;}
+    const hint=gen.lastErr?`<p>${sampleErr(gen.lastErr)}</p>`:'';
+    stageMsg(`<h3>No fresh combinations left</h3>${hint}Add more ${gen.occ.styles.join(' or ').toLowerCase()} pieces for more variety.`,
+      ['Try again',()=>startGen(gen.occ)]);
+    return;
+  }
+  gen.shown.add(o.key);
+  const items=o.ids.map(id=>all.find(i=>i.id===id)).filter(Boolean);
+  const bySlot=s=>items.filter(i=>slotOf(i)===s);
+  const card=document.createElement('article');card.className='ocard';card.tabIndex=0;
+  const flat=document.createElement('div');flat.className='flat';
+  const main=document.createElement('div');main.className='col';const side=document.createElement('div');side.className='col side';
+  [...bySlot('top'),...bySlot('bottom')].forEach(i=>main.append(tile(i)));
+  [...bySlot('layer'),...bySlot('acc'),...bySlot('shoes')].forEach(i=>side.append(tile(i)));
+  flat.append(main,side);
+  const bar=document.createElement('div');bar.className='obar';
+  const h=document.createElement('h3');h.textContent=o.title;
+  const q=document.createElement('button');q.className='qbtn';q.textContent='?';q.setAttribute('aria-label','Why this works');q.setAttribute('aria-expanded','false');
+  bar.append(h,q);
+  const why=document.createElement('div');why.className='why';why.hidden=true;why.id='why'+Math.random().toString(36).slice(2);q.setAttribute('aria-controls',why.id);
+  for(const [lbl,txt] of [['Colour',o.colour],['Proportion',o.proportion]]){if(!txt)continue;
+    const f=document.createElement('p');f.className='for';f.textContent=lbl;const p=document.createElement('p');p.textContent=txt;why.append(f,p);}
+  const toggle=()=>{const open=why.hidden;why.hidden=!open;q.setAttribute('aria-expanded',open);};
+  q.onclick=toggle;why.onclick=toggle;
+  [q,why].forEach(el=>el.addEventListener('pointerdown',e=>e.stopPropagation()));
+  const sn=document.createElement('div');sn.className='stamp no';sn.textContent='NOPE';
+  const sy=document.createElement('div');sy.className='stamp yes';sy.textContent='WEAR';
+  card.append(flat,bar,why,sn,sy);
+  const st=$('stage');st.textContent='';st.append(card);setDecide(true);gen.current=o;
+  attachSwipe(card,sn,sy);
+  card.onkeydown=e=>{if(e.key==='ArrowLeft')decide(false);if(e.key==='ArrowRight')decide(true);};
+  if(gen.queue.length<=2)fetchMore();
+}
+function attachSwipe(card,sn,sy){
+  let x0=null,dx=0,id=null;
+  card.addEventListener('pointerdown',e=>{if(e.button)return;x0=e.clientX;dx=0;id=e.pointerId;card.classList.remove('anim');});
+  card.addEventListener('pointermove',e=>{if(x0==null||e.pointerId!==id)return;dx=e.clientX-x0;
+    if(Math.abs(dx)>6&&!card.hasPointerCapture(id))card.setPointerCapture(id);
+    card.style.transform=`translateX(${dx}px) rotate(${dx/22}deg)`;sy.style.opacity=Math.max(0,Math.min(1,dx/100));sn.style.opacity=Math.max(0,Math.min(1,-dx/100));});
+  const end=()=>{if(x0==null)return;x0=null;
+    if(Math.abs(dx)>100)decide(dx>0);else{card.classList.add('anim');card.style.transform='';sn.style.opacity=0;sy.style.opacity=0;}};
+  card.addEventListener('pointerup',end);card.addEventListener('pointercancel',end);
+}
+let deciding=false;
+async function decide(like){
+  if(deciding||!gen?.queue.length)return;deciding=true;setDecide(false);
+  const g=gen,o=g.queue.shift();g.current=null;const card=$('stage').querySelector('.ocard');
+  if(card){card.classList.add('anim');card.style.transform=`translateX(${like?'':'-'}130%) rotate(${like?14:-14}deg)`;card.style.opacity=0;}
+  await new Promise(r=>setTimeout(r,matchMedia('(prefers-reduced-motion:reduce)').matches?0:260));
+  const entry={ids:o.ids,occasion:g.occ.id,at:Date.now(),verdict:like?'wore':'skip'};
+  log=[...log,entry].slice(-300);
+  const snapshot=log;
+  serial(()=>logRef.set({entries:snapshot})).catch(()=>{});
+  deciding=false;
+  if(like){
+    g.hold=true;
+    stageMsg(`<h3>Enjoy the ${g.occ.label.toLowerCase()}</h3>This exact outfit won't be suggested again for a couple of weeks. The pieces can still show up in other combinations.`,['Show another',()=>{g.hold=false;showCard();}]);
+  }else showCard();
+}
+$('noBtn').onclick=()=>decide(false);$('yesBtn').onclick=()=>decide(true);
+
+
+function sampleErr(code){
+  return{not_granted:'Claude styling is switched off for this page, so these are quick picks from your tags.',rate_limited:'Too many requests right now. Try again in a minute.',
+    invalid_json:'The styling answer came back garbled.',images_unavailable:'Photo reading isn’t available here.'}[code]||'Couldn’t reach Claude just now.';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>try{Object.defineProperty(window,"claude",{value:undefined,configurable:true,writable:true})}catch(e){try{window.claude=undefined}catch(_){}}</script><meta name="robots" content="noindex"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}html,body,*{scrollbar-width:none;-ms-overflow-style:none}*::-webkit-scrollbar{display:none;width:0;height:0}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ghar/Bahar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2EC; --card:#FFFFFF; --ink:#1C2724; --muted:#5E6B66; --line:#CCD6CF;
+  --home:#2F6B4F; --home-soft:#DCEBE2; --out:#D9950F; --out-soft:#FBEBC6; --empty:#E1E7E2;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131A18; --card:#1C2522; --ink:#E7EEEA; --muted:#98A6A0; --line:#2E3A36;
+    --home:#6BC29A; --home-soft:#1F3A2E; --out:#F2B63C; --out-soft:#3D3115; --empty:#27312E;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131A18; --card:#1C2522; --ink:#E7EEEA; --muted:#98A6A0; --line:#2E3A36;
+  --home:#6BC29A; --home-soft:#1F3A2E; --out:#F2B63C; --out-soft:#3D3115; --empty:#27312E;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:16px/1.5 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+main{max-width:520px;margin:0 auto;padding:20px 18px 48px}
+h1{font-size:2rem;line-height:1.05;font-weight:800;margin:4px 0 18px;letter-spacing:-.02em}
+h2{font-size:1.1rem;font-weight:600;margin:0 0 12px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--home);outline-offset:2px}
+
+.daynav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.daynav button{background:none;border:1px solid var(--line);border-radius:999px;width:40px;height:40px;font-size:1.1rem}
+.daynav button:disabled{opacity:.35;cursor:default}
+.daylabel{text-align:center}
+.daylabel strong{display:block;font-size:1.15rem}
+.daylabel span{color:var(--muted);font-size:.9rem}
+
+.meals{background:var(--card);border-radius:18px;padding:6px 16px;border:1px solid var(--line)}
+.meal{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 0}
+.meal + .meal{border-top:1px solid var(--line)}
+.meal-name{font-weight:600}
+.meal-note{grid-column:1 / -1;display:none}
+.meal.is-out .meal-note{display:block}
+.meal-note input{width:100%;border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  border-radius:10px;padding:8px 10px;font:inherit;font-size:.95rem}
+.seg{display:flex;background:var(--empty);border-radius:999px;padding:3px}
+.seg button{display:inline-flex;align-items:center;gap:6px;border:0;background:none;border-radius:999px;padding:7px 14px 7px 11px;font-weight:600;font-size:.95rem;color:var(--muted)}
+.seg button[aria-pressed="true"][data-v="home"]{background:var(--home);color:#fff}
+.seg button[aria-pressed="true"][data-v="out"]{background:var(--out);color:#1C1606}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hint{color:var(--muted);font-size:.85rem;margin:8px 2px 0}
+
+.summary{margin-top:32px}
+.periods{display:flex;gap:6px;margin-bottom:16px}
+.periods button{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 14px;font-size:.9rem}
+.periods button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.headline{font-size:1.6rem;line-height:1.2;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+.headline b{font-size:3.2rem;font-weight:800;color:var(--out);display:block;line-height:1;letter-spacing:-.03em}
+.sub{color:var(--muted);margin:0 0 18px}
+.ratio{display:flex;height:12px;border-radius:999px;overflow:hidden;background:var(--empty);margin-bottom:8px}
+.ratio i{display:block;height:100%}
+.legend{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted)}
+.legend b{color:var(--ink)}
+.bymeal{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}
+.bymeal div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.bymeal strong{display:block;font-size:1.6rem;line-height:1.1}
+.bymeal span{color:var(--muted);font-size:.85rem}
+.places{margin-top:18px;font-size:.95rem}
+.places p{margin:0 0 6px;color:var(--muted)}
+.places ol{margin:0;padding-left:1.2em}
+
+.month{margin-top:32px}
+.monthhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.monthhead button{background:none;border:0;font-size:1.1rem;padding:4px 10px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dow{text-align:center;font-size:.75rem;color:var(--muted)}
+.cell{border:0;background:var(--card);border-radius:10px;padding:6px 0 7px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:52px}
+.cell.blank{background:none}
+.cell.sel{box-shadow:inset 0 0 0 2px var(--ink)}
+.cell.future{opacity:.4}
+.cell .n{font-size:.8rem;line-height:1}
+.pips{display:flex;gap:3px}
+.pips i{width:8px;height:8px;border-radius:50%;background:var(--empty)}
+.pips i.home{background:var(--home)}
+.pips i.out{background:var(--out)}
+.key{display:flex;gap:16px;font-size:.85rem;color:var(--muted);margin-top:10px}
+.key i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.status{font-size:.85rem;color:var(--muted);margin-top:28px;text-align:center}
+@media (prefers-reduced-motion:no-preference){.seg button{transition:background .15s}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Ghar/Bahar</h1>
+
+  <div class="daynav">
+    <button id="prevDay" aria-label="Previous day">‹</button>
+    <div class="daylabel"><strong id="dayTitle"></strong><span id="daySub"></span></div>
+    <button id="nextDay" aria-label="Next day">›</button>
+  </div>
+  <section class="meals" id="meals" aria-label="Meals for the selected day"></section>
+  <p class="hint">Every meal counts as Ghar unless you switch it to Bahar.</p>
+
+  <section class="summary" aria-labelledby="sumTitle">
+    <h2 id="sumTitle" hidden>Summary</h2>
+    <div class="periods" role="group" aria-label="Summary period">
+      <button data-p="week">This week</button>
+      <button data-p="month" aria-pressed="true" id="monthBtn">This month</button>
+      <button data-p="all">All time</button>
+    </div>
+    <p class="headline" id="headline"></p>
+    <p class="sub" id="sub"></p>
+    <div class="ratio" id="ratio"></div>
+    <div class="legend" id="legend"></div>
+    <div class="bymeal" id="bymeal"></div>
+    <div class="places" id="places"></div>
+  </section>
+
+  <section class="month" aria-label="Month view">
+    <div class="monthhead">
+      <button id="prevMonth" aria-label="Previous month">‹</button>
+      <h2 id="monthTitle" style="margin:0"></h2>
+      <button id="nextMonth" aria-label="Next month">›</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="key"><span><i style="background:var(--home)"></i>Ghar</span><span><i style="background:var(--out)"></i>Bahar</span><span><i style="background:var(--empty)"></i>Not tracked</span></div>
+  </section>
+
+  <p class="status" id="status">Connecting…</p>
+</main>
+
+<script>
+(function(){
+  try{ if(localStorage.getItem("gb-demo-v1")) return; }catch(e){ return; }
+  var pad=function(n){return String(n).padStart(2,"0")}, iso=function(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+  var seed=7, rnd=function(){ seed=(seed*16807)%2147483647; return seed/2147483647; };
+  var places=["Dosa corner","Biryani place","Café on the corner","Friend's house","Office canteen","Pizza night"];
+  var entries={}, today=new Date(); today.setHours(0,0,0,0);
+  for(var k=1;k<=48;k++){
+    var d=new Date(today); d.setDate(d.getDate()-k); var ds=iso(d), wk=d.getDay()===0||d.getDay()===6;
+    ["brunch","dinner"].forEach(function(m){
+      if(rnd() < (wk ? (m==="dinner"?.55:.35) : (m==="dinner"?.22:.12))){
+        var place=places[Math.floor(rnd()*places.length)];
+        entries[ds+"_"+m]={date:ds,meal:m,where:"out",place:rnd()<.8?place:"",updatedAt:Date.now()};
+      }
+    });
+  }
+  var s=new Date(today); s.setDate(s.getDate()-48);
+  try{ localStorage.setItem("gb-demo-v1", JSON.stringify({entries:entries,startDate:iso(s)})); }catch(e){}
+})();
+</script>
+<script>
+const MEALS = [["brunch","Brunch"],["dinner","Dinner"]];
+const MEAL_KEYS = MEALS.map(m => m[0]);
+const LS_KEY = "gb-demo-v1";
+let entries = {};          // id -> {date, meal, where, place}
+let db = null, col = null;
+let period = "month";
+let startDate = null;       // first day tracked; unlogged meals from here on count as home
+
+const pad = n => String(n).padStart(2,"0");
+const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+const todayISO = () => iso(new Date());
+let selected = todayISO();
+let viewMonth = (() => { const t = new Date(); return new Date(t.getFullYear(), t.getMonth(), 1); })();
+
+/* ---------- storage ---------- */
+function loadLocal(){ try { const o = JSON.parse(localStorage.getItem(LS_KEY) || "{}"); entries = o.entries || {}; startDate = o.startDate || null; } catch(e){ entries = {}; } }
+function saveLocal(){ try { localStorage.setItem(LS_KEY, JSON.stringify({entries, startDate})); } catch(e){} }
+const whereOf = (date, meal) => entries[date+"_"+meal]?.where || (startDate && date >= startDate && date <= todayISO() ? "home" : null);
+function allMeals(r){
+  const list = []; if (!startDate) return list;
+  const a = r[0] > startDate ? r[0] : startDate, b = r[1] < todayISO() ? r[1] : todayISO();
+  for (let d = parse(a); iso(d) <= b; d.setDate(d.getDate()+1)){
+    const ds = iso(d);
+    MEAL_KEYS.forEach(k => list.push({date: ds, meal: k, where: whereOf(ds,k), place: entries[ds+"_"+k]?.place || ""}));
+  }
+  return list;
+}
+async function ensureStart(date){
+  if (startDate && startDate <= date) return;
+  startDate = date;
+  if (db){ try { await db.doc("settings/start").set({date}); } catch(e){} } else saveLocal();
+  renderAll();
+}
+
+async function save(id, value){
+  if (value) entries[id] = value; else delete entries[id];
+  renderAll();
+  if (col){
+    try { value ? await col.doc(id).set(value) : await col.doc(id).delete(); }
+    catch(e){ setStatus(e && e.code === "quota_exceeded" ? "Storage is full — older entries need clearing." : "Couldn't save that change. Check your connection and try again."); }
+  } else saveLocal();
+}
+
+/* ---------- day editor ---------- */
+function renderDay(){
+  const d = parse(selected), t = todayISO();
+  document.getElementById("dayTitle").textContent =
+    selected === t ? "Today" : d.toLocaleDateString(undefined,{weekday:"long"});
+  document.getElementById("daySub").textContent = d.toLocaleDateString(undefined,{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("nextDay").disabled = selected >= t;
+
+  const wrap = document.getElementById("meals");
+  wrap.innerHTML = "";
+  MEALS.forEach(([key,label]) => {
+    const id = selected + "_" + key, e = entries[id], w = whereOf(selected, key) || "home";
+    const row = document.createElement("div");
+    row.className = "meal" + (w === "out" ? " is-out" : "");
+    row.innerHTML = `<span class="meal-name">${label}</span>
+      <div class="seg" role="group" aria-label="${label}">
+        <button data-v="home" aria-pressed="${w==='home'}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>Ghar</button>
+        <button data-v="out" aria-pressed="${w==='out'}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9 5 4.5h14L20.5 9"/><path d="M3.5 9a2.8 2.8 0 0 0 5.67 0 2.8 2.8 0 0 0 5.66 0 2.8 2.8 0 0 0 5.67 0"/><path d="M5 11.5v8h14v-8"/><path d="M10 19.5v-4.5h4v4.5"/></svg>Bahar</button>
+      </div>
+      <label class="meal-note"><input placeholder="Where? (optional)" maxlength="60" aria-label="${label} place"></label>`;
+    const input = row.querySelector("input");
+    input.value = e?.place || "";
+    input.addEventListener("change", () => {
+      const cur = entries[id]; if (!cur) return;
+      save(id, {...cur, place: input.value.trim(), updatedAt: Date.now()});
+    });
+    row.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+      const v = b.dataset.v, cur = entries[id];
+      ensureStart(selected);
+      if (v === "home") save(id, null);   // home is the default, no entry needed
+      else if (!cur || cur.where !== "out") save(id, {date: selected, meal: key, where: "out", place: cur?.place || "", updatedAt: Date.now()});
+    }));
+    wrap.appendChild(row);
+  });
+}
+
+/* ---------- summary ---------- */
+function range(){
+  const t = new Date(); t.setHours(0,0,0,0);
+  if (period === "week"){ const s = new Date(t); s.setDate(t.getDate() - ((t.getDay()+6)%7)); return [iso(s), iso(t), "this week"]; }
+  if (period === "month"){ const s = viewMonth, e = new Date(s.getFullYear(), s.getMonth()+1, 0); return [iso(s), iso(e < t ? e : t), "in " + s.toLocaleDateString(undefined,{month:"long"})]; }
+  return ["0000-00-00", "9999-99-99", "since you started"];
+}
+function prevRange(){
+  const t = new Date(); t.setHours(0,0,0,0);
+  if (period === "week"){ const s = new Date(t); s.setDate(t.getDate() - ((t.getDay()+6)%7) - 7); const e = new Date(s); e.setDate(s.getDate()+6); return [iso(s), iso(e), "last week"]; }
+  if (period === "month"){ const s = new Date(viewMonth.getFullYear(), viewMonth.getMonth()-1, 1), e = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), 0); return [iso(s), iso(e), s.toLocaleDateString(undefined,{month:"long"})]; }
+  return null;
+}
+const inRange = (e,[a,b]) => e.date >= a && e.date <= b;
+
+function renderSummary(){
+  const now = new Date(), isCur = viewMonth.getFullYear() === now.getFullYear() && viewMonth.getMonth() === now.getMonth();
+  document.getElementById("monthBtn").textContent = isCur ? "This month" : viewMonth.toLocaleDateString(undefined,{month:"long"});
+  const r = range(), list = allMeals(r);
+  const out = list.filter(e => e.where === "out"), home = list.length - out.length;
+  document.getElementById("headline").innerHTML =
+    `<b>${out.length}</b>${out.length === 1 ? "meal" : "meals"} eaten outside ${r[2]}`;
+
+  let sub = list.length ? `${home} at home, out of ${list.length} meals.` : "Nothing tracked yet for this period.";
+  const pr = prevRange();
+  if (pr){
+    const prevOut = allMeals(pr).filter(e => e.where === "out").length;
+    if (prevOut || out.length){
+      const diff = out.length - prevOut;
+      sub += diff === 0 ? ` Same as ${pr[2]}.` : ` ${Math.abs(diff)} ${diff > 0 ? "more" : "fewer"} than ${pr[2]} (${prevOut}).`;
+    }
+  }
+  document.getElementById("sub").textContent = sub;
+
+  const pOut = list.length ? Math.round(out.length / list.length * 100) : 0;
+  document.getElementById("ratio").innerHTML = list.length
+    ? `<i style="width:${100-pOut}%;background:var(--home)"></i><i style="width:${pOut}%;background:var(--out)"></i>` : "";
+  document.getElementById("legend").innerHTML = list.length
+    ? `<span><b>${100-pOut}%</b> ghar</span><span><b>${pOut}%</b> bahar</span>` : "";
+
+  document.getElementById("bymeal").innerHTML = MEALS.map(([k,l]) =>
+    `<div><strong>${out.filter(e => e.meal === k).length}</strong><span>${l} bahar</span></div>`).join("");
+
+  const counts = {};
+  out.forEach(e => { const p = (e.place || "").trim(); if (p){ const key = p.toLowerCase(); counts[key] = counts[key] || {name:p, n:0}; counts[key].n++; } });
+  const top = Object.values(counts).sort((a,b) => b.n - a.n).slice(0,3);
+  const pl = document.getElementById("places");
+  pl.innerHTML = "";
+  if (top.length){
+    const p = document.createElement("p"); p.textContent = "Most visited";
+    const ol = document.createElement("ol");
+    top.forEach(t => { const li = document.createElement("li"); li.textContent = `${t.name} — ${t.n}×`; ol.appendChild(li); });
+    pl.append(p, ol);
+  }
+}
+
+/* ---------- month grid ---------- */
+function renderMonth(){
+  document.getElementById("monthTitle").textContent = viewMonth.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  const t = new Date(), thisMonth = new Date(t.getFullYear(), t.getMonth(), 1);
+  document.getElementById("nextMonth").disabled = viewMonth >= thisMonth;
+  const grid = document.getElementById("grid");
+  grid.innerHTML = ["M","T","W","T","F","S","S"].map(d => `<div class="dow">${d}</div>`).join("");
+  const lead = (viewMonth.getDay()+6)%7;
+  for (let i = 0; i < lead; i++) grid.insertAdjacentHTML("beforeend", `<div class="cell blank"></div>`);
+  const days = new Date(viewMonth.getFullYear(), viewMonth.getMonth()+1, 0).getDate(), today = todayISO();
+  for (let d = 1; d <= days; d++){
+    const ds = iso(new Date(viewMonth.getFullYear(), viewMonth.getMonth(), d));
+    const b = document.createElement("button");
+    b.className = "cell" + (ds === selected ? " sel" : "") + (ds > today ? " future" : "");
+    b.disabled = ds > today;
+    const pips = MEAL_KEYS.map(k => `<i class="${whereOf(ds,k) || ""}"></i>`).join("");
+    const outN = MEAL_KEYS.filter(k => whereOf(ds,k) === "out").length;
+    b.setAttribute("aria-label", `${parse(ds).toLocaleDateString(undefined,{day:"numeric",month:"long"})}, ${outN} outside`);
+    b.innerHTML = `<span class="n">${d}</span><span class="pips">${pips}</span>`;
+    b.addEventListener("click", () => { selected = ds; renderDay(); renderMonth(); window.scrollTo({top:0, behavior:"smooth"}); });
+    grid.appendChild(b);
+  }
+}
+
+function renderAll(){ renderDay(); renderSummary(); renderMonth(); }
+function setStatus(s){ document.getElementById("status").textContent = s; }
+
+/* ---------- controls ---------- */
+function shiftDay(n){ const d = parse(selected); d.setDate(d.getDate()+n); if (iso(d) > todayISO()) return; selected = iso(d);
+  viewMonth = new Date(d.getFullYear(), d.getMonth(), 1); renderDay(); renderMonth(); renderSummary(); }
+document.getElementById("prevDay").onclick = () => shiftDay(-1);
+document.getElementById("nextDay").onclick = () => shiftDay(1);
+function showMonth(n){
+  viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth()+n, 1);
+  period = "month";
+  document.querySelectorAll(".periods button").forEach(x => x.setAttribute("aria-pressed", x.dataset.p === "month"));
+  renderMonth(); renderSummary();
+}
+document.getElementById("prevMonth").onclick = () => showMonth(-1);
+document.getElementById("nextMonth").onclick = () => showMonth(1);
+document.querySelectorAll(".periods button").forEach(b => b.addEventListener("click", () => {
+  period = b.dataset.p;
+  document.querySelectorAll(".periods button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  renderSummary();
+}));
+
+/* ---------- boot ---------- */
+loadLocal();
+renderAll();
+if (!startDate) ensureStart(todayISO());
+(async () => {
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch(e){ db = null; }
+  if (!db){ setStatus("Demo with sample meals. Changes stay on this device."); return; }
+  col = db.collection("meals");
+  db.doc("settings/start").onSnapshot(s => {
+    const d = s.exists ? s.data().date : null;
+    if (d) { startDate = d; renderAll(); }
+    else { startDate = startDate || todayISO(); db.doc("settings/start").set({date: startDate}).catch(() => {}); renderAll(); }
+  });
+  col.limit(1000).onSnapshot(snap => {
+    const next = {};
+    snap.docs.forEach(d => { const v = d.data(); if (v && v.date && MEAL_KEYS.includes(v.meal)) next[d.id] = v; });
+    entries = next;
+    renderAll();
+    setStatus("Synced — anyone you share this with sees the same log.");
+  }, err => {
+    if (err.code === "revoked" || err.code === "not_granted") { col = null; setStatus("Saved on this device only."); }
+    else setStatus("Sync paused. Changes will show once the connection is back.");
+  });
+})();
+</script>
+</body>
+</html>
