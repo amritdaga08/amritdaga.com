@@ -604,3 +604,9 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   .pair > .shot { display: grid; grid-template-rows: auto 1fr; align-content: start; }
   .pair > .shot img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: contain; background: #fff; }
 }
+
+.story-head { display: grid; gap: 10px; justify-items: center; text-align: center; max-width: 40rem; margin: clamp(16px, 3vw, 32px) auto 0; }
+.story-head .eyebrow { margin: 0; padding-left: 0; }
+.story-head h3 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-2); line-height: var(--lh-2); color: var(--bark); text-wrap: balance; }
+.story-head + .demo .txt { align-content: center; }
+.time span { color: var(--moss); font-weight: 600; }
