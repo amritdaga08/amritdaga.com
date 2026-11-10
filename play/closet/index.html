@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script>if(/[?&]inset=1/.test(location.search))document.documentElement.classList.add("embedded");if(/[?&]frame=1/.test(location.search))document.documentElement.classList.add("framed")</script>
 <script>try{Object.defineProperty(window,"claude",{value:undefined,configurable:true,writable:true})}catch(e){try{window.claude=undefined}catch(_){}}</script><meta name="robots" content="noindex"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}html,body,*{scrollbar-width:none;-ms-overflow-style:none}*::-webkit-scrollbar{display:none;width:0;height:0}</style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -69,8 +70,22 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:12p
   border:0;cursor:pointer;background:var(--tag);color:var(--tag-ink);font-weight:800;font-size:1.05rem;
   padding:15px 22px 15px 40px;clip-path:polygon(18px 0,100% 0,100% 100%,18px 100%,0 50%);
   filter:drop-shadow(0 6px 14px var(--shade))}
-.fab::before{content:"";position:absolute;left:16px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;background:var(--paper)}
+.fab::before{content:none}
 .fab:disabled{opacity:.5}
+.fab{clip-path:none!important;padding:0!important;background:transparent!important;width:112px;height:94px;display:grid;place-items:center;
+  filter:drop-shadow(0 10px 16px var(--shade)) drop-shadow(0 2px 3px var(--shade))!important;-webkit-tap-highlight-color:transparent;
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.fab .tee{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.fab .tee path{fill:var(--tag);stroke:var(--tag-ink);stroke-width:2.5;stroke-linejoin:round}
+.fab .tee .collar{fill:none;stroke-width:3}
+.fab .lbl{position:relative;margin-top:22px;font-size:.9rem;line-height:1.05;font-weight:800;color:var(--tag-ink);text-align:center;letter-spacing:-.01em}
+.fab:not(:disabled):hover{transform:translateY(-3px) rotate(-3deg)}
+.fab:not(:disabled):active{transform:scale(.94)}
+.fab:focus-visible{outline:none}.fab:focus-visible .tee path:first-child{stroke:var(--ink);stroke-width:4}
+html.embedded .fab{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+html.framed .fab{right:26px;bottom:34px}
+@media (prefers-reduced-motion:no-preference){.fab:not(:disabled){animation:teesway 3.2s ease-in-out 1s 2}
+ @keyframes teesway{0%,100%{transform:none}20%{transform:rotate(-5deg)}40%{transform:rotate(4deg)}60%{transform:rotate(-2deg)}}}
 
 /* dialogs */
 dialog{border:0;padding:0;background:var(--card);color:var(--ink)}
@@ -160,7 +175,7 @@ dialog.full{width:100%;height:100%;max-width:100%;max-height:100%;margin:0;borde
   <div class="foot"><button class="btn ghost small" id="tidyBtn" hidden></button><p class="sub" id="tidyStatus" style="margin:8px 0 14px" aria-live="polite"></p><button class="linkbtn" id="discBtn" hidden></button></div>
 </div>
 
-<button class="fab" id="fab" disabled>Dress me</button>
+<button class="fab" id="fab" disabled aria-label="Dress me"><svg class="tee" viewBox="0 0 148 124" aria-hidden="true"><path d="M52 4 C58 14 90 14 96 4 L124 14 Q132 17 136 25 L146 46 Q148 51 143 54 L124 63 Q119 65 117 60 L113 52 L113 116 Q113 121 108 121 L40 121 Q35 121 35 116 L35 52 L31 60 Q29 65 24 63 L5 54 Q0 51 2 46 L12 25 Q16 17 24 14 Z"/><path class="collar" d="M52 4 C58 14 90 14 96 4"/></svg><span class="lbl">Dress<br>me</span></button>
 <input type="file" id="fileIn" accept="image/*" multiple hidden>
 
 <!-- Add / edit -->

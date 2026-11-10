@@ -941,7 +941,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     frame.onload = function () { try { var d = frame.contentDocument, c = getComputedStyle(d.body).backgroundColor; if (c === 'rgba(0, 0, 0, 0)') c = getComputedStyle(d.documentElement).backgroundColor; if (c && c !== 'rgba(0, 0, 0, 0)') frame.parentNode.style.background = c; } catch (e) {} };
     frame.title = p.title + ' prototype';
     load.classList.remove('done');
-    frame.src = p.src;
+    var full = window.matchMedia && window.matchMedia('(max-width: 719px), (max-height: 520px)').matches;
+    frame.src = p.src + (full ? '?inset=1' : '?frame=1');
     fitPhone();
     player.hidden = false; player.classList.remove('out'); player.classList.add('in');
     document.documentElement.style.overflow = 'hidden';
