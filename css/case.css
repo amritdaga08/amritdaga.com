@@ -610,3 +610,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .story-head h3 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-2); line-height: var(--lh-2); color: var(--bark); text-wrap: balance; }
 .story-head + .demo .txt { align-content: center; }
 .time span { color: var(--moss); font-weight: 600; }
+.story-head.pull-box { max-width: none; width: 100%; margin-top: clamp(24px, 4vw, 48px); padding: clamp(36px, 6vw, 64px) clamp(24px, 6vw, 72px); }
+.story-head.pull-box h3 { max-width: 30ch; margin-inline: auto; font-size: var(--step-3); line-height: var(--lh-3); }
+.story-head.pull-box + .demo { margin-top: clamp(20px, 3vw, 36px); }
