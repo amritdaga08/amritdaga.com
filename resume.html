@@ -77,6 +77,64 @@
 .rflow li::before { content: counter(wf); position: absolute; left: 0; top: 2px; width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 1.5px solid var(--sage); color: var(--moss); font-size: .7rem; font-weight: 600; }
 .rflow span { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--bark-soft); }
 .rflow b { color: var(--bark); font-weight: 500; }
+
+.rme { display: flex; align-items: center; gap: clamp(18px, 3vw, 36px); }
+.rid { display: grid; gap: 6px; align-content: center; }
+.rid h1 { line-height: 1; }
+.rrole { margin: 0; }
+.rcontact { margin-top: 10px; }
+.rbody .wrap { display: grid; gap: clamp(48px, 6vw, 80px); padding-bottom: clamp(56px, 8vw, 96px); }
+.rblock + .rblock { margin-top: 0; }
+.rbody .rblock h2 { margin-bottom: clamp(24px, 3vw, 36px); }
+.rextra { display: grid; gap: clamp(32px, 4vw, 48px); border-top: 1px solid var(--rule); padding-top: clamp(40px, 5vw, 64px); }
+@media (min-width: 900px) { .rextra { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.rextra p { color: var(--bark-soft); } .rextra p + p { margin-top: 10px; }
+.timeline .ladder { margin-top: 2px; font-size: var(--step--1); }
+.path .rpoints { margin: 6px 0 0; }
+.timeline { list-style: none; padding: 0; position: relative; }
+.timeline::before, .timeline::after { content: ""; position: absolute; left: 5px; top: var(--l-top, 8px); height: var(--l-h, calc(100% - 16px)); }
+.timeline::before { border-left: 1px dashed var(--sage); }
+.timeline::after { left: 4.5px; width: 2px; border-radius: 2px; background: var(--moss); transform-origin: top; transform: scaleY(var(--p, 1)); }
+.timeline > li { position: relative; padding-left: 28px; padding-bottom: 24px; }
+.timeline > li:last-child { padding-bottom: 0; }
+.timeline .co { position: relative; }
+.timeline .co::before { content: ""; position: absolute; z-index: 1; left: -28px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; box-sizing: border-box; border-radius: 50%; background: var(--paper); border: 2px solid var(--sage); transition: background .3s, border-color .3s; }
+.timeline > li.lit .co::before { background: var(--moss); border-color: var(--moss); }
+.timeline > li.now.lit .co::after { content: ""; position: absolute; left: -28px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 45%, transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  .timeline.anim > li.lit .co::before { animation: dotpop .55s cubic-bezier(.34, 1.56, .64, 1); }
+  .timeline > li.now.lit .co::after { animation: dotring 2.4s ease-out 0.4s infinite; }
+  @keyframes dotpop { 0% { transform: scale(.6); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  @keyframes dotring { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 45%, transparent); } 80%, 100% { box-shadow: 0 0 0 12px transparent; } }
+}
+.timeline .co { font-family: var(--font-display); font-size: var(--step-1); line-height: var(--lh-1); }
+.timeline .role { font-weight: 600; color: var(--moss); font-size: var(--step--1); line-height: var(--lh--1); margin-top: 2px; }
+.timeline .ladder { display: block; color: var(--bark-soft); font-weight: 400; }
+
+/* journey: impact */
+}
+@media (min-width: 860px) { .work li { grid-template-columns: 11rem minmax(0, 1fr) 12rem; align-items: start; } }
+.path { margin-top: 0; }
+.path > li { display: grid; gap: 12px 48px; padding-bottom: clamp(40px, 4.5vw, 56px); }
+.path > li:last-child { padding-bottom: 0; }
+@media (min-width: 860px) { .path > li { grid-template-columns: 13rem minmax(0, 1fr); } }
+.path .what { display: grid; gap: 6px; min-width: 0; }
+.path .role { margin-top: 0; font-size: var(--step-0); line-height: var(--lh-0); }
+.path .desc { color: var(--bark-soft); max-width: 60ch; }
+.path .when .meta:first-child { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.75rem; }
+.path .desc { color: var(--bark); }
+.stats { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.stats li { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 10px; border-radius: 999px; background: var(--linen); border: 1px solid var(--rule); font-size: 0.8125rem; line-height: 1; color: var(--bark-soft); white-space: nowrap; }
+.stats li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--sage); }
+.stats b { font-weight: 700; color: var(--bark); font-variant-numeric: tabular-nums; }
+
+
+.resume .rtop .wrap { align-items: center; }
+.rhead-col { display: grid; gap: 16px; }
+.rcontact { margin: 0; }
+.rbody { padding-top: clamp(24px, 4vw, 48px); }
+.rbody .wrap { padding-top: clamp(16px, 3vw, 32px); }
+@media (max-width: 719px) { .rphoto { width: 84px; } .rid h1 { font-size: 2.2rem; } .rrole { font-size: var(--step-0); } .rcontact { flex-direction: column; gap: 8px; } }
 </style>
 </head>
 <body>
@@ -98,7 +156,6 @@
   <section class="rtop"><div class="wrap">
     <div class="rhead-col"><div class="rme"><img class="rphoto" src="img/amrit.jpg" width="480" height="480" alt="Amrit Daga">
     <div class="rid">
-      <p class="eyebrow">Resumé</p>
       <h1>Amrit Daga</h1>
       <p class="rrole">AVP – Product Design at Kotak811</p>
     </div></div>
@@ -106,22 +163,22 @@
     <a class="btn btn-primary rdl" href="Amrit-Daga-Resume.pdf" download>Download PDF<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a>
   </div></section>
 
-  <section class="rbody"><div class="wrap rgrid">
-    <aside class="rside">
+  <section class="rbody"><div class="wrap">
+
+      <div class="rblock"><h2>Work experience <span class="meta">~9 years</span></h2><ol class="timeline path">
+        <li class="now"><div class="when"><p class="meta">Jan 2026 – Present</p><p class="co">Kotak811</p><p class="meta">Bengaluru · Fintech</p></div><div class="what"><p class="role">Associate VP – Product Design</p><ul class="rpoints"><li>Lead design for the fintech’s high-revenue products: Credit Cards, Rewards, Loans, Forex, Insurance and Chatbot.</li><li>Revamped the Credit Card homepage to increase engagement, retention and conversions.</li><li>Designed the Rewards and Milestones experience, which leadership took live in the Kotak Mahindra app.</li><li>Reworked the Personal and Gold Loan journeys for a smoother, more engaging experience.</li><li>Scrum master for a 30+ member design team, managing bandwidth and resource allocation.</li></ul></div></li>
+        <li><div class="when"><p class="meta">Apr 2021 – Nov 2025</p><p class="co">Tata ClassEdge</p><p class="meta">Mumbai · EdTech</p></div><div class="what"><p class="role">UX Specialist<span class="ladder">Promoted from UX Designer and Assistant Manager</span></p><ul class="rpoints"><li>Led UX for AI-powered EdTech products, SaaS adopted by 5K+ schools, 74K+ classrooms, 200K teachers and 2M+ students.</li><li>Worked closely with leadership to balance the business lens with user focus. Conducted 50+ interviews with real users for early feedback.</li><li>Mentored 5 designers to grow professionally and contribute meaningfully. Awarded ‘Star of the Quarter’ for leadership and process optimisation.</li><li>Built a complete responsive design system following WCAG accessibility guidelines, increasing the design team’s efficiency by 300%.</li></ul></div></li>
+        <li><div class="when"><p class="meta">Oct 2020 – Apr 2021</p><p class="co">Rucept</p><p class="meta">Los Angeles · Gaming</p></div><div class="what"><p class="role">Product Designer</p><ul class="rpoints"><li>Pitched gaming studios, from indie to AAA, to set up in-app merchandising stores and dashboards. The start-up raised a successful funding round in early 2022.</li></ul></div></li>
+        <li><div class="when"><p class="meta">Oct 2017 – Dec 2019</p><p class="co">Metaphors</p><p class="meta">Pune · Architecture</p></div><div class="what"><p class="role">Architect</p></div></li>
+      </ol></div>
+      <div class="rblock"><h2>Education <span class="meta">5 years</span></h2><ol class="timeline path">
+        <li><div class="when"><p class="meta">Jul 2012 – Aug 2017</p><p class="co">Manipal University</p><p class="meta">Udupi · Design school</p></div><div class="what"><p class="role">Bachelor of Architecture (B.Arch)</p></div></li>
+      </ol></div>
+    
+    <div class="rextra">
       <div class="rblock"><h2>My story</h2><p>Studied architecture, spent 9 years experimenting with all things design. Urban, landscape, interiors, commercial, residential, you name it!</p><p>Found my ikigai in building products and experiences. Working across gaming, edtech and finance has reinforced one idea: design fails when it forgets who it serves.</p></div>
       <div class="rblock"><h2>Current workflow</h2><ol class="rflow"><li><span>Task prioritisation</span><b>JIRA + Azure</b></li><li><span>Requirements</span><b>Confluence</b></li><li><span>Usable design input</span><b>Claude</b></li><li><span>Documentation</span><b>Notion</b></li><li><span>Information architecture</span><b>FigJam</b></li><li><span>Design</span><b>Figma + Claude / Make</b></li><li><span>Systems</span><b>Material / HIG</b></li><li><span>Code</span><b>Visual Studio</b></li></ol></div>
       <div class="rblock"><h2>Interests</h2><ul class="chips"><li class="chip">Football</li><li class="chip">Travel</li><li class="chip">Design</li><li class="chip">Fitness</li><li class="chip">Photography</li><li class="chip">Food</li><li class="chip">Treks & hikes</li><li class="chip">Dogs</li><li class="chip">Wildlife</li><li class="chip">Technology</li><li class="chip">Music</li><li class="chip">Video games</li><li class="chip">Stand-up comedy</li></ul></div>
-    </aside>
-    <div class="rmain">
-      <div class="rblock"><h2>Work experience <span class="meta">~9 years</span></h2><ol class="rjobs">
-        <li class="rjob"><div class="rhead"><h3>Kotak811<span class="meta">Bengaluru</span></h3><span class="meta when">Jan 2026 – Present</span></div><p class="role">Associate VP – Product Design</p><ul class="rpoints"><li>Lead design for the fintech’s high-revenue products: Credit Cards, Rewards, Loans, Forex, Insurance and Chatbot.</li><li>Revamped the Credit Card homepage to increase engagement, retention and conversions.</li><li>Designed the Rewards and Milestones experience, which leadership took live in the Kotak Mahindra app.</li><li>Reworked the Personal and Gold Loan journeys for a smoother, more engaging experience.</li><li>Scrum master for a 30+ member design team, managing bandwidth and resource allocation.</li></ul></li>
-        <li class="rjob"><div class="rhead"><h3>Tata ClassEdge<span class="meta">Mumbai</span></h3><span class="meta when">Apr 2021 – Nov 2025</span></div><p class="role">UX Specialist</p><ul class="ladder"><li><span>Assistant Manager</span><span class="meta">Apr 2022 – Apr 2024</span></li><li><span>UX Designer</span><span class="meta">Apr 2021 – Apr 2022</span></li></ul><ul class="rpoints"><li>Led UX for AI-powered EdTech products, SaaS adopted by 5K+ schools, 74K+ classrooms, 200K teachers and 2M+ students.</li><li>Worked closely with leadership to balance the business lens with user focus. Conducted 50+ interviews with real users for early feedback.</li><li>Mentored 5 designers to grow professionally and contribute meaningfully. Awarded ‘Star of the Quarter’ for leadership and process optimisation.</li><li>Built a complete responsive design system following WCAG accessibility guidelines, increasing the design team’s efficiency by 300%.</li></ul></li>
-        <li class="rjob"><div class="rhead"><h3>Rucept<span class="meta">Los Angeles</span></h3><span class="meta when">Oct 2020 – Apr 2021</span></div><p class="role">Product Designer</p><ul class="rpoints"><li>Pitched gaming studios, from indie to AAA, to set up in-app merchandising stores and dashboards. The start-up raised a successful funding round in early 2022.</li></ul></li>
-        <li class="rjob"><div class="rhead"><h3>Metaphors<span class="meta">Pune</span></h3><span class="meta when">Oct 2017 – Dec 2019</span></div><p class="role">Architect</p></li>
-      </ol></div>
-      <div class="rblock"><h2>Education <span class="meta">5 years</span></h2><ol class="rjobs">
-        <li class="rjob"><div class="rhead"><h3>Manipal University<span class="meta">Udupi</span></h3><span class="meta when">Jul 2012 – Aug 2017</span></div><p class="role">Bachelor of Architecture (B.Arch)</p></li>
-      </ol></div>
     </div>
   </div></section>
 </main>
@@ -133,5 +190,36 @@
   </div>
 </footer>
 <script src="js/case.js?v=20261110170919"></script>
+<script>
+  /* ---------- journey thread ---------- */
+  (function () {
+    Array.prototype.forEach.call(document.querySelectorAll('.timeline.path'), function (tl) {
+    var items = Array.prototype.slice.call(tl.children);
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var dotY = [];
+    function measure() {
+      var top = tl.getBoundingClientRect().top;
+      dotY = items.map(function (li) { var c = li.querySelector('.co').getBoundingClientRect(); var lh = parseFloat(getComputedStyle(li.querySelector('.co')).lineHeight) || 28; return c.top - top + lh / 2; });
+      tl.style.setProperty('--l-top', dotY[0] + 'px');
+      tl.style.setProperty('--l-h', (dotY[dotY.length - 1] - dotY[0]) + 'px');
+      update();
+    }
+    function update() {
+      var top = tl.getBoundingClientRect().top, mark = window.innerHeight * 0.6 - top;
+      var span = dotY[dotY.length - 1] - dotY[0];
+      var p = reduce ? 1 : Math.max(0, Math.min(1, (mark - dotY[0]) / (span || 1)));
+      tl.style.setProperty('--p', p.toFixed(4));
+      items.forEach(function (li, i) { li.classList.toggle('lit', reduce || mark >= dotY[i] - 1); });
+    }
+    var ticking = false;
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; update(); }); } }, { passive: true });
+    window.addEventListener('resize', measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    measure();
+    requestAnimationFrame(function () { tl.classList.add('anim'); });
+  });
+  })();
+
+</script>
 </body>
 </html>
