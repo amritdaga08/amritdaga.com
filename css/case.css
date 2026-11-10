@@ -632,3 +632,15 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 @media (max-width: 859px) {
   .sflow { justify-content: start; grid-auto-columns: 62vw; width: calc(100% + 2 * max(16px, env(safe-area-inset-left, 0px))); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
 }
+
+/* fan questions */
+.qs { list-style: none; margin: 0 auto; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; width: 100%; max-width: 60rem; }
+.qs li { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 26px 20px; border-radius: 22px; background: var(--paper); border: 1px solid var(--rule); }
+.qs span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--moss); color: #FFFDF8; font-weight: 600; font-size: .875rem; }
+.qs b { font-family: var(--font-display); font-weight: 400; font-size: var(--step-1); line-height: var(--lh-1); color: var(--bark); }
+.qs em { font-style: normal; color: var(--bark-soft); font-size: var(--step--1); }
+.qs.ans { margin-bottom: clamp(24px, 4vw, 40px); }
+@media (max-width: 719px) { .qs { grid-template-columns: 1fr; } }
+.fric { margin: 0 auto; max-width: 44rem; width: 100%; }
+.fric li svg { color: var(--alert, #A64B0E); background: color-mix(in srgb, #E8C987 30%, var(--paper)); }
+.chgs.one { grid-template-columns: minmax(0, 32rem); justify-content: center; }
