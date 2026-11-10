@@ -459,7 +459,9 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .story .portrait img { display: block; width: 100%; height: auto; }
 
 /* ---------- story as a match log ---------- */
-.saga { padding-top: clamp(72px, 10vw, 136px); }
+.saga { padding-top: clamp(72px, 10vw, 136px); --alert: #A64B0E; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .saga { --alert: #F0A35E; } }
+:root[data-theme="dark"] .saga { --alert: #F0A35E; }
 .saga h2 { font-size: var(--step-3); line-height: var(--lh-3); }
 .log { list-style: none; margin: 0 auto; padding: 0; max-width: 48rem; position: relative; --rail: 7rem; }
 .log::before, .log::after { content: ""; position: absolute; left: var(--rail); top: var(--l-top, 0); height: var(--l-h, 100%); }
@@ -471,11 +473,11 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .beat.lit .when::after { background: var(--moss); border-color: var(--moss); }
 .beat h3 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-2); line-height: var(--lh-2); color: var(--bark); }
 .beat p:not(.when) { margin-top: 4px; color: var(--bark); max-width: 36ch; }
-.damage .when, .damage h3 { color: #B4462F; }
-.damage.lit .when::after { background: #B4462F; border-color: #B4462F; }
+.damage .when, .damage h3 { color: var(--alert); }
+.damage.lit .when::after { background: var(--alert); border-color: var(--alert); }
 .warp { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px 32px; }
 .warp li { display: grid; }
-.warp b { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.1; color: #B4462F; }
+.warp b { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.1; color: var(--alert); }
 .warp span { font-size: var(--step--1); color: var(--bark-soft); }
 /* small, real-sized watch mockups */
 .wm { display: block; width: 116px; padding: 8px; border-radius: 34px; background: linear-gradient(145deg, #3a3a3c, #161618 45%, #0b0b0c); box-shadow: inset 0 0 0 1.5px #4a4a4c, 0 14px 28px -18px rgba(0, 0, 0, .55); position: relative; }
@@ -487,7 +489,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .reaction img { display: block; width: 100%; height: auto; border-radius: 22px; box-shadow: 0 24px 40px -28px rgba(0, 0, 0, .45); }
 .moralbox { margin-top: clamp(28px, 4vw, 44px); padding-block: clamp(32px, 5vw, 56px); }
 .moralbox .scene { font-family: var(--font-display); font-size: var(--step-2); line-height: var(--lh-2); max-width: 26ch; }
-.moralbox .scene b { font-weight: 400; color: #B4462F; }
+.moralbox .scene b { font-weight: 400; color: var(--alert); }
 @media (max-width: 719px) {
   .log { --rail: 5px; }
   .beat { grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; padding-left: 28px; }
@@ -504,3 +506,12 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .ipoints li svg { width: 40px; height: 40px; padding: 9px; border-radius: 50%; background: var(--linen); color: var(--moss); box-sizing: border-box; }
 .ipoints b { color: var(--bark); font-weight: 600; }
 .ipoints span { padding-top: 7px; }
+
+/* stats in Apple Fitness style */
+.astats { margin: 14px 0 0; display: inline-grid; grid-template-columns: repeat(3, auto); gap: 4px 28px; padding: 16px 20px; border-radius: 18px; background: #0B0B0C; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "Instrument Sans", system-ui, sans-serif; }
+.astats div { display: grid; gap: 2px; }
+.astats dt { font-size: .8125rem; color: #EBEBF0; font-weight: 500; }
+.astats dd { margin: 0; font-size: 1.75rem; line-height: 1.1; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.astats small { font-size: .55em; font-weight: 600; margin-left: 2px; }
+.astats .y { color: #FFD60A; } .astats .c { color: #64D2FF; } .astats .p { color: #FF6B8B; }
+@media (max-width: 719px) { .astats { grid-template-columns: repeat(2, auto); } .astats dd { font-size: 1.4rem; } }
