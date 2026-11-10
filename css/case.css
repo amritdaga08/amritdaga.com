@@ -407,3 +407,12 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 /* pull quote on the pond gradient */
 .pull-box { margin-top: clamp(40px, 6vw, 72px); padding: clamp(40px, 7vw, 80px) clamp(24px, 6vw, 64px); border-radius: 28px; display: grid; justify-items: center; text-align: center; background: radial-gradient(60% 80% at 85% 10%, color-mix(in srgb, #7FB3AC 40%, transparent), transparent 70%), radial-gradient(55% 70% at 10% 95%, color-mix(in srgb, #E8C987 45%, transparent), transparent 70%), radial-gradient(40% 60% at 95% 95%, color-mix(in srgb, #6B9B63 30%, transparent), transparent 70%), var(--linen); }
 .pull-box .pull { margin: 0 auto; text-align: center; max-width: 32ch; font-size: var(--step-3); line-height: var(--lh-3); }
+
+/* scene card */
+.pull-box .eyebrow { margin: 0 0 14px; padding-left: 0; }
+.pull-box .scene { margin: 0 auto; max-width: 38ch; font-size: var(--step-1); line-height: 1.6; color: var(--bark); text-wrap: balance; }
+/* glass nav stays legible over bright cover images */
+:root { --glass: rgba(255, 253, 248, 0.82); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --glass: rgba(37, 32, 26, 0.84); } }
+:root[data-theme="dark"] { --glass: rgba(37, 32, 26, 0.84); }
+.glass { -webkit-backdrop-filter: blur(18px) saturate(120%); backdrop-filter: blur(18px) saturate(120%); }
