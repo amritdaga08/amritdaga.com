@@ -313,6 +313,7 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 .gb-seg.s1 .knob { background: var(--sage); } .gb-seg.s1 b:first-of-type { color: #FFFDF8; }
 .gb-seg.s2 .knob { background: #E8C987; transform: translateX(100%); } .gb-seg.s2 b:last-of-type { color: #3B2F25; }
 .gb-seg b { min-width: 3.4em; text-align: center; }
+.hi { font-family: 'Tiro Devanagari Hindi', var(--font-display); font-size: 1.12em; line-height: 1; }
 .kb-pull [lang="hi"] { font-family: 'Tiro Devanagari Hindi', var(--font-display); font-size: 1.12em; line-height: 1; }
 @media all {
   .card:is(.hov, .hold) .mock .bar i { width: var(--g); }
@@ -714,7 +715,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
             </div>
             <div class="body">
               <ul class="chips"><li class="chip wip">In progress</li><li class="chip neutral"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M8 7c0-1.5 1-2 1-3M12 7c0-1.5 1-2 1-3M16 7c0-1.5 1-2 1-3"/></svg>Food</li></ul>
-              <h3><button class="play-btn" type="button" data-play="kuchh-bhi-chalega">Kuchh bhi chalega</button></h3>
+              <h3><button class="play-btn" type="button" data-play="kuchh-bhi-chalega" aria-label="Kuchh bhi chalega"><span lang="hi" class="hi">कुछ</span> bhi chalega</button></h3>
               <p>Can’t decide what to eat? Pull the lever and let your own menu choose.</p>
               <span class="more" aria-hidden="true">Try it live<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg></span>
             </div>
@@ -962,7 +963,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       steps: ['Tap Dress me and pick an occasion.', 'Swipe right to wear an outfit, left for another.', 'Tap ? to see why the colours and fit work.'] },
     'ghar-bahar': { title: 'Ghar/Bahar', tag: 'How often do you really eat out?', why: 'Eating out creeps up. No single meal feels like much, but over a month it adds up in money and health.', how: 'Two taps mark each meal as home or out. The month view shows the real ratio and where you eat out most.', src: 'play/ghar-bahar/',
       steps: ['Switch a meal to Bahar and add where you ate.', 'Watch the month and the totals update.', 'Tap any day in the calendar to edit it.'] },
-    'kuchh-bhi-chalega': { title: 'Kuchh bhi chalega', tag: 'Let your own menu decide.', why: '“Aaj kya khaana hai?” The daily debate over what to eat usually ends with the same three dishes.', how: 'Build your own menu once, then pull the lever for a random pick, with its macros and the ingredients you already have.', src: 'play/kuchh-bhi-chalega/',
+    'kuchh-bhi-chalega': { title: 'Kuchh bhi chalega', titleHtml: '<span lang="hi" class="hi">कुछ</span> bhi chalega', tag: 'Let your own menu decide.', why: '“Aaj kya khaana hai?” The daily debate over what to eat usually ends with the same three dishes.', how: 'Build your own menu once, then pull the lever for a random pick, with its macros and the ingredients you already have.', src: 'play/kuchh-bhi-chalega/',
       steps: ['Pick Brunch, Dinner or Dessert.', 'Pull the lever and let the reel spin.', 'Tap the ingredients you already have at home.'] }
   };
   var player = document.getElementById('player'), frame = document.getElementById('pl-frame'), load = document.getElementById('pl-load');
@@ -972,7 +973,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     var p = PLAY[key]; if (!p) return;
     clearTimeout(closing); lastFocus = document.activeElement;
     var url = new URL(p.src, location.href).href;
-    document.getElementById('pl-title').textContent = p.title;
+    var pt = document.getElementById('pl-title'); if (p.titleHtml) pt.innerHTML = p.titleHtml; else pt.textContent = p.title;
     document.getElementById('pl-tag').textContent = p.tag;
     document.getElementById('pl-why').textContent = p.why;
     document.getElementById('pl-how').textContent = p.how;
