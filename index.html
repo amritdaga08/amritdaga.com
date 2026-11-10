@@ -442,11 +442,21 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 .exp-copy p { max-width: 54ch; }
 .exp-copy .pull { font-family: var(--font-display); font-size: var(--step-2); line-height: var(--lh-2); color: var(--bark); max-width: 22ch; }
 .timeline { list-style: none; padding: 0; position: relative; }
-.timeline::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; border-left: 1px dashed var(--sage); }
+.timeline::before, .timeline::after { content: ""; position: absolute; left: 5px; top: var(--l-top, 8px); height: var(--l-h, calc(100% - 16px)); }
+.timeline::before { border-left: 1px dashed var(--sage); }
+.timeline::after { left: 4.5px; width: 2px; border-radius: 2px; background: var(--moss); transform-origin: top; transform: scaleY(var(--p, 1)); }
 .timeline > li { position: relative; padding-left: 28px; padding-bottom: 24px; }
 .timeline > li:last-child { padding-bottom: 0; }
-.timeline > li::before { content: ""; position: absolute; left: 0; top: 7px; width: 11px; height: 11px; border-radius: 50%; background: var(--paper); border: 2px solid var(--sage); }
-.timeline > li.now::before { background: var(--moss); border-color: var(--moss); }
+.timeline .co { position: relative; }
+.timeline .co::before { content: ""; position: absolute; z-index: 1; left: -28px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; box-sizing: border-box; border-radius: 50%; background: var(--paper); border: 2px solid var(--sage); transition: background .3s, border-color .3s; }
+.timeline > li.lit .co::before { background: var(--moss); border-color: var(--moss); }
+.timeline > li.now.lit .co::after { content: ""; position: absolute; left: -28px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 45%, transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  .timeline.anim > li.lit .co::before { animation: dotpop .55s cubic-bezier(.34, 1.56, .64, 1); }
+  .timeline > li.now.lit .co::after { animation: dotring 2.4s ease-out 0.4s infinite; }
+  @keyframes dotpop { 0% { transform: scale(.6); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  @keyframes dotring { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 45%, transparent); } 80%, 100% { box-shadow: 0 0 0 12px transparent; } }
+}
 .timeline .co { font-family: var(--font-display); font-size: var(--step-1); line-height: var(--lh-1); }
 .timeline .role { font-weight: 600; color: var(--moss); font-size: var(--step--1); line-height: var(--lh--1); margin-top: 2px; }
 .timeline .ladder { display: block; color: var(--bark-soft); font-weight: 400; }
@@ -739,8 +749,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
           <div class="when"><p class="meta">Jan 2026 – Present</p><p class="co">Kotak811</p><p class="meta">Bengaluru · Fintech</p></div>
           <div class="what">
             <p class="role">Associate VP, Product Design</p>
-            <p class="desc">Lead design for credit cards, loans, forex, insurance and FASTag. Revamped the credit card homepage, launched rewards and milestones, and reworked the Personal and Gold Loan journeys.</p>
-            <ul class="stats"><li><b>26M+</b>savings customers</li><li><b>16M+</b>app downloads</li><li><b>30+</b>person design team</li></ul>
+            <p class="desc">Lead design for credit cards, loans, forex, insurance and FASTag. Revamped the credit card homepage, launched rewards and milestones, and reworked the Personal and Gold Loan journeys. Scrum master for the 30+ member design team.</p>
+            <ul class="stats"><li><b>26M+</b>savings customers</li><li><b>16M+</b>app downloads</li><li><b>30+</b>members, as scrum master</li></ul>
           </div>
         </li>
         <li>
@@ -949,6 +959,34 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     }
   });
   window.addEventListener('resize', function () { if (!player.hidden) fitPhone(); });
+
+  /* ---------- journey thread ---------- */
+  (function () {
+    var tl = document.querySelector('.timeline.path'); if (!tl) return;
+    var items = Array.prototype.slice.call(tl.children);
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var dotY = [];
+    function measure() {
+      var top = tl.getBoundingClientRect().top;
+      dotY = items.map(function (li) { var c = li.querySelector('.co').getBoundingClientRect(); var lh = parseFloat(getComputedStyle(li.querySelector('.co')).lineHeight) || 28; return c.top - top + lh / 2; });
+      tl.style.setProperty('--l-top', dotY[0] + 'px');
+      tl.style.setProperty('--l-h', (dotY[dotY.length - 1] - dotY[0]) + 'px');
+      update();
+    }
+    function update() {
+      var top = tl.getBoundingClientRect().top, mark = window.innerHeight * 0.6 - top;
+      var span = dotY[dotY.length - 1] - dotY[0];
+      var p = reduce ? 1 : Math.max(0, Math.min(1, (mark - dotY[0]) / (span || 1)));
+      tl.style.setProperty('--p', p.toFixed(4));
+      items.forEach(function (li, i) { li.classList.toggle('lit', reduce || mark >= dotY[i] - 1); });
+    }
+    var ticking = false;
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; update(); }); } }, { passive: true });
+    window.addEventListener('resize', measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    measure();
+    requestAnimationFrame(function () { tl.classList.add('anim'); });
+  })();
 
   var nav = document.querySelector('.glass');
   var drop = nav.querySelector('.drop');
