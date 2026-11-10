@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Tiro+Devanagari+Hindi&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
 </head>
 <body>
 <style>
@@ -297,6 +297,47 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 .gb-cal i { display: flex; justify-content: center; gap: 2px; padding: 5px 0; border-radius: 5px; background: var(--linen); }
 .gb-cal b { width: 5px; height: 5px; border-radius: 50%; }
 .gb-cal b.h { background: var(--sage); } .gb-cal b.o { background: #E8C987; }
+
+/* thumbnail hover stories */
+.mock .bar i { width: var(--w); transition: width .9s cubic-bezier(.2,.8,.2,1); }
+.mock .kg { position: relative; display: inline-grid; justify-items: end; }
+.mock .kg > span { grid-area: 1 / 1; transition: opacity .3s, transform .4s cubic-bezier(.34,1.56,.64,1); }
+.mock .kg .b { opacity: 0; transform: translateY(6px); }
+.m-closet .grid { position: relative; }
+.m-closet .pick { position: absolute; z-index: 1; left: 0; top: 0; width: calc((100% - 12px) / 3); aspect-ratio: 3 / 4; border-radius: 7px; box-shadow: 0 0 0 3px var(--bark), 0 8px 18px -6px rgba(0,0,0,.45); opacity: 0; pointer-events: none; }
+.m-closet .pick::after { content: ""; position: absolute; right: -7px; top: -7px; width: 18px; height: 18px; border-radius: 50%; background: var(--bark) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFDF8' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E") center / 11px no-repeat; transform: scale(0); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) { .card:hover .m-closet .pick::after { animation: tick .4s 1.75s cubic-bezier(.34,1.56,.64,1) forwards; } @keyframes tick { to { transform: scale(1); } } }
+.gb-seg { position: relative; isolation: isolate; }
+.gb-seg b { position: relative; z-index: 1; transition: color .35s; }
+.gb-seg .knob { position: absolute; z-index: 0; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 999px; transition: transform .55s cubic-bezier(.34,1.56,.64,1), background .35s; }
+.gb-seg.s1 .knob { background: var(--sage); } .gb-seg.s1 b:first-of-type { color: #FFFDF8; }
+.gb-seg.s2 .knob { background: #E8C987; transform: translateX(100%); } .gb-seg.s2 b:last-of-type { color: #3B2F25; }
+.gb-seg b { min-width: 3.4em; text-align: center; }
+.kb-pull[lang="hi"] { font-family: 'Tiro Devanagari Hindi', var(--font-display); font-size: 1rem; line-height: 1.2; }
+@media (hover: hover) {
+  .card:hover .mock .bar i { width: var(--g); }
+  .card:hover .mock .bar:nth-of-type(2) i { transition-delay: .05s; } .card:hover .mock .bar:nth-of-type(4) i { transition-delay: .15s; } .card:hover .mock .bar:nth-of-type(6) i { transition-delay: .25s; }
+  .card:hover .mock .kg .a { opacity: 0; transform: translateY(-6px); }
+  .card:hover .mock .kg .b { opacity: 1; transform: none; transition-delay: .35s; }
+  .card:hover .gb-seg.s1 .knob { transform: translateX(100%); background: #E8C987; }
+  .card:hover .gb-seg.s1 b:first-of-type { color: var(--bark-soft); } .card:hover .gb-seg.s1 b:last-of-type { color: #3B2F25; }
+  .card:hover .gb-seg.s2 .knob { transform: none; background: var(--sage); }
+  .card:hover .gb-seg.s2 b:last-of-type { color: var(--bark-soft); } .card:hover .gb-seg.s2 b:first-of-type { color: #FFFDF8; }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card:hover .m-closet .pick { animation: pick 1.8s cubic-bezier(.65,0,.35,1) forwards; }
+  .card:hover .m-closet .dress { animation: dresspop .5s 1.6s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes pick {
+    0% { opacity: 0; transform: translate(0, 0); }
+    10% { opacity: 1; transform: translate(0, 0); }
+    30% { transform: translate(calc(100% + 6px), 0); }
+    50% { transform: translate(calc(200% + 12px), 0); }
+    70% { transform: translate(calc(200% + 12px), calc(100% + 6px)); }
+    100% { opacity: 1; transform: translate(calc(100% + 6px), calc(100% + 6px)); }
+  }
+  @keyframes dresspop { 0% { transform: scale(1); } 50% { transform: scale(1.12); } 100% { transform: scale(1); } }
+}
+@media (prefers-reduced-motion: reduce) { .mock .bar i, .gb-seg .knob, .gb-seg b, .mock .kg > span { transition: none; } }
 /* Kuchh bhi chalega thumbnail */
 .m-kb { width: min(100%, 14rem); background: var(--paper); border: 2px solid var(--bark); border-radius: 16px; padding: 10px; display: grid; gap: 8px; justify-items: center; box-shadow: 4px 4px 0 var(--bark); }
 .kb-tab { font-size: .7rem; font-weight: 600; padding: 3px 12px; border-radius: 999px; background: var(--bark); color: var(--paper); }
@@ -616,12 +657,12 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
             <div class="shot" aria-hidden="true">
               <div class="mock">
                 <div class="ttl">Upper A</div>
-                <div class="row"><span>Bench press</span><span>70 kg</span></div>
-                <div class="bar"><i style="width:78%"></i></div>
-                <div class="row"><span>Lat pulldown</span><span>60 kg</span></div>
-                <div class="bar"><i style="width:64%"></i></div>
-                <div class="row"><span>Shoulder press</span><span>22.5 kg</span></div>
-                <div class="bar"><i style="width:48%"></i></div>
+                <div class="row"><span>Bench press</span><span class="kg"><span class="a">70 kg</span><span class="b">72.5 kg</span></span></div>
+                <div class="bar" style="--w:78%;--g:90%"><i></i></div>
+                <div class="row"><span>Lat pulldown</span><span class="kg"><span class="a">60 kg</span><span class="b">62.5 kg</span></span></div>
+                <div class="bar" style="--w:64%;--g:74%"><i></i></div>
+                <div class="row"><span>Shoulder press</span><span class="kg"><span class="a">22.5 kg</span><span class="b">25 kg</span></span></div>
+                <div class="bar" style="--w:48%;--g:58%"><i></i></div>
               </div>
             </div>
             <div class="body">
@@ -634,7 +675,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
           <article class="card">
             <div class="shot" aria-hidden="true">
               <div class="m-closet">
-                <div class="grid"><i style="background:#E8E2D6"></i><i style="background:#3B4A5C"></i><i style="background:#8DAE86"></i><i style="background:#2A2622"></i><i style="background:#C9B79C"></i><i style="background:#F7F5F0"></i></div>
+                <div class="grid"><span class="pick" aria-hidden="true"></span><i style="background:#E8E2D6"></i><i style="background:#3B4A5C"></i><i style="background:#8DAE86"></i><i style="background:#2A2622"></i><i style="background:#C9B79C"></i><i style="background:#F7F5F0"></i></div>
                 <span class="dress">Dress me</span>
               </div>
             </div>
@@ -648,8 +689,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
           <article class="card">
             <div class="shot" aria-hidden="true">
               <div class="m-gb">
-                <div class="gb-row"><span>Brunch</span><span class="gb-seg"><b class="on">Ghar</b><b>Bahar</b></span></div>
-                <div class="gb-row"><span>Dinner</span><span class="gb-seg"><b>Ghar</b><b class="on out">Bahar</b></span></div>
+                <div class="gb-row"><span>Brunch</span><span class="gb-seg s1"><i class="knob"></i><b>Ghar</b><b>Bahar</b></span></div>
+                <div class="gb-row"><span>Dinner</span><span class="gb-seg s2"><i class="knob"></i><b>Ghar</b><b>Bahar</b></span></div>
                 <div class="gb-cal"><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="o"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="o"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="o"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="o"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="o"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i></div>
               </div>
             </div>
@@ -665,7 +706,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
               <div class="m-kb">
                 <span class="kb-tab">Dinner</span>
                 <div class="kb-win"><span>Paneer tikka</span><span>Rajma chawal</span><span>Dal khichdi</span></div>
-                <span class="kb-pull">Kuchh bhi chalega</span>
+                <span class="kb-pull" lang="hi">कुछ भी चलेगा</span>
               </div>
             </div>
             <div class="body">
