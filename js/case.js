@@ -92,3 +92,20 @@
   lb.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
   lb.addEventListener('touchend', function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(idx + (dx < 0 ? 1 : -1)); sx = null; }, { passive: true });
 })();
+
+/* auto carousel of screens on phones */
+(function () {
+  var mq = window.matchMedia('(max-width: 859px)');
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  Array.prototype.forEach.call(document.querySelectorAll('.screens[data-autoplay]'), function (ol) {
+    var items = ol.children, i = 0, timer = null, stopped = false, visible = false;
+    function next() {
+      if (!mq.matches || stopped || !visible) return;
+      i = (i + 1) % items.length;
+      var li = items[i]; ol.scrollTo({ left: li.offsetLeft - (ol.clientWidth - li.offsetWidth) / 2, behavior: still ? 'auto' : 'smooth' });
+    }
+    function start() { if (!timer) timer = setInterval(next, 2600); }
+    ['pointerdown', 'touchstart', 'wheel'].forEach(function (ev) { ol.addEventListener(ev, function () { stopped = true; clearInterval(timer); timer = null; }, { passive: true }); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) start(); }, { threshold: 0.5 }).observe(ol);
+  });
+})();

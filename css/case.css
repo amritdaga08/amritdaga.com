@@ -449,3 +449,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 @media (max-width: 480px) { .tw-watch { height: calc((100vw - 32px) * 560 / 460); } }
 .tw-phone { width: min(100%, 390px); height: 760px; max-height: 80vh; border-radius: 44px; padding: 10px; background: #121110; box-shadow: 0 0 0 2px #2A2622, 0 40px 80px -30px rgba(0, 0, 0, .5); }
 .tw-phone iframe { display: block; width: 100%; height: 100%; border: 0; border-radius: 34px; background: #F2F2F7; }
+/* the interactive watch is for larger screens; phones get the auto carousel */
+@media (max-width: 719px) { .tryit:has(.tw-watch) { display: none; } }
+.story .portrait img { display: block; width: 100%; height: auto; }
