@@ -154,3 +154,26 @@
     io.observe(ba);
   });
 })();
+
+/* video-synced step thread + time bars */
+(function () {
+  Array.prototype.forEach.call(document.querySelectorAll('.vsteps'), function (ol) {
+    var demo = ol.closest('.demo'), v = demo && demo.querySelector('video'); if (!v) return;
+    var lis = Array.prototype.slice.call(ol.children), ts = lis.map(function (li) { return parseFloat(li.getAttribute('data-t')); });
+    function sync() {
+      var t = v.currentTime, i = 0; for (var k = 0; k < ts.length; k++) if (t >= ts[k]) i = k;
+      lis.forEach(function (li, k) { li.classList.toggle('done', k < i); li.classList.toggle('now', k === i); });
+      var seg = i < ts.length - 1 ? Math.min(1, (t - ts[i]) / (ts[i + 1] - ts[i])) : 0;
+      ol.style.setProperty('--p', ((i + seg) / (ts.length - 1)).toFixed(3));
+    }
+    var raf = null; function loop() { sync(); raf = v.paused ? null : requestAnimationFrame(loop); }
+    v.addEventListener('play', function () { if (!raf) loop(); });
+    v.addEventListener('seeked', sync); v.addEventListener('timeupdate', sync);
+    lis.forEach(function (li, k) { li.style.cursor = 'pointer'; li.addEventListener('click', function () { v.currentTime = ts[k] + 0.05; sync(); }); });
+    sync();
+  });
+  var bars = document.querySelectorAll('.tbar'); if (!bars.length || !('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('js-bars');
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.6 });
+  Array.prototype.forEach.call(bars, function (b) { io.observe(b); });
+})();
