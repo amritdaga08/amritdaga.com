@@ -108,3 +108,11 @@
   ov.addEventListener('click', function (e) { if (e.target === ov || e.target.closest('.lb-close')) close(); });
   document.addEventListener('keydown', function (e) { if (!ov.hidden && e.key === 'Escape') close(); if (!ov.hidden && e.key === 'Tab') { e.preventDefault(); (document.activeElement === cl ? fr : cl).focus(); } });
 })();
+
+/* scroll reveal for story beats */
+(function () {
+  var els = document.querySelectorAll('.reveal'); if (!els.length || !('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('js-reveal');
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } }); }, { threshold: 0.25, rootMargin: '0px 0px -8% 0px' });
+  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+})();
