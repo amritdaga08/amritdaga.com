@@ -66,6 +66,17 @@
 .rpoints { margin: 10px 0 0; padding-left: 1.1em; display: grid; gap: 8px; color: var(--bark); }
 .rpoints li::marker { color: var(--sage); }
 @media print { .theme, header.top, .rdl, footer { display: none !important; } .resume .rtop { padding-top: 24px; } }
+.rhead-col { display: grid; gap: 18px; }
+.rme { display: flex; align-items: center; gap: clamp(16px, 3vw, 32px); flex-wrap: nowrap; }
+.rphoto { width: clamp(84px, 12vw, 140px); height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px var(--rule), 0 20px 40px -24px rgba(0,0,0,.5); }
+.rid h1 { font-size: clamp(2.2rem, 6vw, 3.5rem); }
+.rflow { list-style: none; margin: 0; padding: 0; position: relative; counter-reset: wf; display: grid; gap: 0; }
+.rflow::before { content: ""; position: absolute; left: 11px; top: 14px; bottom: 14px; border-left: 1.5px dashed var(--sage); }
+.rflow li { counter-increment: wf; position: relative; display: grid; gap: 1px; padding: 0 0 16px 38px; }
+.rflow li:last-child { padding-bottom: 0; }
+.rflow li::before { content: counter(wf); position: absolute; left: 0; top: 2px; width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 1.5px solid var(--sage); color: var(--moss); font-size: .7rem; font-weight: 600; }
+.rflow span { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--bark-soft); }
+.rflow b { color: var(--bark); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -85,24 +96,20 @@
 
 <main class="resume">
   <section class="rtop"><div class="wrap">
-    <div class="rme"><img class="rphoto" src="img/amrit.jpg" width="480" height="480" alt="Amrit Daga">
+    <div class="rhead-col"><div class="rme"><img class="rphoto" src="img/amrit.jpg" width="480" height="480" alt="Amrit Daga">
     <div class="rid">
       <p class="eyebrow">Resumé</p>
       <h1>Amrit Daga</h1>
-      <p class="rrole">AVP – Product Design</p>
-      <ul class="rcontact"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><a href="tel:+919740541567">+91 97405 41567</a></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg><a href="mailto:amritdaga08@gmail.com">amritdaga08@gmail.com</a></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><a href="index.html">amritdaga.com</a></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bengaluru, India</li></ul>
+      <p class="rrole">AVP – Product Design at Kotak811</p>
     </div></div>
+    <ul class="rcontact"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><a href="tel:+919740541567">+91 97405 41567</a></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg><a href="mailto:amritdaga08@gmail.com">amritdaga08@gmail.com</a></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bengaluru, India</li></ul></div>
     <a class="btn btn-primary rdl" href="Amrit-Daga-Resume.pdf" download>Download PDF<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a>
   </div></section>
 
   <section class="rbody"><div class="wrap rgrid">
     <aside class="rside">
       <div class="rblock"><h2>My story</h2><p>Studied architecture, spent 9 years experimenting with all things design. Urban, landscape, interiors, commercial, residential, you name it!</p><p>Found my ikigai in building products and experiences. Working across gaming, edtech and finance has reinforced one idea: design fails when it forgets who it serves.</p></div>
-      <div class="rblock"><h2>Current workflow</h2><dl class="rflow">
-        <div><dt>Task prioritisation</dt><dd>JIRA + Azure</dd></div><div><dt>Requirements</dt><dd>Confluence</dd></div>
-        <div><dt>Usable design input</dt><dd>Claude</dd></div><div><dt>Documentation</dt><dd>Notion</dd></div>
-        <div><dt>Information architecture</dt><dd>FigJam</dd></div><div><dt>Design</dt><dd>Figma + Claude / Make</dd></div>
-        <div><dt>Systems</dt><dd>Material / HIG</dd></div><div><dt>Website</dt><dd>Framer</dd></div><div><dt>Code</dt><dd>Visual Studio</dd></div></dl></div>
+      <div class="rblock"><h2>Current workflow</h2><ol class="rflow"><li><span>Task prioritisation</span><b>JIRA + Azure</b></li><li><span>Requirements</span><b>Confluence</b></li><li><span>Usable design input</span><b>Claude</b></li><li><span>Documentation</span><b>Notion</b></li><li><span>Information architecture</span><b>FigJam</b></li><li><span>Design</span><b>Figma + Claude / Make</b></li><li><span>Systems</span><b>Material / HIG</b></li><li><span>Website</span><b>Framer</b></li><li><span>Code</span><b>Visual Studio</b></li></ol></div>
       <div class="rblock"><h2>Interests</h2><ul class="chips"><li class="chip">Football</li><li class="chip">Travel</li><li class="chip">Design</li><li class="chip">Fitness</li><li class="chip">Photography</li><li class="chip">Food</li><li class="chip">Treks & hikes</li><li class="chip">Dogs</li><li class="chip">Wildlife</li><li class="chip">Technology</li><li class="chip">Music</li><li class="chip">Video games</li><li class="chip">Stand-up comedy</li></ul></div>
     </aside>
     <div class="rmain">
