@@ -515,3 +515,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .astats small { font-size: .55em; font-weight: 600; margin-left: 2px; }
 .astats .y { color: #FFD60A; } .astats .c { color: #64D2FF; } .astats .p { color: #FF6B8B; }
 @media (max-width: 719px) { .astats { grid-template-columns: repeat(2, auto); } .astats dd { font-size: 1.4rem; } }
+
+.sec-head.sol-head { margin-top: clamp(40px, 6vw, 72px); margin-bottom: clamp(20px, 3vw, 32px); }
+.sec-head:has(> .eyebrow:only-child) { margin-bottom: clamp(12px, 2vw, 20px); }
