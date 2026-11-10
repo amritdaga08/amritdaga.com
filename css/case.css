@@ -613,3 +613,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .story-head.pull-box { max-width: none; width: 100%; margin-top: clamp(24px, 4vw, 48px); padding: clamp(36px, 6vw, 64px) clamp(24px, 6vw, 72px); }
 .story-head.pull-box h3 { max-width: 30ch; margin-inline: auto; font-size: var(--step-3); line-height: var(--lh-3); }
 .story-head.pull-box + .demo { margin-top: clamp(20px, 3vw, 36px); }
+.time { display: grid; gap: 6px; justify-items: start; }
+.time b { color: var(--moss); }
+.time span { font-size: var(--step-0); font-weight: 500; color: var(--bark); }
