@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
-<link rel="stylesheet" href="css/case.css?v=20261110141756">
+<link rel="stylesheet" href="css/case.css?v=20261110170919">
 <script>(function () { try { var t = localStorage.getItem('ad-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();</script>
 <style>
 .resume .rtop { padding-block: clamp(104px, 12vw, 152px) clamp(24px, 4vw, 40px); }
@@ -32,7 +32,11 @@
 .rid h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-5, 3.5rem); line-height: 1.05; color: var(--bark); }
 .rrole { font-size: var(--step-1); color: var(--moss); font-weight: 500; }
 .rcontact { list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 6px 20px; color: var(--bark-soft); }
+.rcontact li { display: inline-flex; align-items: center; gap: 8px; }
+.rcontact svg { width: 18px; height: 18px; color: var(--moss); flex: none; }
 .rcontact a { color: inherit; }
+.rme { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(20px, 3vw, 36px); }
+.rphoto { width: clamp(104px, 12vw, 148px); height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px var(--rule), 0 20px 40px -24px rgba(0,0,0,.5); }
 .rcontact a:hover { color: var(--moss); }
 .rgrid { display: grid; gap: clamp(32px, 5vw, 64px); padding-bottom: clamp(56px, 8vw, 96px); padding-top: clamp(24px, 3vw, 40px); }
 @media (min-width: 900px) { .rgrid { grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); } }
@@ -51,6 +55,7 @@
 .rjob { position: relative; padding-left: 32px; padding-bottom: 28px; }
 .rjob:last-child { padding-bottom: 0; }
 .rjob::before { content: ""; position: absolute; left: 0; top: 9px; width: 11px; height: 11px; box-sizing: border-box; border-radius: 50%; background: var(--paper); border: 2px solid var(--sage); }
+.rjobs:has(> .rjob:only-child)::before { display: none; }
 .rjobs > .rjob:first-child::before { background: var(--moss); border-color: var(--moss); }
 .rhead { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
 .rhead h3 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-1); line-height: var(--lh-1); color: var(--bark); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -80,12 +85,13 @@
 
 <main class="resume">
   <section class="rtop"><div class="wrap">
+    <div class="rme"><img class="rphoto" src="img/amrit.jpg" width="480" height="480" alt="Amrit Daga">
     <div class="rid">
       <p class="eyebrow">Resumé</p>
       <h1>Amrit Daga</h1>
       <p class="rrole">AVP – Product Design</p>
-      <ul class="rcontact"><li><a href="mailto:amritdaga08@gmail.com">amritdaga08@gmail.com</a></li><li><a href="index.html">amritdaga.com</a></li><li>Bengaluru, India</li></ul>
-    </div>
+      <ul class="rcontact"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><a href="tel:+919740541567">+91 97405 41567</a></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg><a href="mailto:amritdaga08@gmail.com">amritdaga08@gmail.com</a></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><a href="index.html">amritdaga.com</a></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bengaluru, India</li></ul>
+    </div></div>
     <a class="btn btn-primary rdl" href="Amrit-Daga-Resume.pdf" download>Download PDF<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a>
   </div></section>
 
@@ -119,6 +125,6 @@
     <span class="meta">Built on Naturalé Design System</span>
   </div>
 </footer>
-<script src="js/case.js?v=20261110141756"></script>
+<script src="js/case.js?v=20261110170919"></script>
 </body>
 </html>
