@@ -93,19 +93,18 @@
   lb.addEventListener('touchend', function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(idx + (dx < 0 ? 1 : -1)); sx = null; }, { passive: true });
 })();
 
-/* auto carousel of screens on phones */
+
+/* watch prototype overlay (larger screens) */
 (function () {
-  var mq = window.matchMedia('(max-width: 859px)');
-  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  Array.prototype.forEach.call(document.querySelectorAll('.screens[data-autoplay]'), function (ol) {
-    var items = ol.children, i = 0, timer = null, stopped = false, visible = false;
-    function next() {
-      if (!mq.matches || stopped || !visible) return;
-      i = (i + 1) % items.length;
-      var li = items[i]; ol.scrollTo({ left: li.offsetLeft - (ol.clientWidth - li.offsetWidth) / 2, behavior: still ? 'auto' : 'smooth' });
-    }
-    function start() { if (!timer) timer = setInterval(next, 2600); }
-    ['pointerdown', 'touchstart', 'wheel'].forEach(function (ev) { ol.addEventListener(ev, function () { stopped = true; clearInterval(timer); timer = null; }, { passive: true }); });
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) start(); }, { threshold: 0.5 }).observe(ol);
-  });
+  var btns = document.querySelectorAll('[data-watch]'); if (!btns.length) return;
+  var ov = document.createElement('div'); ov.className = 'watch-ov'; ov.hidden = true;
+  ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Trim Workout prototype');
+  ov.innerHTML = '<iframe title="Interactive Apple Watch prototype of Trim Workout"></iframe><button class="lb-btn lb-close" type="button" aria-label="Close prototype"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+  document.body.appendChild(ov);
+  var fr = ov.querySelector('iframe'), cl = ov.querySelector('.lb-close'), last = null;
+  function open(b) { last = b; fr.src = b.getAttribute('data-watch'); ov.hidden = false; ov.classList.add('in'); document.documentElement.style.overflow = 'hidden'; cl.focus(); }
+  function close() { ov.hidden = true; ov.classList.remove('in'); fr.src = 'about:blank'; document.documentElement.style.overflow = ''; if (last) last.focus(); }
+  Array.prototype.forEach.call(btns, function (b) { b.addEventListener('click', function () { open(b); }); });
+  ov.addEventListener('click', function (e) { if (e.target === ov || e.target.closest('.lb-close')) close(); });
+  document.addEventListener('keydown', function (e) { if (!ov.hidden && e.key === 'Escape') close(); if (!ov.hidden && e.key === 'Tab') { e.preventDefault(); (document.activeElement === cl ? fr : cl).focus(); } });
 })();

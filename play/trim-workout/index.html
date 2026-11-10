@@ -15,8 +15,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .num{font-variant-numeric:tabular-nums}
 
 /* ================= WATCH ================= */
-body.watch{background:transparent;display:grid;place-items:center;min-height:100%;padding:12px}
-.case{position:relative;width:432px;height:520px;max-width:100%;border-radius:110px;background:linear-gradient(145deg,#3a3a3c,#1c1c1e 40%,#0b0b0c);padding:18px;box-shadow:0 14px 22px -16px rgba(0,0,0,.55),inset 0 0 0 2px #4a4a4c}
+body.watch{background:transparent;display:grid;place-items:center;min-height:100%;padding:12px;overflow:hidden}
+.fitbox{width:calc(432px * var(--s,1));height:calc(520px * var(--s,1))}
+.case{position:relative;width:432px;height:520px;border-radius:110px;transform:scale(var(--s,1));transform-origin:top left;background:linear-gradient(145deg,#3a3a3c,#1c1c1e 40%,#0b0b0c);padding:18px;box-shadow:0 14px 22px -16px rgba(0,0,0,.55),inset 0 0 0 2px #4a4a4c}
 .case::after{content:"";position:absolute;right:-12px;top:120px;width:14px;height:64px;border-radius:6px;background:linear-gradient(90deg,#2c2c2e,#5a5a5c);box-shadow:0 120px 0 -2px #2c2c2e}
 .screen{position:relative;width:396px;height:484px;border-radius:94px;background:#000;color:#fff;overflow:hidden;touch-action:none}
 .scale{transform-origin:center}
@@ -118,7 +119,7 @@ body.phone{background:#F2F2F7;color:#111;font-size:16px}
 <body>
 <!-- WATCH -->
 <div id="watch" hidden>
-  <div class="case"><div class="screen" id="screen">
+  <div class="fitbox"><div class="case"><div class="screen" id="screen">
     <section class="w run pane" id="wRun">
       <span class="wicon"><svg viewBox="0 0 24 24" fill="none" stroke="#9EF01A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="4" r="2"/><path d="M8 21l3-6 3 2 1 4M6 12l3-3 4 1 3 3M11 10l-2 5"/><circle cx="19" cy="20" r="1.6" fill="#9EF01A"/></svg></span>
       <span class="clock num" id="wClock">8:51</span>
@@ -126,7 +127,7 @@ body.phone{background:#F2F2F7;color:#111;font-size:16px}
       <div class="row num"><span id="wKcal">1561</span><small>ACTIVE<br>KCAL</small></div>
       <div class="row num"><span id="wKm" class="b">13.30</span><small class="b">KM</small></div>
       <div class="row hr num"><span style="color:#fff;font-size:54px" id="wHr">98</span><span>&#9829;</span></div>
-      <div class="hint nudge" id="swipeHint">Swipe to see controls <span aria-hidden="true">&#8594;</span></div>
+      <div class="hint nudge" id="swipeHint">Tap or swipe for controls <span aria-hidden="true">&#8594;</span></div>
       <div class="dots"><i></i><i class="on"></i><i></i></div>
     </section>
 
@@ -173,7 +174,7 @@ body.phone{background:#F2F2F7;color:#111;font-size:16px}
       <p class="note" id="sNote"></p>
       <button class="again" data-act="again">Try again</button>
     </section>
-  </div></div>
+  </div></div></div>
 </div>
 
 <!-- PHONE -->
@@ -266,7 +267,7 @@ body.phone{background:#F2F2F7;color:#111;font-size:16px}
   if (mode === 'watch') {
     /* fit the watch to the frame */
     var cs = document.querySelector('.case');
-    function fit() { var s = Math.min(1, (innerWidth - 24) / 432, (innerHeight - 24) / 520); cs.style.transform = 'scale(' + s + ')'; }
+    function fit() { var s = Math.min(1, (innerWidth - 24) / 432, (innerHeight - 24) / 520); document.documentElement.style.setProperty('--s', s.toFixed(4)); }
     fit(); addEventListener('resize', fit);
 
     var panes = { run: wRun, ctl: wCtl, trim: wTrim, sum: wSum }, cur = 'run';
@@ -282,8 +283,12 @@ body.phone{background:#F2F2F7;color:#111;font-size:16px}
       wElapsed.textContent = hms(s / 60) + '.' + (cs2 < 10 ? '0' : '') + cs2; }, 50);
     /* swipe or tap to open controls */
     var sx = null;
+    function openCtl(dx) { if (cur === 'run') go('ctl', dx > 0 ? 1 : -1); }
     wRun.addEventListener('pointerdown', function (e) { sx = e.clientX; });
-    wRun.addEventListener('pointerup', function (e) { if (sx === null) return; go('ctl', Math.sign(e.clientX - sx) || -1); sx = null; });
+    wRun.addEventListener('pointerup', function (e) { if (sx !== null && Math.abs(e.clientX - sx) > 30) openCtl(e.clientX - sx); sx = null; });
+    wRun.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    wRun.addEventListener('touchend', function (e) { if (sx !== null && Math.abs(e.changedTouches[0].clientX - sx) > 30) openCtl(e.changedTouches[0].clientX - sx); }, { passive: true });
+    wRun.addEventListener('click', function () { openCtl(-1); });
     var sl = slider(wGraph, wHA, wHB, function (st) {
       var w = wGraph.clientWidth;
       wTagA.textContent = hms(st.a); wTagB.textContent = hms(st.b);
