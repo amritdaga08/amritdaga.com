@@ -396,8 +396,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .hint { display: inline-flex; align-items: center; gap: 8px; justify-self: center; margin: 0 auto 16px; padding: 7px 14px 7px 10px; border-radius: 999px; background: var(--linen); color: var(--bark-soft); font-size: 0.8125rem; font-weight: 500; }
 .sec .wrap > .hint, .icons-wrap > .hint { display: flex; width: max-content; max-width: 100%; }
 .hint svg { width: 16px; height: 16px; color: var(--moss); flex: none; }
-.hint .h-tap { display: none; }
-@media (hover: none) { .hint .h-hover { display: none; } .hint .h-tap { display: inline; } }
 @media (prefers-reduced-motion: no-preference) { .hint svg { animation: nudge 2.4s ease-in-out infinite; } @keyframes nudge { 0%, 70%, 100% { transform: none; } 80% { transform: translateY(-2px) rotate(-8deg); } 90% { transform: translateY(1px); } } }
 .icons-wrap { display: grid; min-width: 0; }
 .icons li, .motion li[tabindex] { cursor: pointer; -webkit-tap-highlight-color: transparent; }
