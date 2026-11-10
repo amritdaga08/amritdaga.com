@@ -391,3 +391,21 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .sec-head .eyebrow, .next .eyebrow { padding-left: 0.08em; }
 
 .acc { color: var(--moss); }
+
+/* interaction hints */
+.hint { display: inline-flex; align-items: center; gap: 8px; justify-self: center; margin: 0 auto 16px; padding: 7px 14px 7px 10px; border-radius: 999px; background: var(--linen); color: var(--bark-soft); font-size: 0.8125rem; font-weight: 500; }
+.sec .wrap > .hint, .icons-wrap > .hint { display: flex; width: max-content; max-width: 100%; }
+.hint svg { width: 16px; height: 16px; color: var(--moss); flex: none; }
+.hint .h-tap { display: none; }
+@media (hover: none) { .hint .h-hover { display: none; } .hint .h-tap { display: inline; } }
+@media (prefers-reduced-motion: no-preference) { .hint svg { animation: nudge 2.4s ease-in-out infinite; } @keyframes nudge { 0%, 70%, 100% { transform: none; } 80% { transform: translateY(-2px) rotate(-8deg); } 90% { transform: translateY(1px); } } }
+.icons-wrap { display: grid; min-width: 0; }
+.icons li, .motion li[tabindex] { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.icons li:focus-visible, .motion li:focus-visible { outline: 2px solid var(--moss); outline-offset: 2px; }
+.icons li.play svg { color: var(--moss); }
+@media (prefers-reduced-motion: no-preference) { .icons li.play svg { animation: wiggle .7s cubic-bezier(.34, 1.56, .64, 1); } }
+.motion li.play .ball.spring { transform: translateX(calc(100% * 6)); transition: transform .6s cubic-bezier(.34, 1.56, .64, 1); }
+.motion li.play .ball.out { transform: translateX(calc(100% * 6)); transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+/* pull quote on the pond gradient */
+.pull-box { margin-top: clamp(40px, 6vw, 72px); padding: clamp(40px, 7vw, 80px) clamp(24px, 6vw, 64px); border-radius: 28px; display: grid; justify-items: center; text-align: center; background: radial-gradient(60% 80% at 85% 10%, color-mix(in srgb, #7FB3AC 40%, transparent), transparent 70%), radial-gradient(55% 70% at 10% 95%, color-mix(in srgb, #E8C987 45%, transparent), transparent 70%), radial-gradient(40% 60% at 95% 95%, color-mix(in srgb, #6B9B63 30%, transparent), transparent 70%), var(--linen); }
+.pull-box .pull { margin: 0 auto; text-align: center; max-width: 32ch; font-size: var(--step-3); line-height: var(--lh-3); }
