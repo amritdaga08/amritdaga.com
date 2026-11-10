@@ -130,3 +130,27 @@
   Array.prototype.forEach.call(log.querySelectorAll('img'), function (im) { if (!im.complete) im.addEventListener('load', measure); });
   measure();
 })();
+
+/* before / after compare */
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  Array.prototype.forEach.call(document.querySelectorAll('.ba'), function (ba) {
+    var r = ba.querySelector('.ba-range'), touched = false;
+    function set(v) { ba.style.setProperty('--pos', v + '%'); ba.style.setProperty('--pos-n', v / 100); }
+    r.addEventListener('input', function () { touched = true; set(r.value); });
+    set(r.value);
+    if (reduce || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting || touched) return; io.disconnect();
+      var t0 = performance.now(), path = [50, 18, 82, 50], seg = 700;
+      (function step(now) {
+        if (touched) return;
+        var k = (now - t0) / seg, i = Math.floor(k);
+        if (i >= path.length - 1) { set(50); r.value = 50; return; }
+        var f = k - i, e = f < .5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2, v = path[i] + (path[i + 1] - path[i]) * e;
+        set(v.toFixed(1)); r.value = v; requestAnimationFrame(step);
+      })(t0);
+    }, { threshold: 0.6 });
+    io.observe(ba);
+  });
+})();
