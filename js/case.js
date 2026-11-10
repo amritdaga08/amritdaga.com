@@ -109,10 +109,24 @@
   document.addEventListener('keydown', function (e) { if (!ov.hidden && e.key === 'Escape') close(); if (!ov.hidden && e.key === 'Tab') { e.preventDefault(); (document.activeElement === cl ? fr : cl).focus(); } });
 })();
 
-/* scroll reveal for story beats */
+
+/* story thread: same scroll-drawn line as the Journey */
 (function () {
-  var els = document.querySelectorAll('.reveal'); if (!els.length || !('IntersectionObserver' in window)) return;
-  document.documentElement.classList.add('js-reveal');
-  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } }); }, { threshold: 0.25, rootMargin: '0px 0px -8% 0px' });
-  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+  var log = document.querySelector('.log'); if (!log) return;
+  var items = Array.prototype.slice.call(log.querySelectorAll('.beat'));
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches, ys = [];
+  function measure() {
+    var top = log.getBoundingClientRect().top;
+    ys = items.map(function (li) { var d = li.querySelector('.when'), r = d.getBoundingClientRect(), cs = getComputedStyle(d, '::after'); return li.getBoundingClientRect().top - top + parseFloat(cs.top) + 5.5; });
+    log.style.setProperty('--l-top', ys[0] + 'px'); log.style.setProperty('--l-h', (ys[ys.length - 1] - ys[0]) + 'px'); update();
+  }
+  function update() {
+    var top = log.getBoundingClientRect().top, mark = window.innerHeight * 0.6 - top, span = ys[ys.length - 1] - ys[0];
+    log.style.setProperty('--p', (reduce ? 1 : Math.max(0, Math.min(1, (mark - ys[0]) / (span || 1)))).toFixed(4));
+    items.forEach(function (li, i) { var on = reduce || mark >= ys[i] - 1; if (on && !li.classList.contains('lit')) { li.classList.add('lit', 'popped'); } else if (!on) li.classList.remove('lit', 'popped'); });
+  }
+  var t = false; window.addEventListener('scroll', function () { if (!t) { t = true; requestAnimationFrame(function () { t = false; update(); }); } }, { passive: true });
+  window.addEventListener('resize', measure); if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  Array.prototype.forEach.call(log.querySelectorAll('img'), function (im) { if (!im.complete) im.addEventListener('load', measure); });
+  measure();
 })();
