@@ -499,3 +499,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 @media (prefers-reduced-motion: no-preference) { .beat.lit.popped .when::after { animation: dotpop .55s cubic-bezier(.34, 1.56, .64, 1); } @keyframes dotpop { 0% { transform: scale(.6); } 60% { transform: scale(1.4); } 100% { transform: none; } } }
 
 .tryit .hint { margin: 4px auto 0; }
+.ipoints { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 16px; }
+.ipoints li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: start; color: var(--bark-soft); }
+.ipoints li svg { width: 40px; height: 40px; padding: 9px; border-radius: 50%; background: var(--linen); color: var(--moss); box-sizing: border-box; }
+.ipoints b { color: var(--bark); font-weight: 600; }
+.ipoints span { padding-top: 7px; }
