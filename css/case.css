@@ -1089,3 +1089,7 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 :root[data-theme="dark"] { --sun: #F5A65B; --fire: #F59A92; }
 .h-serif { font-family: var(--font-display); font-weight: 400; }
 .h-sans { font-family: var(--font-body); font-weight: 600; letter-spacing: -0.02em; }
+.thread.anim.snap::after, .thread.anim.snap li, .thread.anim.snap li::before { transition: none !important; }
+.thread.anim::after { transition-duration: 1.6s; }
+.tg-mode { font-weight: 600; color: var(--bark); font-size: 1rem; min-width: 3.2em; }
+.tg-mode { font-size: inherit; font-weight: 500; }

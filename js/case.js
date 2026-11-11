@@ -270,10 +270,12 @@
 /* Naturalé: journey thread draws itself; tap to replay */
 (function () {
   Array.prototype.forEach.call(document.querySelectorAll('.thread.anim'), function (t) {
-    function replay() { t.classList.remove('in'); void t.offsetWidth; setTimeout(function () { t.classList.add('in'); }, 60); }
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { t.classList.add('in'); o.disconnect(); } }, { threshold: .6 }).observe(t); else t.classList.add('in');
-    t.addEventListener('click', replay);
-    t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); replay(); } });
+    var tm;
+    function reset() { t.classList.add('snap'); t.classList.remove('in'); void t.offsetWidth; t.classList.remove('snap'); }
+    function play(delay) { clearTimeout(tm); reset(); tm = setTimeout(function () { t.classList.add('in'); }, delay || 80); }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { if (es[0].isIntersecting) play(250); else { clearTimeout(tm); reset(); } }, { threshold: .7 }).observe(t); else t.classList.add('in');
+    t.addEventListener('click', function () { play(80); });
+    t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(80); } });
   });
 })();
 (function () { var s = document.querySelector('.spc'); if (!s || !('IntersectionObserver' in window)) return; new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { s.classList.add('in'); o.disconnect(); } }, { threshold: .4 }).observe(s); })();
