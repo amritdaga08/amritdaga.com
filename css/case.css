@@ -989,3 +989,50 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .sc-seg button { display: inline-flex; align-items: center; gap: 8px; }
 .sc-seg .tab-ic { width: 18px; height: 18px; flex: none; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
 .sc-seg button[aria-selected="true"] .tab-ic { transform: scale(1.08); }
+/* v3.2 */
+.motion li:hover .ball.spring, .motion li:hover .ball.out { transform: none; }
+.motion li:hover .ball.fade, .motion li:hover .ball.launch { animation: none; }
+.motion li.play .ball.spring { transform: translateX(calc(100% * 6)); }
+.motion li.play .ball.out { transform: translateX(calc(100% * 6)); }
+.motion li.play .ball.fade { animation: dsFade .9s ease both; }
+.motion li[tabindex] .track::after { content: "Tap to play"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: .6875rem; color: var(--bark-soft); opacity: .8; transition: opacity .2s; }
+.motion li.play .track::after { content: "Tap to reset"; }
+@media (hover: hover) { .motion li[tabindex] .track::after { content: ""; } }
+.grad .when { display: grid; gap: 4px; }
+.grad .when b.u { color: var(--moss-ink); }
+.grad .when b.a { color: var(--fire); }
+:root { --rain: #2D63A6; --sun: #8A4A0B; --fire: #A8452C; --sprout: #456B3F; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --rain: #9CC3F0; --sun: #F0B66E; --fire: #F08F72; --sprout: #A9CF9F; } }
+:root[data-theme="dark"] { --rain: #9CC3F0; --sun: #F0B66E; --fire: #F08F72; --sprout: #A9CF9F; }
+.c-info { --tone: var(--rain); --ink: var(--rain) !important; } .c-ok { --tone: var(--sprout); --ink: var(--sprout) !important; } .c-warn { --tone: var(--sun); --ink: var(--sun) !important; } .c-err { --tone: var(--fire); --ink: var(--fire) !important; }
+.call { background: color-mix(in srgb, var(--tone) 10%, var(--paper)) !important; border-color: color-mix(in srgb, var(--tone) 30%, transparent) !important; }
+.fld.bad input { border-color: var(--fire) !important; } .fld.bad small { color: var(--fire) !important; }
+.sems { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.sem { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 16px; border: 1px solid var(--rule); background: var(--paper); }
+.sem .dot { flex: none; width: 36px; height: 36px; border-radius: 12px; background: var(--c); transition: background .5s; }
+.sem div { display: grid; gap: 2px; }
+.sem b { font-weight: 600; color: var(--bark); }
+.sem code { font: 500 .8125rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--bark-soft); }
+.sem div > span { font-size: .8125rem; color: var(--bark-soft); }
+.s-rain { --c: var(--rain); } .s-sprout { --c: var(--sprout); } .s-sun { --c: var(--sun); } .s-fire { --c: var(--fire); }
+.scale-tabs { justify-items: center; }
+.scale-tabs .sc-note { text-align: center; justify-self: center; }
+.at > .seg2, .at > .sel { justify-self: start; width: fit-content; }
+.dm-pop { width: 220px; padding: 8px; }
+.dm-pop ul { margin: 0; display: grid; gap: 2px; }
+.dm-pop a { justify-content: space-between; gap: 12px; min-height: 46px; }
+.dm-pop a b { font-family: var(--font-display); font-weight: 400; font-size: 1.0625rem; color: var(--bark); }
+.dm-pop a span { font-size: .75rem; color: var(--bark-soft); }
+.dm-pop a.on b { color: var(--moss-ink); }
+.dm-btn svg { width: 20px; height: 20px; }
+/* journey thread draws itself */
+.thread.anim { cursor: pointer; outline: none; border-radius: 12px; }
+.thread.anim:focus-visible { outline: 3px solid var(--bark); outline-offset: 6px; }
+.thread.anim::after { height: 0; transition: height 1.4s cubic-bezier(.65, 0, .35, 1); }
+.thread.anim.in::after { height: calc(50% + 4px); }
+.thread.anim li::before { transition: background .3s, border-color .3s, box-shadow .4s; }
+.thread.anim.in li:nth-child(1)::before { border-color: var(--sage); background: var(--sage); transition-delay: .1s; }
+.thread.anim.in li:nth-child(2)::before { border-color: var(--sage); background: var(--sage); box-shadow: 0 0 0 5px color-mix(in srgb, var(--sage) 25%, transparent); transition-delay: .9s; }
+.thread.anim li { opacity: .55; transition: opacity .4s; }
+.thread.anim.in li:nth-child(1) { opacity: 1; transition-delay: .1s; } .thread.anim.in li:nth-child(2) { opacity: 1; transition-delay: .9s; } .thread.anim.in li:nth-child(3) { opacity: .75; transition-delay: 1.3s; }
+@media (prefers-reduced-motion: reduce) { .thread.anim::after, .thread.anim li, .thread.anim li::before { transition: none !important; } }

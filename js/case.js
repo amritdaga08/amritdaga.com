@@ -252,3 +252,13 @@
     new IntersectionObserver(function (es, o) { if (!es[0].isIntersecting) return; o.disconnect(); pg.style.width = '60%'; var t0 = performance.now(); (function f(t) { var k = Math.min(1, (t - t0) / 1400); n.textContent = Math.round(60 * (1 - Math.pow(1 - k, 3))) + '%'; if (k < 1) requestAnimationFrame(f); })(t0); }).observe(pg);
   }
 })();
+
+/* Naturalé: journey thread draws itself; tap to replay */
+(function () {
+  Array.prototype.forEach.call(document.querySelectorAll('.thread.anim'), function (t) {
+    function replay() { t.classList.remove('in'); void t.offsetWidth; setTimeout(function () { t.classList.add('in'); }, 60); }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { t.classList.add('in'); o.disconnect(); } }, { threshold: .6 }).observe(t); else t.classList.add('in');
+    t.addEventListener('click', replay);
+    t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); replay(); } });
+  });
+})();
