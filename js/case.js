@@ -203,3 +203,25 @@
   Array.prototype.forEach.call(document.querySelectorAll('.pager'), function (pg) { var d = pg.querySelectorAll('.ripples i'), s = pg.querySelector('.pg span'), i = 1, n = 6; function r() { s.textContent = (i + 1) + ' of ' + n; Array.prototype.forEach.call(d, function (x, k) { x.classList.toggle('on', k === Math.min(3, Math.round(i * 3 / (n - 1)))); }); } var b = pg.querySelectorAll('.pg button'); b[0].addEventListener('click', function () { i = Math.max(0, i - 1); r(); }); b[1].addEventListener('click', function () { i = Math.min(n - 1, i + 1); r(); }); r(); });
   Array.prototype.forEach.call(document.querySelectorAll('a[href="#nav-demo"]'), function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
 })();
+
+/* Naturalé v3: scale tabs, theme switch demo, quick nav spy */
+(function () {
+  var seg = document.querySelector('.sc-seg');
+  if (seg) {
+    var drop = seg.querySelector('.drop'), tabs = seg.querySelectorAll('[role="tab"]'), tt;
+    function place(b) { drop.classList.add('moving'); drop.style.left = b.offsetLeft + 'px'; drop.style.width = b.offsetWidth + 'px'; drop.style.opacity = '1'; clearTimeout(tt); tt = setTimeout(function () { drop.classList.remove('moving'); }, 450); }
+    function sel(b, focus) { Array.prototype.forEach.call(tabs, function (t) { var on = t === b; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; }); place(b); if (focus) b.focus(); }
+    Array.prototype.forEach.call(tabs, function (t, i) { t.addEventListener('click', function () { sel(t); }); t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); sel(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length], true); } }); });
+    var init = function () { place(seg.querySelector('[aria-selected="true"]')); }; init(); window.addEventListener('resize', init); if (document.fonts && document.fonts.ready) document.fonts.ready.then(init);
+  }
+  var real = document.getElementById('theme');
+  Array.prototype.forEach.call(document.querySelectorAll('.theme-demo'), function (d) {
+    function sync() { var dark = real ? real.getAttribute('data-mode') === 'dark' : false; d.setAttribute('data-mode', dark ? 'dark' : 'light'); d.querySelector('.d-light').setAttribute('aria-checked', !dark); d.querySelector('.d-dark').setAttribute('aria-checked', dark); }
+    d.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || !real) return; d.classList.add('moving'); setTimeout(function () { d.classList.remove('moving'); }, 600); (real.querySelector(b.classList.contains('d-dark') ? '.t-dark' : '.t-light')).click(); setTimeout(sync, 20); });
+    if (real) new MutationObserver(sync).observe(real, { attributes: true }); sync();
+  });
+  var qn = document.querySelector('.qnav'); if (!qn) return;
+  var links = qn.querySelectorAll('a'), targets = Array.prototype.map.call(links, function (a) { return document.querySelector(a.getAttribute('href')); }), tick = false;
+  function spy() { var y = innerHeight * .4, hit = -1; targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top < y) hit = i; }); Array.prototype.forEach.call(links, function (a, i) { a.classList.toggle('on', i === hit); if (i === hit) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); }
+  addEventListener('scroll', function () { if (tick) return; tick = true; requestAnimationFrame(function () { tick = false; spy(); }); }, { passive: true }); spy();
+})();
