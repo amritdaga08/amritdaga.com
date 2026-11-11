@@ -763,3 +763,5 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .board > * { min-width: 0; }
 @media (max-width: 360px) { .board { padding: 18px 14px; } .navdemo .glass { gap: 0; padding: 4px; } .navdemo .glass a { padding: 0 8px; font-size: .8125rem; } .navdemo .glass .mark { padding: 0 10px !important; } }
 @media (max-width: 560px) { .ds2 .app-icons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .ds2 .app-icons li { width: auto; font-size: .75rem; } .ds2 .app-icons .ic { width: min(56px, 100%); height: auto; aspect-ratio: 1; } .ds2 .app-icons .kbc-glyph { font-size: 1.3rem; } }
+.ds2 .honest { margin: 0; padding: 16px 18px; border-radius: 16px; background: color-mix(in srgb, var(--sage) 10%, var(--paper)); border: 1px solid color-mix(in srgb, var(--sage) 30%, transparent); color: var(--bark-soft); line-height: 1.55; max-width: 70ch; }
+.ds2 .honest b { color: var(--bark); font-weight: 600; }
