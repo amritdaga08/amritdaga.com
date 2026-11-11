@@ -324,23 +324,16 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 .sh-ttl { display: grid; gap: 6px; min-width: 0; }
 .sh-ttl h3 { margin: -4px 0 0; font-family: var(--font-display); font-weight: 400; font-size: var(--step-2); line-height: 1.1; color: var(--bark); }
 .sh-sub { margin: 0 0 8px; color: var(--bark-soft); line-height: 1.45; }
-.sh-info { margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 14px 0; border-block: 1px solid var(--rule); }
-.sh-info > div { display: grid; justify-items: center; align-content: start; gap: 6px; text-align: center; padding: 0 8px; min-width: 0; }
-.sh-info > div + div { border-left: 1px solid var(--rule); }
-.sh-info dt { font-size: .6875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--bark-soft); }
-.sh-info dd { margin: 0; height: 28px; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-size: 1.375rem; color: var(--bark); }
-.sh-info dd svg { width: 24px; height: 24px; color: var(--bark); }
-.sh-info > div > span { font-size: .8125rem; color: var(--bark-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-.sh-info .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--moss); } .sh-info .dot.wip { background: transparent; border: 1.5px solid var(--moss); }
-@media (max-width: 520px) { .sh-info { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 16px; } .sh-info > div:nth-child(3) { border-left: 0; } }
-.sh-sec { display: grid; gap: 10px; }
+.sh-sec { display: grid; gap: 10px; min-width: 0; }
+.sh-head + .sh-sec { padding-top: 24px; border-top: 1px solid var(--rule); }
+.sh-shots { display: grid; grid-auto-flow: column; grid-auto-columns: 200px; gap: 14px; min-width: 0; align-items: start; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 2px; padding: 2px 2px 10px; margin-inline: -2px; scrollbar-width: thin; }
+.sh-shots img { display: block; width: 100%; height: auto; aspect-ratio: 600 / 1299; scroll-snap-align: start; border-radius: 22px; border: 1px solid var(--rule); background: var(--linen); }
+.sh-shots:focus-visible { outline: 2px solid var(--moss); outline-offset: 4px; border-radius: 22px; }
+@media (max-width: 719px) { .sh-shots { grid-auto-columns: 58vw; margin-inline: calc(-1 * max(20px, env(safe-area-inset-left, 0px))); padding-inline: max(20px, env(safe-area-inset-left, 0px)); scroll-padding-inline: max(20px, env(safe-area-inset-left, 0px)); } }
 .sh-sec h4 { margin: 0; font: 600 1.0625rem/1.2 var(--font-body); color: var(--bark); }
 .sh-sec p { margin: 0; color: var(--bark-soft); line-height: 1.6; max-width: 62ch; }
 .sh-steps { margin: 0; padding-left: 1.3em; color: var(--bark-soft); line-height: 1.6; display: grid; gap: 4px; }
 .sh-steps li::marker { color: var(--moss); font-weight: 600; }
-.sh-prev .sheet-prev { border: 0; padding: 0; background: none; border-radius: 20px; box-shadow: none; overflow: hidden; }
-.sh-prev .sheet-prev .shot { aspect-ratio: 16 / 9; border-radius: 20px; margin: 0; width: 100%; }
-@media (max-width: 520px) { .sh-prev .sheet-prev .shot { aspect-ratio: 4 / 3; } }
 @media (max-width: 719px) {
   .sheet { place-items: end stretch; }
   .sh-panel { width: 100%; max-height: 92vh; border-radius: 28px 28px 0 0; padding: 22px max(20px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); gap: 24px; }
@@ -777,37 +770,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
             <button class="open-btn" type="button" data-play="kuchh-bhi-chalega" aria-label="Open Kuchh bhi chalega">Open</button>
           </li>
         </ul>
-      <template id="app-gainz" data-status="Live" data-cat="Fitness"><span class="t-cat"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/></svg></span><div class="card sheet-prev"><div class="shot" aria-hidden="true">
-              <div class="mock">
-                <div class="ttl">Upper A</div>
-                <div class="row"><span>Bench press</span><span class="kg"><span class="a">70 kg</span><span class="b">72.5 kg</span></span></div>
-                <div class="bar" style="--w:78%;--g:90%"><i></i></div>
-                <div class="row"><span>Lat pulldown</span><span class="kg"><span class="a">60 kg</span><span class="b">62.5 kg</span></span></div>
-                <div class="bar" style="--w:64%;--g:74%"><i></i></div>
-                <div class="row"><span>Shoulder press</span><span class="kg"><span class="a">22.5 kg</span><span class="b">25 kg</span></span></div>
-                <div class="bar" style="--w:48%;--g:58%"><i></i></div>
-              </div>
-            </div></div></template>
-      <template id="app-closet" data-status="Live" data-cat="Wardrobe"><span class="t-cat"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6a2 2 0 1 1 2 2v1.5L3.5 15.4A1.3 1.3 0 0 0 4.3 18h15.4a1.3 1.3 0 0 0 .8-2.6L12 9.5"/></svg></span><div class="card sheet-prev"><div class="shot" aria-hidden="true">
-              <div class="m-closet">
-                <div class="grid"><span class="pick" aria-hidden="true"></span><i style="background:#E8E2D6"></i><i style="background:#3B4A5C"></i><i style="background:#8DAE86"></i><i style="background:#2A2622"></i><i style="background:#C9B79C"></i><i style="background:#F7F5F0"></i></div>
-                <span class="dress">Dress me</span>
-              </div>
-            </div></div></template>
-      <template id="app-ghar-bahar" data-status="Live" data-cat="Habits"><span class="t-cat"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg></span><div class="card sheet-prev"><div class="shot" aria-hidden="true">
-              <div class="m-gb">
-                <div class="gb-row"><span>Brunch</span><span class="gb-seg s1"><i class="knob"></i><b>Ghar</b><b>Bahar</b></span></div>
-                <div class="gb-row"><span>Dinner</span><span class="gb-seg s2"><i class="knob"></i><b>Ghar</b><b>Bahar</b></span></div>
-                <div class="gb-cal"><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="o"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="o"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="o"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="o"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="h"></b></i><i><b class="h"></b><b class="o"></b></i><i><b class="o"></b><b class="o"></b></i><i><b class="h"></b><b class="h"></b></i></div>
-              </div>
-            </div></div></template>
-      <template id="app-kuchh-bhi-chalega" data-status="In progress" data-cat="Food"><span class="t-cat"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M8 7c0-1.5 1-2 1-3M12 7c0-1.5 1-2 1-3M16 7c0-1.5 1-2 1-3"/></svg></span><div class="card sheet-prev"><div class="shot" aria-hidden="true">
-              <div class="m-kb">
-                <span class="kb-tab">Dinner</span>
-                <div class="kb-win"><span>Paneer tikka</span><span>Rajma chawal</span><span>Dal khichdi</span></div>
-                <span class="kb-pull"><span lang="hi">कुछ</span> bhi chalega</span>
-              </div>
-            </div></div></template>
       </div>
 
       <div class="sub-head" id="concepts">
@@ -996,16 +958,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <span class="sh-ic ic"></span>
       <div class="sh-ttl"><h3 id="sh-name"></h3><p class="sh-sub"></p><button class="open-btn big" type="button" data-play="">Open</button></div>
     </header>
-    <dl class="sh-info">
-      <div><dt>Status</dt><dd class="sh-status"></dd><span>Prototype</span></div>
-      <div><dt>Category</dt><dd class="sh-cat"></dd><span class="sh-catn"></span></div>
-      <div><dt>Platform</dt><dd>Web</dd><span>Phone &amp; desktop</span></div>
-      <div><dt>Developer</dt><dd><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-3.6 3.8-5.4 7-5.4s5.8 1.8 7 5.4"/></svg></dd><span>Amrit Daga</span></div>
-    </dl>
-    <section class="sh-sec"><h4>Preview</h4><div class="sh-prev"></div></section>
     <section class="sh-sec"><h4>Why I built this</h4><p class="sh-why"></p></section>
     <section class="sh-sec"><h4>How it works</h4><p class="sh-how"></p></section>
     <section class="sh-sec"><h4>Try this</h4><ol class="sh-steps"></ol></section>
+    <section class="sh-sec"><h4>Preview</h4><div class="sh-shots" tabindex="0" aria-label="Screenshots"></div></section>
   </div>
 </div>
 <div class="player" id="player" hidden>
@@ -1454,20 +1410,17 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     var sheet = document.getElementById('sheet'), panel = sheet.querySelector('.sh-panel'), lastF = null, loop = null;
     function q(c) { return sheet.querySelector(c); }
     function openSheet(k) {
-      var row = home.querySelector('[data-sheet="' + k + '"]').closest('.lst-row'), t = document.getElementById('app-' + k), P = PLAY[k];
+      var row = home.querySelector('[data-sheet="' + k + '"]').closest('.lst-row'), P = PLAY[k];
       var ic = row.querySelector('.ic'); q('.sh-ic').className = 'sh-ic ' + ic.className; q('.sh-ic').innerHTML = ic.innerHTML;
       q('#sh-name').innerHTML = row.querySelector('.lst-name').innerHTML; q('.sh-sub').innerHTML = row.querySelector('.lst-sub').innerHTML;
       q('.sh-head .open-btn').setAttribute('data-play', k); q('.sh-head .open-btn').setAttribute('aria-label', 'Open ' + (P.title || ''));
-      q('.sh-status').innerHTML = '<i class="dot' + (t.dataset.status === 'Live' ? '' : ' wip') + '"></i>' + (t.dataset.status === 'Live' ? 'Live' : 'Beta');
-      q('.sh-status').nextElementSibling.textContent = t.dataset.status === 'Live' ? 'In daily use' : 'In progress';
-      var c = t.content.cloneNode(true); q('.sh-cat').innerHTML = ''; q('.sh-cat').appendChild(c.querySelector('.t-cat svg')); q('.sh-catn').textContent = t.dataset.cat;
-      q('.sh-prev').innerHTML = ''; q('.sh-prev').appendChild(c.querySelector('.sheet-prev'));
+      var nm = (P.title || '');
+      q('.sh-shots').innerHTML = [1, 2, 3].map(function (n) { return '<img src="img/shots/' + k + '-' + n + '.jpg" width="600" height="1299" alt="' + nm + ' screen ' + n + ' of 3" decoding="async">'; }).join('');
+      q('.sh-shots').scrollLeft = 0;
       q('.sh-why').textContent = P.why; q('.sh-how').textContent = P.how;
       q('.sh-steps').innerHTML = P.steps.map(function (x) { return '<li>' + x + '</li>'; }).join('');
       lastF = document.activeElement; sheet.hidden = false; sheet.classList.remove('out'); sheet.classList.add('in'); panel.scrollTop = 0;
       document.documentElement.style.overflow = 'hidden';
-      var pv = q('.sheet-prev'); clearInterval(loop);
-      if (!calm) { var on = false; setTimeout(function () { pv.classList.add('auto'); on = true; }, 500); loop = setInterval(function () { on = !on; pv.classList.toggle('auto', on); }, on ? 3000 : 3200); }
       setTimeout(function () { q('.sh-x').focus(); }, 40);
     }
     function closeSheet(instant) {
