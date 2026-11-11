@@ -177,3 +177,19 @@
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.6 });
   Array.prototype.forEach.call(bars, function (b) { io.observe(b); });
 })();
+
+/* Naturalé: line rotator demo */
+(function () {
+  var rot = document.getElementById('ds-rot'), rip = document.getElementById('ds-rip');
+  if (!rot || !rip || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  var P = [['design with', 'Figma'], ['scope with', 'Confluence'], ['document with', 'Notion'], ['code with', 'Visual Studio']], i = 0, line = rot.parentNode;
+  setInterval(function () {
+    if (document.hidden) return;
+    i = (i + 1) % P.length; line.classList.remove('in'); line.classList.add('out');
+    setTimeout(function () {
+      rot.innerHTML = P[i][0] + ' <span class="tool">' + P[i][1] + '</span>';
+      Array.prototype.forEach.call(rip.children, function (d, k) { d.classList.toggle('on', k === i); });
+      line.classList.remove('out'); void line.offsetWidth; line.classList.add('in');
+    }, 260);
+  }, 2800);
+})();
