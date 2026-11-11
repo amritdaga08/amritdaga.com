@@ -275,3 +275,4 @@
     t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); replay(); } });
   });
 })();
+(function () { var s = document.querySelector('.spc'); if (!s || !('IntersectionObserver' in window)) return; new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { s.classList.add('in'); o.disconnect(); } }, { threshold: .4 }).observe(s); })();

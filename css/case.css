@@ -1056,3 +1056,18 @@ section[id^="s-"] { scroll-margin-top: 90px; }
   100% { transform: translateY(0) scale(1, 1); }
 }
 .dm-btn { overflow: visible; }
+/* spacing tokens */
+:root { --sp-4: 4px; --sp-8: 8px; --sp-12: 12px; --sp-16: 16px; --sp-24: 24px; --sp-32: 32px; --sp-48: 48px; --sp-64: 64px; --sp-96: 96px; }
+.tbl-wrap + .sem-head { margin-top: var(--sp-48); }
+.sem-head + .sems { margin-top: var(--sp-16); }
+.spc { list-style: none; margin: 0; padding: 0; display: grid; border-radius: 20px; border: 1px solid var(--rule); background: var(--paper); overflow: hidden; }
+.spc li { display: grid; grid-template-columns: 112px 44px 92px minmax(0, 1fr); align-items: center; gap: var(--sp-12); padding: var(--sp-12) var(--sp-16); }
+.spc li + li { border-top: 1px solid var(--rule); }
+.spc .bar { height: 14px; width: var(--w); max-width: 100%; border-radius: 4px; background: color-mix(in srgb, var(--sage) 55%, transparent); transform-origin: left; }
+.spc code { font: 600 .8125rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--bark); }
+.spc b { font-weight: 600; color: var(--bark); font-size: .9375rem; }
+.spc li > span:last-child { font-size: .875rem; color: var(--bark-soft); }
+@media (max-width: 560px) { .spc li { grid-template-columns: 96px 1fr; row-gap: 2px; } .spc code { grid-column: 2; grid-row: 1; } .spc b { grid-column: 2; grid-row: 1; margin-left: 40px; } .spc li > span:last-child { grid-column: 1 / -1; } }
+.spc-note { margin: var(--sp-16) 0 0; text-align: center; }
+@media (prefers-reduced-motion: no-preference) { .spc.in .bar { animation: barIn .8s cubic-bezier(.2, .8, .2, 1) both; } .spc li:nth-child(2) .bar { animation-delay: .04s; } .spc li:nth-child(3) .bar { animation-delay: .08s; } .spc li:nth-child(4) .bar { animation-delay: .12s; } .spc li:nth-child(5) .bar { animation-delay: .16s; } .spc li:nth-child(6) .bar { animation-delay: .2s; } .spc li:nth-child(7) .bar { animation-delay: .24s; } .spc li:nth-child(8) .bar { animation-delay: .28s; } .spc li:nth-child(9) .bar { animation-delay: .32s; } @keyframes barIn { from { transform: scaleX(0); } } }
+@media (max-width: 560px) { .spc li { grid-template-columns: 96px 32px minmax(0, 1fr); row-gap: 2px; } .spc code, .spc b { grid-column: auto; grid-row: auto; margin: 0; } .spc li > span:last-child { grid-column: 2 / -1; } }
