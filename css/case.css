@@ -1087,3 +1087,5 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 :root { --sun: #9A4A0A; --fire: #B42318; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sun: #F5A65B; --fire: #F59A92; } }
 :root[data-theme="dark"] { --sun: #F5A65B; --fire: #F59A92; }
+.h-serif { font-family: var(--font-display); font-weight: 400; }
+.h-sans { font-family: var(--font-body); font-weight: 600; letter-spacing: -0.02em; }
