@@ -986,3 +986,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 section[id^="s-"] { scroll-margin-top: 90px; }
 .chap { scroll-margin-top: 90px; }
 @media (prefers-reduced-motion: reduce) { .dsmenu { transition: none; } .chip3 { transition: none; } }
+.sc-seg button { display: inline-flex; align-items: center; gap: 8px; }
+.sc-seg .tab-ic { width: 18px; height: 18px; flex: none; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.sc-seg button[aria-selected="true"] .tab-ic { transform: scale(1.08); }
