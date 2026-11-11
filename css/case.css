@@ -734,3 +734,32 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 @keyframes dsFade { 30% { opacity: 0; transform: translateY(-6px); } 31% { opacity: 0; transform: translateY(8px); background: var(--pond-sun, #E8C987); } 100% { opacity: 1; transform: none; background: var(--pond-sun, #E8C987); } }
 @keyframes dsLaunch { 70% { transform: scale(4); border-radius: 30%; opacity: 1; } 100% { transform: scale(4.6); border-radius: 30%; opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .motion .ball.fade, .motion .ball.launch, .rot-demo .rot { animation: none !important; transition: none; } }
+/* patterns: grouping, glass demo, notes, overflow guards */
+.ds2 { gap: 44px; }
+.ds2 .grp { display: grid; gap: 22px; min-width: 0; }
+.ds2 .grp + .grp { padding-top: 34px; border-top: 1px solid var(--rule); }
+.ds2 .grp-h { margin: 0; font-family: var(--font-display); font-size: var(--step-1); color: var(--bark); }
+.pair2 { display: grid; gap: 22px; align-items: center; min-width: 0; }
+.pair2 > * { min-width: 0; }
+@media (min-width: 820px) { .pair2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 36px; } }
+.ds2 .notes { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; color: var(--bark-soft); line-height: 1.5; }
+.ds2 .notes b { color: var(--bark); font-weight: 600; }
+.glass-demo { position: relative; overflow: hidden; isolation: isolate; height: 220px; border-radius: 22px; display: grid; place-items: center; background: linear-gradient(160deg, color-mix(in srgb, #E8C987 18%, var(--linen)), color-mix(in srgb, #7FB3AC 20%, var(--linen))); }
+.glass-demo .gd { position: absolute; z-index: -1; border-radius: 50%; aspect-ratio: 1; background: radial-gradient(closest-side, var(--c), transparent); }
+.glass-demo .b1 { --c: rgba(107, 155, 99, .75); width: 55%; left: -8%; top: -20%; }
+.glass-demo .b2 { --c: rgba(232, 201, 135, .9); width: 45%; right: 6%; top: 10%; }
+.glass-demo .b3 { --c: rgba(127, 179, 172, .8); width: 50%; left: 30%; bottom: -35%; }
+.gd-card { display: grid; gap: 4px; padding: 18px 26px; border-radius: 20px; text-align: center; background: linear-gradient(180deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .3)); border: 1px solid rgba(255, 255, 255, .8); box-shadow: inset 0 1px 0 #fff, 0 0 0 1px rgba(59, 47, 37, .06), 0 20px 44px -24px rgba(59, 47, 37, .4); -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%); }
+.gd-card b { font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; color: var(--bark); }
+.gd-card span { font-size: .8125rem; color: var(--bark-soft); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .gd-card { background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .04)); border-color: rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 20px 44px -24px rgba(0, 0, 0, .7); } :root:not([data-theme="light"]) .glass-demo .gd { opacity: .55; } }
+:root[data-theme="dark"] .gd-card { background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .04)); border-color: rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 20px 44px -24px rgba(0, 0, 0, .7); }
+:root[data-theme="dark"] .glass-demo .gd { opacity: .55; }
+.ds2 .app-icons { justify-content: center; }
+.rot-demo { min-width: 0; overflow: hidden; }
+.rot-demo .rot { max-width: 100%; }
+@media (max-width: 560px) { .rot-demo .rot { font-size: 1.125rem; } .wish-panel { padding: 20px 14px; gap: 10px; } .fest-wish { font-size: .9375rem; padding: 8px 16px; } }
+.ds-subhead h3 { gap: 10px; }
+.board > * { min-width: 0; }
+@media (max-width: 360px) { .board { padding: 18px 14px; } .navdemo .glass { gap: 0; padding: 4px; } .navdemo .glass a { padding: 0 8px; font-size: .8125rem; } .navdemo .glass .mark { padding: 0 10px !important; } }
+@media (max-width: 560px) { .ds2 .app-icons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .ds2 .app-icons li { width: auto; font-size: .75rem; } .ds2 .app-icons .ic { width: min(56px, 100%); height: auto; aspect-ratio: 1; } .ds2 .app-icons .kbc-glyph { font-size: 1.3rem; } }
