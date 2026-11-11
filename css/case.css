@@ -1045,3 +1045,14 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .dm-btn.landed .jumper svg { animation: land .35s cubic-bezier(.34, 1.56, .64, 1); }
 @keyframes land { 0% { transform: scale(1.15, .8); } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .dm-btn.jumping .jumper svg, .dm-btn.landed .jumper svg { animation: none; } }
+.dm-btn.jumping .jumper svg { animation: hop2 .78s cubic-bezier(.3, 0, .3, 1) infinite; }
+@keyframes hop2 {
+  0% { transform: translateY(0) scale(1, 1); }
+  22% { transform: translateY(2px) scale(1.28, .62); }
+  34% { transform: translateY(-4px) scale(.82, 1.25); }
+  55% { transform: translateY(-15px) scale(.95, 1.05) rotate(-6deg); }
+  72% { transform: translateY(-6px) scale(1, 1) rotate(4deg); }
+  86% { transform: translateY(1px) scale(1.2, .78); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+.dm-btn { overflow: visible; }
