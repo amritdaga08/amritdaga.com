@@ -680,22 +680,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 .card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .card p, .card h3 { -webkit-user-select: text; user-select: text; }
-/* signature logo */
-@font-face { font-family: 'Square Peg'; src: url(fonts/square-peg.woff2) format('woff2'); font-display: swap; }
-.glass .mark .full, .glass .mark .mono { font-family: 'Square Peg', var(--font-display), cursive; font-weight: 400; letter-spacing: 0; line-height: 1; padding-top: .14em; -webkit-text-stroke: .02em currentColor; paint-order: stroke fill; }
-.glass .mark .full { font-size: 1.5rem; }
-.glass .mark .mono { font-size: 1.3rem; }
-.glass .mark .full { display: inline-block; } .glass .mark .mono { display: none; }
-@media (max-width: 719px) { .glass .mark .full { display: none; } .glass .mark .mono { display: inline-block; } }
-
-@media (prefers-reduced-motion: no-preference) {
-  .glass .mark .full, .glass .mark .mono { clip-path: inset(-20% 100% -20% -10%); animation: sign 1.15s .25s cubic-bezier(.5, 0, .25, 1) forwards; }
-  @keyframes sign { to { clip-path: inset(-20% -10% -20% -10%); } }
-}
-.glass .mark .full { font-size: 1.375rem; padding-top: 0; position: relative; top: -.11em; }
-.glass .mark .mono { font-size: 1.2rem; padding-top: .14em; }
-@media (min-width: 720px) { .glass .mark { padding-inline: 22px !important; } }
-
 </style>
 
 <script>
