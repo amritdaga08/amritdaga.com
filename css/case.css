@@ -771,3 +771,55 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .grad .g.water { opacity: .9; } :root:not([data-theme="light"]) .grad .wcard { background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .04)); border-color: rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); } }
 :root[data-theme="dark"] .grad .wcard { background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .04)); border-color: rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
 .ds2 .honest { padding: 10px 14px; font-size: .9375rem; }
+/* ---------- Naturalé atoms ---------- */
+.atoms { display: grid; gap: 16px; }
+@media (min-width: 760px) { .atoms { grid-template-columns: repeat(2, minmax(0, 1fr)); } .atoms .wide { grid-column: 1 / -1; } }
+.at { min-width: 0; display: grid; gap: 14px; align-content: start; padding: clamp(18px, 3vw, 26px); border-radius: 22px; border: 1px solid var(--rule); background: var(--paper); }
+.at .lbl { margin: 0; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--bark-soft); }
+.at .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.at .col { display: grid; gap: 12px; }
+.at-note { margin: 0; font-size: var(--step--1); line-height: var(--lh--1); color: var(--bark-soft); }
+.at .btn { min-height: 48px; padding-block: 0; cursor: pointer; }
+.at .btn:focus-visible, .ck input:focus-visible + .box, .tg input:focus-visible + .trk, .fld input:focus-visible { outline: 3px solid var(--bark); outline-offset: 2px; }
+.at-text { background: none; color: var(--moss-ink); padding-inline: 8px; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.at-text:hover { color: var(--bark); }
+.at .btn:disabled { background: var(--linen); color: color-mix(in srgb, var(--bark-soft) 75%, var(--linen)); border-color: var(--rule); cursor: not-allowed; }
+/* checkbox + radio */
+.ck { position: relative; display: inline-flex; align-items: center; gap: 12px; min-height: 32px; cursor: pointer; }
+.ck input, .tg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.ck .box { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--bark-soft); background: var(--paper); color: var(--paper); transition: background .2s, border-color .2s; }
+.ck .box svg { width: 14px; height: 14px; transform: scale(0); transition: transform .35s cubic-bezier(.34, 1.56, .64, 1); }
+.ck input:checked + .box { background: var(--open-bg); border-color: var(--open-bg); color: var(--open-fg); }
+.ck input:checked + .box svg { transform: none; }
+.ck.rd .box { border-radius: 50%; }
+.ck.rd .box::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--open-fg); transform: scale(0); transition: transform .35s cubic-bezier(.34, 1.56, .64, 1); }
+.ck.rd input:checked + .box::after { transform: none; }
+/* toggle */
+.tg { position: relative; display: inline-flex; align-items: center; gap: 12px; min-height: 32px; cursor: pointer; }
+.tg .trk { flex: none; position: relative; width: 46px; height: 28px; border-radius: 999px; background: color-mix(in srgb, var(--bark-soft) 45%, var(--linen)); transition: background .25s; }
+.tg .trk i { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #FFFDF8; box-shadow: 0 2px 6px rgba(0, 0, 0, .25); transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.tg input:checked + .trk { background: var(--open-bg); }
+.tg input:checked + .trk i { transform: translateX(18px); }
+/* field */
+.fld { display: grid; gap: 6px; }
+.fld > span { font-size: .875rem; font-weight: 600; color: var(--bark); }
+.fld input { font: inherit; font-size: 1rem; color: var(--bark); min-height: 48px; padding: 0 14px; border-radius: 12px; border: 1.5px solid var(--bark-soft); background: var(--paper); }
+.fld input::placeholder { color: var(--bark-soft); opacity: 1; }
+.fld small { font-size: .8125rem; color: var(--bark-soft); }
+.fld.bad input { border-color: var(--danger); }
+.fld.bad small { color: var(--danger); font-weight: 600; }
+/* callouts */
+.calls { display: grid; gap: 10px; }
+@media (min-width: 760px) { .calls { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.call { margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; font-size: .9375rem; line-height: 1.45; color: var(--ink); background: color-mix(in srgb, var(--tone) 12%, var(--paper)); border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent); }
+.call svg { flex: none; width: 20px; height: 20px; margin-top: 1px; }
+.call b { font-weight: 600; }
+.c-info { --tone: #7FB3AC; --ink: #2F6A7A; } .c-ok { --tone: #6B9B63; --ink: #456B3F; } .c-warn { --tone: #E8A33D; --ink: #8A4A0B; } .c-err { --tone: #A8452C; --ink: #A8452C; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .c-info { --ink: #9FD3CB; } :root:not([data-theme="light"]) .c-ok { --ink: #A9CF9F; } :root:not([data-theme="light"]) .c-warn { --ink: #F0B66E; } :root:not([data-theme="light"]) .c-err { --tone: #C9603F; --ink: #F08F72; } :root:not([data-theme="light"]) .call { background: color-mix(in srgb, var(--tone) 16%, var(--paper)); } }
+:root[data-theme="dark"] .c-info { --ink: #9FD3CB; } :root[data-theme="dark"] .c-ok { --ink: #A9CF9F; } :root[data-theme="dark"] .c-warn { --ink: #F0B66E; } :root[data-theme="dark"] .c-err { --tone: #C9603F; --ink: #F08F72; } :root[data-theme="dark"] .call { background: color-mix(in srgb, var(--tone) 16%, var(--paper)); }
+@media (prefers-reduced-motion: reduce) { .ck .box svg, .ck.rd .box::after, .tg .trk i { transition: none; } }
+.at { grid-template-columns: minmax(0, 1fr); }
+.fld input { width: 100%; min-width: 0; box-sizing: border-box; }
+.ck, .tg { max-width: 100%; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fld.bad small { color: #F08F72; } :root:not([data-theme="light"]) .fld.bad input { border-color: #F08F72; } }
+:root[data-theme="dark"] .fld.bad small { color: #F08F72; } :root[data-theme="dark"] .fld.bad input { border-color: #F08F72; }
