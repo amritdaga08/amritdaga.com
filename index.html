@@ -642,10 +642,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   <section class="tools" aria-labelledby="tools-h">
     <div class="wrap">
       <p class="eyebrow" id="tools-h">Tools I use</p>
-      <p class="rot" aria-hidden="true">I <span class="rot-phrase" id="rot">design in <span style="color:var(--moss)">Figma</span></span></p>
+      <p class="rot" aria-hidden="true">I <span class="rot-phrase" id="rot">design with <span style="color:var(--moss)">Figma</span></span></p>
       <div class="ripples" id="ripples" role="group" aria-label="Tools"></div>
-      <p class="tools-static">I design in Figma, build with Claude, document in Notion, manage in JIRA, brainstorm in Make and wireframe in Balsamiq.</p>
-      <p class="sr-only">I design in Figma, build with Claude, document in Notion, manage in JIRA, brainstorm in Make and wireframe in Balsamiq.</p>
+      <p class="tools-static">I design with Figma, prioritise in JIRA &amp; Azure, spec in Confluence, brainstorm with Claude, document in Notion, map IA in FigJam, prototype with Make, follow Material &amp; HIG and code in Visual Studio.</p>
+      <p class="sr-only">I design with Figma, prioritise in JIRA &amp; Azure, spec in Confluence, brainstorm with Claude, document in Notion, map IA in FigJam, prototype with Make, follow Material &amp; HIG and code in Visual Studio.</p>
     </div>
   </section>
 
@@ -1390,7 +1390,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   var rot = document.getElementById('rot');
   var rip = document.getElementById('ripples');
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var phrases = [['design in', 'Figma'], ['build with', 'Claude'], ['document in', 'Notion'], ['manage in', 'JIRA'], ['brainstorm in', 'Make'], ['wireframe in', 'Balsamiq']];
+  var phrases = [['design with', 'Figma'], ['prioritise in', 'JIRA & Azure'], ['spec in', 'Confluence'], ['brainstorm with', 'Claude'], ['document in', 'Notion'], ['map IA in', 'FigJam'], ['prototype with', 'Make'], ['follow', 'Material & HIG'], ['code in', 'Visual Studio']];
   if (rot && !still) {
     var idx = 0;
     phrases.forEach(function (p, i) { var b = document.createElement('button'); b.type = 'button'; b.dataset.i = i; b.setAttribute('aria-label', p[1]); rip.appendChild(b); });
