@@ -227,12 +227,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @media (max-width: 860px) { .rot { font-size: var(--step-2); } }
 @media (max-width: 420px) { .rot { font-size: 1.3125rem; } }
 .rot-phrase { display: inline-block; vertical-align: bottom; text-align: left; white-space: pre; transition: width .6s cubic-bezier(.65, 0, .35, 1); }
-.ch { display: inline-block; white-space: pre; will-change: transform, filter, opacity; }
+.ch { display: inline-block; white-space: pre; }
 .ch.tool { color: var(--moss); }
-.ch.in { animation: chIn .8s cubic-bezier(.2, .8, .2, 1) both; }
-.ch.out { animation: chOut .42s cubic-bezier(.5, 0, .9, .4) both; }
-@keyframes chIn { from { opacity: 0; transform: translateY(.5em) scaleY(1.15); filter: blur(10px); } 60% { opacity: 1; } to { opacity: 1; transform: none; filter: blur(0); } }
-@keyframes chOut { to { opacity: 0; transform: translateY(-.4em); filter: blur(8px); } }
+.ch.in { animation: chIn .7s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes chIn { from { opacity: 0; transform: translateY(.5em) scaleY(1.15); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+.rot-out { display: inline-block; animation: phraseOut .34s cubic-bezier(.5, 0, .9, .4) both; }
+@keyframes phraseOut { to { opacity: 0; transform: translateY(-.4em); filter: blur(6px); } }
 .rot-measure { position: absolute; left: 0; top: 0; visibility: hidden; white-space: pre; pointer-events: none; }
 .tools { overflow-x: clip; }
 .tools .wrap { position: relative; }
@@ -1398,13 +1398,13 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     measure.className = 'rot-measure';
     rot.parentNode.appendChild(measure);
     function chars(p, animate) {
-      var frag = document.createDocumentFragment(), n = 0;
+      var frag = document.createDocumentFragment(), n = 0, step = Math.min(24, 420 / (p[0].length + p[1].length + 1));
       function add(text, cls) {
         for (var i = 0; i < text.length; i++) {
           var s = document.createElement('span');
           s.className = 'ch' + (cls ? ' ' + cls : '') + (animate ? ' in' : '');
           s.textContent = text[i];
-          if (animate) s.style.animationDelay = (n * 28) + 'ms';
+          if (animate) s.style.animationDelay = Math.round(n * step) + 'ms';
           frag.appendChild(s); n++;
         }
       }
@@ -1421,8 +1421,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     function go(target) {
       if (busy || target === idx) return;
       busy = true;
-      var old = rot.querySelectorAll('.ch');
-      Array.prototype.forEach.call(old, function (c, i) { c.classList.remove('in'); c.style.animationDelay = (i * 14) + 'ms'; c.classList.add('out'); });
+      var wrapOld = document.createElement('span'); wrapOld.className = 'rot-out';
+      while (rot.firstChild) wrapOld.appendChild(rot.firstChild);
+      Array.prototype.forEach.call(wrapOld.querySelectorAll('.ch'), function (c) { c.className = c.className.replace(' in', ''); c.style.animationDelay = ''; });
+      rot.appendChild(wrapOld);
       idx = target;
       dots();
       var next = phrases[idx];
@@ -1431,10 +1433,12 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         rot.style.width = widthOf(next) + 'px';
         rot.appendChild(chars(next, true));
         busy = false;
-      }, 380 + old.length * 6);
+      }, 340);
     }
-    function auto() { clearInterval(timer); timer = setInterval(function () { if (!document.hidden) go((idx + 1) % phrases.length); }, 3000); }
+    var inView = true;
+    function auto() { clearInterval(timer); timer = setInterval(function () { if (!document.hidden && inView) go((idx + 1) % phrases.length); }, 3000); }
     auto();
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { inView = es[0].isIntersecting; }).observe(rot);
     rip.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; go(+b.dataset.i); auto(); });
     rot.parentNode.addEventListener('click', function () { go((idx + 1) % phrases.length); auto(); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { rot.style.width = widthOf(phrases[idx]) + 'px'; });
