@@ -1081,3 +1081,6 @@ section[id^="s-"] { scroll-margin-top: 90px; }
   90% { transform: translateY(2px) scale(1.28, .7); animation-timing-function: cubic-bezier(.34, 1.56, .64, 1); }
   100% { transform: translateY(0) scale(1, 1); }
 }
+.spc li { grid-template-columns: 112px 40px minmax(0, 1fr); }
+.spc b { font: 600 .9375rem/1 var(--font-body); font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) { .spc li { grid-template-columns: 96px 32px minmax(0, 1fr); } .spc li > span:last-child { grid-column: auto; } }
