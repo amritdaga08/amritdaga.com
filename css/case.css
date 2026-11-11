@@ -1084,3 +1084,6 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .spc li { grid-template-columns: 112px 40px minmax(0, 1fr); }
 .spc b { font: 600 .9375rem/1 var(--font-body); font-variant-numeric: tabular-nums; }
 @media (max-width: 560px) { .spc li { grid-template-columns: 96px 32px minmax(0, 1fr); } .spc li > span:last-child { grid-column: auto; } }
+:root { --sun: #9A4A0A; --fire: #B42318; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sun: #F5A65B; --fire: #F59A92; } }
+:root[data-theme="dark"] { --sun: #F5A65B; --fire: #F59A92; }
