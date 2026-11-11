@@ -642,10 +642,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   <section class="tools" aria-labelledby="tools-h">
     <div class="wrap">
       <p class="eyebrow" id="tools-h">Tools I use</p>
-      <p class="rot" aria-hidden="true">I <span class="rot-phrase" id="rot">design with <span style="color:var(--moss)">Figma</span></span></p>
+      <p class="rot" aria-hidden="true">I <span class="rot-phrase" id="rot">prioritise with <span style="color:var(--moss)">JIRA &amp; Azure</span></span></p>
       <div class="ripples" id="ripples" role="group" aria-label="Tools"></div>
-      <p class="tools-static">I design with Figma, prioritise in JIRA &amp; Azure, spec in Confluence, brainstorm with Claude, document in Notion, map IA in FigJam, prototype with Make, follow Material &amp; HIG and code in Visual Studio.</p>
-      <p class="sr-only">I design with Figma, prioritise in JIRA &amp; Azure, spec in Confluence, brainstorm with Claude, document in Notion, map IA in FigJam, prototype with Make, follow Material &amp; HIG and code in Visual Studio.</p>
+      <p class="tools-static">I prioritise with JIRA &amp; Azure, scope with Confluence, ideate with Claude, document with Notion, map IA with FigJam, design with Figma &amp; Make, align with Material &amp; HIG and code with Visual Studio.</p>
+      <p class="sr-only">I prioritise with JIRA &amp; Azure, scope with Confluence, ideate with Claude, document with Notion, map IA with FigJam, design with Figma &amp; Make, align with Material &amp; HIG and code with Visual Studio.</p>
     </div>
   </section>
 
@@ -1390,7 +1390,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   var rot = document.getElementById('rot');
   var rip = document.getElementById('ripples');
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var phrases = [['design with', 'Figma'], ['prioritise in', 'JIRA & Azure'], ['spec in', 'Confluence'], ['brainstorm with', 'Claude'], ['document in', 'Notion'], ['map IA in', 'FigJam'], ['prototype with', 'Make'], ['follow', 'Material & HIG'], ['code in', 'Visual Studio']];
+  var phrases = [['prioritise with', 'JIRA & Azure'], ['scope with', 'Confluence'], ['ideate with', 'Claude'], ['document with', 'Notion'], ['map IA with', 'FigJam'], ['design with', 'Figma & Make'], ['align with', 'Material & HIG'], ['code with', 'Visual Studio']];
   if (rot && !still) {
     var idx = 0;
     phrases.forEach(function (p, i) { var b = document.createElement('button'); b.type = 'button'; b.dataset.i = i; b.setAttribute('aria-label', p[1]); rip.appendChild(b); });
