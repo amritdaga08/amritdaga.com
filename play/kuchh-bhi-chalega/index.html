@@ -87,11 +87,7 @@ textarea{resize:vertical;min-height:64px}
 @media (prefers-reduced-motion: reduce){.reel.spin{transition:none}.window.blur .reel div{filter:none}}
 /* ---------- polish ---------- */
 .wrap{padding-block:36px 120px;gap:32px}
-.hero{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;row-gap:6px;align-items:baseline}
-.mk{font-family:var(--display);color:var(--accent);font-size:1.15rem;line-height:1}
-.q{margin:0;font-size:1.15rem;font-weight:500;color:var(--muted)}
 h1{font-size:clamp(2.1rem,9.5vw,3.2rem);line-height:1.02}
-.mk.a{font-size:1.15rem}
 .machine{gap:16px;padding:16px}
 .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border:2px solid var(--fg);border-radius:999px;background:var(--bg)}
 .tab{border:0;border-radius:999px;padding:8px 4px;font-weight:600;font-size:.95rem}
@@ -132,6 +128,28 @@ html.sheet-open .fab{opacity:0;pointer-events:none}
 .sheet .actions .save{flex:1;padding:12px 18px;border-radius:12px}
 .sheet .actions .ghost{padding:12px 18px;border-radius:12px}
 .icon{background:transparent;border:1.5px solid var(--line);border-radius:999px;width:36px;height:36px}
+
+:root{--field:#FFFDF6;--edge:#7A4A35}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--field:#1C080D;--edge:#D3A98A} }
+:root[data-theme="dark"]{--field:#1C080D;--edge:#D3A98A}
+.sheet{display:flex;flex-direction:column;gap:14px}
+.sheet[hidden],.scrim[hidden]{display:none}
+.sheet label{margin:0}
+.sheet label[for]{margin-bottom:-8px}
+.sheet input,.sheet select,.sheet textarea{min-height:48px;font-size:1rem;color:var(--fg);background:var(--field);border:1.5px solid var(--edge)}
+.sheet input::placeholder,.sheet textarea::placeholder{color:var(--muted);opacity:1}
+.sheet input:focus,.sheet select:focus,.sheet textarea:focus{border-color:var(--fg);outline:3px solid var(--fg);outline-offset:1px;box-shadow:none}
+.sheet [aria-invalid="true"]{border-color:var(--accent);outline-color:var(--accent)}
+.sheet .macros{border:0;margin:0;padding:0;min-width:0}
+.sheet .macros legend{padding:0;margin-bottom:8px;font-size:.9rem;font-weight:600}
+.sheet .macros legend small{margin-left:6px;font-weight:400;font-size:.8rem;color:var(--muted)}
+.sheet label.num{font-weight:500}
+.sheet label.num small{margin-left:2px}
+.sheet .hint{margin:-6px 0 0;font-size:.85rem;color:var(--muted)}
+.sheet .err{padding:10px 12px;border-radius:10px;border:1.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.sheet .actions .save,.sheet .actions .ghost{min-height:48px}
+.sheet .del{color:var(--accent);border-color:var(--accent)}
+.icon{display:grid;place-items:center;color:var(--fg);border-color:var(--edge);width:44px;height:44px}
 @media (prefers-reduced-motion: no-preference){ .sheet:not([hidden]){animation:up .32s cubic-bezier(.2,.8,.2,1)} @keyframes up{from{transform:translateY(100%)}} }
 @media (prefers-reduced-motion: reduce){ .item,.list li.sw{transition:none} }
 
@@ -140,8 +158,7 @@ html.sheet-open .fab{opacity:0;pointer-events:none}
 <body>
 <div class="wrap">
   <header class="hero">
-    <span class="mk" aria-hidden="true">Q.</span><p class="q">Aaj kya khaana hai?</p>
-    <span class="mk a" aria-hidden="true">A.</span><h1>Kuchh bhi chalega.</h1>
+    <h1>Kuchh bhi chalega</h1>
   </header>
 
   <section class="machine" aria-label="Meal picker">
@@ -157,28 +174,29 @@ html.sheet-open .fab{opacity:0;pointer-events:none}
       <p class="status" id="status" hidden></p>
     </div>
     <span id="count" hidden></span>
-    <div class="scrim" id="scrim" hidden></div>
-    <form id="form" class="sheet" hidden>
-      <div class="sheet-head"><h3 id="f-title">Add a meal</h3><button class="icon" type="button" id="close" aria-label="Close">✕</button></div>
-      <label>Meal name <input id="f-name" required maxlength="80" autocomplete="off" placeholder="Rajma chawal"></label>
-      <label>Category <select id="f-cat"><option>Brunch</option><option>Dinner</option><option>Dessert</option></select></label>
-      <div class="grid">
-        <label>Calories <small>optional</small><input id="f-cal" type="number" min="0" inputmode="decimal" placeholder="kcal"></label>
-        <label>Protein <small>optional</small><input id="f-p" type="number" min="0" step="any" inputmode="decimal" placeholder="g"></label>
-        <label>Carbs <small>optional</small><input id="f-c" type="number" min="0" step="any" inputmode="decimal" placeholder="g"></label>
-        <label>Fat <small>optional</small><input id="f-f" type="number" min="0" step="any" inputmode="decimal" placeholder="g"></label>
-      </div>
-      <label>Ingredients <small>optional, separated by commas</small><textarea id="f-ing" placeholder="rajma, rice, onion, tomato"></textarea></label>
-      <p class="err" id="f-err" hidden></p>
-      <div class="actions">
-        <button class="save" type="submit">Save meal</button>
-        <button class="ghost" type="button" id="cancel">Cancel</button>
-        <button class="ghost del" type="button" id="del" hidden>Delete</button>
-      </div>
-    </form>
+
     <ul class="list" id="list"></ul>
   </section>
 </div>
+<div class="scrim" id="scrim" hidden></div>
+    <form id="form" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="f-title" novalidate>
+      <div class="sheet-head"><h3 id="f-title">Add a meal</h3><button class="icon" type="button" id="close" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <label for="f-name">Meal name</label><input id="f-name" required aria-required="true" aria-describedby="f-err" maxlength="80" autocomplete="off" autocapitalize="sentences" enterkeyhint="next" placeholder="e.g. Rajma chawal">
+      <label for="f-cat">Category</label><select id="f-cat"><option>Brunch</option><option>Dinner</option><option>Dessert</option></select>
+      <fieldset class="grid macros"><legend>Macros <small>optional</small></legend>
+        <label class="num">Calories <small>(kcal)</small><input id="f-cal" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"></label>
+        <label class="num">Protein <small>(g)</small><input id="f-p" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"></label>
+        <label class="num">Carbs <small>(g)</small><input id="f-c" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"></label>
+        <label class="num">Fat <small>(g)</small><input id="f-f" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"></label>
+      </fieldset>
+      <label for="f-ing">Ingredients <small>optional</small></label><textarea id="f-ing" aria-describedby="f-ing-hint" placeholder="rajma, rice, onion, tomato"></textarea><p class="hint" id="f-ing-hint">Separate with commas.</p>
+      <p class="err" id="f-err" role="alert" hidden></p>
+      <div class="actions">
+        <button class="save" type="submit">Save meal</button>
+        <button class="ghost" type="button" id="cancel">Cancel</button>
+        <button class="ghost del" type="button" id="del" hidden aria-live="polite">Delete</button>
+      </div>
+    </form>
 <button class="fab" id="addBtn" aria-label="Add a meal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add meal</span></button>
 
 <script>
@@ -348,14 +366,22 @@ function openForm(m){
   $('f-cat').value = m && CATS.includes(m.category) ? m.category : cat;
   $('del').hidden = !m; $('del').textContent = 'Delete'; $('f-err').hidden = true;
   $('f-title').textContent = m ? 'Edit meal' : 'Add a meal';
-  $('form').hidden = false; $('scrim').hidden = false; document.documentElement.classList.add('sheet-open'); setTimeout(() => $('f-name').focus(), 60);
+  $('f-name').removeAttribute('aria-invalid'); ['f-cal','f-p','f-c','f-f'].forEach(k => $(k).removeAttribute('aria-invalid'));
+  opener = document.activeElement;
+  $('form').hidden = false; $('scrim').hidden = false; document.documentElement.classList.add('sheet-open');
+  document.querySelectorAll('.wrap, .fab').forEach(el => { el.inert = true; });
+  setTimeout(() => $('f-name').focus(), 60);
 }
 function fail(e){ $('f-err').textContent = e && e.code === 'invalid_argument' ? "You can view this menu but can't change it." : "Couldn't save. Try again."; $('f-err').hidden = false; }
 
 $('form').addEventListener('submit', async e => {
   e.preventDefault();
-  const name = $('f-name').value.trim(); if (!name) return;
-  const data = { name, category: $('f-cat').value, calories: num($('f-cal').value), protein: num($('f-p').value), carbs: num($('f-c').value), fat: num($('f-f').value),
+  const name = $('f-name').value.trim();
+  const NUMS = ['f-cal','f-p','f-c','f-f']; NUMS.forEach(k => $(k).removeAttribute('aria-invalid'));
+  if (!name){ $('f-name').setAttribute('aria-invalid', 'true'); $('f-err').textContent = 'Give the meal a name.'; $('f-err').hidden = false; $('f-name').focus(); return; }
+  const bad = NUMS.filter(k => $(k).value.trim() !== '' && isNaN(+$(k).value.trim().replace(',', '.')));
+  if (bad.length){ bad.forEach(k => $(k).setAttribute('aria-invalid', 'true')); $('f-err').textContent = 'Macros need to be numbers, like 12 or 12.5.'; $('f-err').hidden = false; $(bad[0]).focus(); return; }
+  const data = { name, category: $('f-cat').value, calories: num($('f-cal').value.trim().replace(',', '.')), protein: num($('f-p').value.trim().replace(',', '.')), carbs: num($('f-c').value.trim().replace(',', '.')), fat: num($('f-f').value.trim().replace(',', '.')),
     ingredients: [...new Set($('f-ing').value.split(/[,\n]/).map(s => s.trim()).filter(Boolean))] };
   try{
     if (db){
@@ -375,7 +401,10 @@ $('del').addEventListener('click', async () => {
     closeSheet();
   }catch(err){ fail(err); }
 });
-function closeSheet(){ $('form').hidden = true; $('scrim').hidden = true; document.documentElement.classList.remove('sheet-open'); }
+let opener = null;
+function closeSheet(){ if ($('form').hidden) return; $('form').hidden = true; $('scrim').hidden = true; document.documentElement.classList.remove('sheet-open'); document.querySelectorAll('.wrap, .fab').forEach(el => { el.inert = false; }); if (opener && document.contains(opener) && opener.offsetParent) opener.focus(); else $('addBtn').focus(); }
+$('form').addEventListener('keydown', e => { if (e.key !== 'Tab') return; const f = [...$('form').querySelectorAll('button, input, select, textarea')].filter(x => !x.hidden && x.offsetParent !== null); const a = f[0], z = f[f.length - 1]; if (e.shiftKey && document.activeElement === a){ e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z){ e.preventDefault(); a.focus(); } });
+$('f-name').addEventListener('input', () => { $('f-name').removeAttribute('aria-invalid'); $('f-err').hidden = true; });
 $('cancel').addEventListener('click', closeSheet);
 $('close').addEventListener('click', closeSheet);
 $('scrim').addEventListener('click', closeSheet);

@@ -326,7 +326,7 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 .sh-sec { display: grid; gap: 10px; min-width: 0; }
 .sh-head + .sh-sec { padding-top: 24px; border-top: 1px solid var(--rule); }
 .sh-shots { display: grid; grid-auto-flow: column; grid-auto-columns: 200px; gap: 14px; min-width: 0; align-items: start; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 2px; padding: 2px 2px 10px; margin-inline: -2px; scrollbar-width: thin; }
-.sh-shots img { display: block; width: 100%; height: auto; aspect-ratio: 600 / 1298; object-fit: contain; scroll-snap-align: start; border-radius: 22px; border: 1px solid var(--rule); background: var(--linen); }
+.sh-shots img { display: block; width: 100%; height: auto; aspect-ratio: 600 / 965; object-fit: contain; scroll-snap-align: start; border-radius: 22px; border: 1px solid var(--rule); background: var(--linen); }
 .sh-shots:focus-visible { outline: 2px solid var(--moss); outline-offset: 4px; border-radius: 22px; }
 @media (max-width: 719px) { .sh-shots { grid-auto-columns: 58vw; margin-inline: calc(-1 * max(20px, env(safe-area-inset-left, 0px))); padding-inline: max(20px, env(safe-area-inset-left, 0px)); scroll-padding-inline: max(20px, env(safe-area-inset-left, 0px)); } }
 .sh-sec h4 { margin: 0; font: 600 1.0625rem/1.2 var(--font-body); color: var(--bark); }
@@ -1416,7 +1416,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       q('#sh-name').innerHTML = row.querySelector('.lst-name').innerHTML; q('.sh-sub').innerHTML = row.querySelector('.lst-sub').innerHTML;
       q('.sh-head .open-btn').setAttribute('data-play', k); q('.sh-head .open-btn').setAttribute('aria-label', 'Open ' + (P.title || ''));
       var nm = (P.title || '');
-      q('.sh-shots').innerHTML = [1, 2, 3].map(function (n) { return '<img src="img/shots/' + k + '-' + n + '.jpg" width="600" height="1298" alt="' + nm + ' screen ' + n + ' of 3" decoding="async">'; }).join('');
+      var cnt = { 'gainz': 3, 'closet': 3, 'ghar-bahar': 2, 'kuchh-bhi-chalega': 3 }[k] || 3, ns = []; for (var n = 1; n <= cnt; n++) ns.push(n);
+      q('.sh-shots').innerHTML = ns.map(function (n) { return '<img src="img/shots/' + k + '-' + n + '.jpg?v=2" width="600" height="965" alt="' + nm + ' screen ' + n + ' of ' + cnt + '" decoding="async">'; }).join('');
       q('.sh-shots').scrollLeft = 0;
       q('.sh-why').textContent = P.why; q('.sh-how').textContent = P.how;
       q('.sh-steps').innerHTML = P.steps.map(function (x) { return '<li>' + x + '</li>'; }).join('');
