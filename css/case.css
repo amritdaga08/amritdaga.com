@@ -1036,3 +1036,12 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .thread.anim li { opacity: .55; transition: opacity .4s; }
 .thread.anim.in li:nth-child(1) { opacity: 1; transition-delay: .1s; } .thread.anim.in li:nth-child(2) { opacity: 1; transition-delay: .9s; } .thread.anim.in li:nth-child(3) { opacity: .75; transition-delay: 1.3s; }
 @media (prefers-reduced-motion: reduce) { .thread.anim::after, .thread.anim li, .thread.anim li::before { transition: none !important; } }
+/* jump to */
+.dsmenu { bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+.dm-btn .jumper { display: grid; place-items: center; width: 20px; height: 20px; }
+.dm-btn .jumper svg { width: 20px; height: 20px; transform-origin: 50% 100%; }
+.dm-btn.jumping .jumper svg { animation: hop .52s cubic-bezier(.3, 0, .4, 1) infinite; }
+@keyframes hop { 0% { transform: translateY(0) scale(1.08, .88); } 25% { transform: translateY(-6px) scale(.94, 1.08); } 50% { transform: translateY(-8px) scale(1); } 75% { transform: translateY(-3px) scale(.98, 1.04); } 100% { transform: translateY(0) scale(1.08, .88); } }
+.dm-btn.landed .jumper svg { animation: land .35s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes land { 0% { transform: scale(1.15, .8); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .dm-btn.jumping .jumper svg, .dm-btn.landed .jumper svg { animation: none; } }

@@ -234,7 +234,20 @@
   var first = document.querySelector('#roots'), endEl = document.querySelector('.next') || document.querySelector('footer');
   function open(v) { pop.hidden = !v; btn.setAttribute('aria-expanded', v); if (v) { var on = pop.querySelector('a.on') || links[0]; on.focus({ preventScroll: true }); } }
   btn.addEventListener('click', function () { open(pop.hidden); });
-  pop.addEventListener('click', function (e) { if (e.target.closest('a')) { open(false); } });
+  var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  pop.addEventListener('click', function (e) {
+    var a = e.target.closest('a'); if (!a) return;
+    e.preventDefault(); open(false);
+    var t = document.querySelector(a.getAttribute('href')); if (!t) return;
+    var y = t.getBoundingClientRect().top + scrollY - 90;
+    if (calm) { scrollTo(0, y); return; }
+    btn.classList.remove('landed'); btn.classList.add('jumping');
+    scrollTo({ top: y, behavior: 'smooth' });
+    var last = -1, still = 0, t0 = performance.now();
+    (function watch() { var cy = scrollY; if (Math.abs(cy - last) < 1) still++; else still = 0; last = cy;
+      if (still > 6 || performance.now() - t0 > 3000) { btn.classList.remove('jumping'); void btn.offsetWidth; btn.classList.add('landed'); setTimeout(function () { btn.classList.remove('landed'); }, 400); history.replaceState(null, '', a.getAttribute('href')); return; }
+      requestAnimationFrame(watch); })();
+  });
   document.addEventListener('click', function (e) { if (!m.contains(e.target) && !pop.hidden) open(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) { open(false); btn.focus(); } });
   var tick = false;
