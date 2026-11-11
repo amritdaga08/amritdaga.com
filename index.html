@@ -228,14 +228,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .rot { margin: 0; font-family: var(--font-display); font-size: var(--step-3); line-height: 1.2; color: var(--bark); white-space: nowrap; max-width: 100%; }
 @media (max-width: 860px) { .rot { font-size: var(--step-2); } }
 @media (max-width: 420px) { .rot { font-size: 1.3125rem; } }
-.rot-phrase { display: inline-block; vertical-align: bottom; text-align: left; white-space: pre; transition: width .5s cubic-bezier(.65, 0, .35, 1); }
-.ch { display: inline-block; white-space: pre; }
-.ch.tool { color: var(--moss); }
-.ch.in { animation: chIn .7s cubic-bezier(.2, .8, .2, 1) both; }
-@keyframes chIn { from { opacity: 0; transform: translateY(.5em) scaleY(1.15); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
-.rot-out { display: inline-block; white-space: pre; animation: phraseOut .34s cubic-bezier(.5, 0, .9, .4) both; }
-@keyframes phraseOut { to { opacity: 0; transform: translateY(-.4em); filter: blur(6px); } }
-.rot-measure { position: absolute; left: 0; top: 0; visibility: hidden; white-space: pre; pointer-events: none; }
+.rot-phrase { white-space: pre; }
+.rot { transition: opacity .26s ease, transform .26s ease; }
+.rot-phrase .tool { color: var(--moss); }
+.rot.out { opacity: 0; transform: translateY(-.25em); }
+.rot.in { animation: rotIn .45s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes rotIn { from { opacity: 0; transform: translateY(.3em); } to { opacity: 1; transform: none; } }
 .tools { overflow-x: clip; }
 .tools .wrap { position: relative; }
 .ripples { display: flex; gap: 6px; align-items: center; }
@@ -530,6 +528,12 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 .card p { color: var(--bark-soft); }
 .kicker { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .card .chips { margin-bottom: 4px; }
+.concepts-panel .chips { gap: 0; row-gap: 4px; }
+.concepts-panel .chip { gap: 0; padding: 0; border: 0; background: none; border-radius: 0; font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--moss-ink); }
+.concepts-panel .chip.neutral, .concepts-panel .chip { color: var(--moss-ink); background: none; border: 0; }
+.concepts-panel .chip::before { display: none; }
+.concepts-panel .chip + .chip::before { content: "·"; display: inline; width: auto; height: auto; margin: 0 6px; border: 0; background: none; border-radius: 0; animation: none; box-shadow: none; }
+.concepts-panel .chip .ci { display: none; }
 .todo { font-size: var(--step--1); line-height: var(--lh--1); color: var(--bark-soft); border: 1px dashed var(--sage); border-radius: 8px; padding: 8px 10px; }
 .mock-ph { font-family: var(--font-display); font-size: var(--step-2); line-height: var(--lh-2); color: var(--bark-soft); opacity: .6; text-align: center; }
 
@@ -1457,49 +1461,18 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var phrases = [['prioritise with', 'JIRA & Azure'], ['scope with', 'Confluence'], ['ideate with', 'Claude'], ['document with', 'Notion'], ['map IA with', 'FigJam'], ['design with', 'Figma & Make'], ['align with', 'Material & HIG'], ['code with', 'Visual Studio']];
   if (rot && !still) {
-    var idx = 0;
+    var idx = 0, timer, busy = false;
     phrases.forEach(function (p, i) { var b = document.createElement('button'); b.type = 'button'; b.dataset.i = i; b.setAttribute('aria-label', p[1]); rip.appendChild(b); });
-    var measure = document.createElement('span');
-    measure.className = 'rot-measure';
-    rot.parentNode.appendChild(measure);
-    function chars(p, animate) {
-      var frag = document.createDocumentFragment(), n = 0, step = Math.min(24, 420 / (p[0].length + p[1].length + 1));
-      function add(text, cls) {
-        for (var i = 0; i < text.length; i++) {
-          var s = document.createElement('span');
-          s.className = 'ch' + (cls ? ' ' + cls : '') + (animate ? ' in' : '');
-          s.textContent = text[i];
-          if (animate) s.style.animationDelay = Math.round(n * step) + 'ms';
-          frag.appendChild(s); n++;
-        }
-      }
-      add(p[0], ''); add(' ', ''); add(p[1], 'tool');
-      return frag;
-    }
-    var widths = {};
-    function widthOf(p) { var k = p[0] + ' ' + p[1]; if (widths[k]) return widths[k]; measure.textContent = ''; measure.appendChild(chars(p, false)); return (widths[k] = Math.ceil(measure.getBoundingClientRect().width)); }
+    function esc(t) { return t.replace(/&/g, '&amp;'); }
+    function paint(p) { rot.innerHTML = esc(p[0]) + ' <span class="tool">' + esc(p[1]) + '</span>'; }
     function dots() { Array.prototype.forEach.call(rip.children, function (d, i) { d.classList.toggle('on', i === idx); if (i === idx) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); }); }
-    rot.textContent = '';
-    rot.appendChild(chars(phrases[0], false));
-    rot.style.width = widthOf(phrases[0]) + 'px';
-    dots();
-    var timer, busy = false;
+    paint(phrases[0]); dots();
+    /* simple swap: fade the line out, change the words while invisible, fade back in */
     function go(target) {
       if (busy || target === idx) return;
-      busy = true;
-      var wrapOld = document.createElement('span'); wrapOld.className = 'rot-out';
-      while (rot.firstChild) wrapOld.appendChild(rot.firstChild);
-      Array.prototype.forEach.call(wrapOld.querySelectorAll('.ch'), function (c) { c.className = c.className.replace(' in', ''); c.style.animationDelay = ''; });
-      rot.appendChild(wrapOld);
-      idx = target;
-      dots();
-      var next = phrases[idx];
-      rot.style.width = widthOf(next) + 'px';
-      setTimeout(function () {
-        rot.textContent = '';
-        rot.appendChild(chars(next, true));
-        busy = false;
-      }, 340);
+      busy = true; idx = target; dots();
+      var line = rot.parentNode; line.classList.remove('in'); line.classList.add('out');
+      setTimeout(function () { paint(phrases[idx]); line.classList.remove('out'); void line.offsetWidth; line.classList.add('in'); busy = false; }, 260);
     }
     var inView = true;
     function auto() { clearInterval(timer); timer = setInterval(function () { if (!document.hidden && inView) go((idx + 1) % phrases.length); }, 3000); }
@@ -1507,7 +1480,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { inView = es[0].isIntersecting; }).observe(rot);
     rip.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; go(+b.dataset.i); auto(); });
     rot.parentNode.addEventListener('click', function () { go((idx + 1) % phrases.length); auto(); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { widths = {}; rot.style.width = widthOf(phrases[idx]) + 'px'; });
   }
 
   var btn = document.getElementById('copy-email');
