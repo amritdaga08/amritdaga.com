@@ -248,10 +248,16 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* project tabs */
 .tabbar { display: grid; justify-items: center; text-align: center; gap: 18px; margin-bottom: clamp(36px, 5vw, 56px); }
 .seg2 { position: relative; display: inline-flex; padding: 5px; border-radius: 999px; background: var(--paper); border: 1px solid var(--rule); }
-.seg2 button { position: relative; z-index: 1; font: 500 var(--step--1)/1 var(--font-body); color: var(--bark); background: transparent; border: 0; border-radius: 999px; padding: 11px 18px; cursor: pointer; transition: color .3s; }
+.seg2 button { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; font: 500 1.0625rem/1 var(--font-body); color: var(--bark); background: transparent; border: 0; border-radius: 999px; padding: 0 28px; cursor: pointer; transition: color .3s; }
 .seg2 button:hover { color: var(--moss); }
 .seg2 button[aria-selected="true"] { color: var(--moss); }
-.seg2 button i { font-style: normal; font-variant-numeric: tabular-nums; opacity: .7; margin-left: 4px; }
+.seg2 button i { font-style: normal; font-variant-numeric: tabular-nums; font-size: .8125rem; font-weight: 600; min-width: 24px; height: 24px; padding: 0 7px; display: inline-grid; place-items: center; border-radius: 999px; background: var(--linen); color: var(--bark-soft); transition: background .3s, color .3s; }
+.seg2 button[aria-selected="true"] i { background: var(--moss); color: var(--paper); }
+@media (max-width: 520px) { .seg2 { display: flex; width: 100%; max-width: 420px; } .seg2 button { flex: 1; padding: 0 12px; } }
+.next-tab { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: clamp(20px, 3vw, 28px); min-height: 64px; padding: 0 24px; border-radius: 22px; border: 1px dashed color-mix(in srgb, var(--sage) 55%, var(--rule)); background: transparent; color: var(--moss); font: 500 1.0625rem/1 var(--font-body); cursor: pointer; transition: background .25s, border-color .25s; }
+.next-tab:hover { background: color-mix(in srgb, var(--sage) 10%, transparent); border-style: solid; }
+.next-tab svg { transition: transform .3s cubic-bezier(.34, 1.56, .64, 1); }
+.next-tab:hover svg { transform: translateX(4px); }
 .notes { display: grid; }
 .panel-note { grid-area: 1 / 1; color: var(--bark-soft); max-width: 60ch; text-wrap: balance; transition: opacity .35s, transform .45s cubic-bezier(.2, .8, .2, 1); }
 .panel-note.off { opacity: 0; transform: translateY(6px); visibility: hidden; }
@@ -661,8 +667,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div class="tabbar">
         <div class="seg2" role="tablist" aria-label="Project type">
           <span class="drop" aria-hidden="true"></span>
-          <button role="tab" id="t-proto" aria-controls="prototypes" aria-selected="true">Prototypes</button>
-          <button role="tab" id="t-conc" aria-controls="concepts" aria-selected="false" tabindex="-1">Concepts</button>
+          <button role="tab" id="t-proto" aria-controls="prototypes" aria-selected="true">Prototypes<i>4</i></button>
+          <button role="tab" id="t-conc" aria-controls="concepts" aria-selected="false" tabindex="-1">Concepts<i>6</i></button>
         </div>
         <div class="notes">
           <p class="panel-note" data-for="prototypes">Designed and built end to end. Real products I use every day.</p>
@@ -736,6 +742,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
             </div>
           </article>
         </div>
+        <button class="next-tab" type="button" data-to="t-conc">See 6 concepts<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       </div>
 
       <div id="concepts" role="tabpanel" aria-labelledby="t-conc" hidden>
@@ -804,6 +811,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
             </div>
           </article>
         </div>
+        <button class="next-tab" type="button" data-to="t-proto">See 4 prototypes<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       </div>
     </div>
   </section>
@@ -1360,6 +1368,13 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     placeTab(t);
     if (focus) t.focus();
   }
+  Array.prototype.forEach.call(document.querySelectorAll('.next-tab'), function (b) {
+    b.addEventListener('click', function () {
+      var t = document.getElementById(b.dataset.to); selectTab(t);
+      var y = tl.getBoundingClientRect().top + window.scrollY - 96;
+      window.scrollTo({ top: y, behavior: still ? 'auto' : 'smooth' });
+    });
+  });
   tbs.forEach(function (t, i) {
     t.addEventListener('click', function () { selectTab(t); });
     t.addEventListener('keydown', function (e) {
