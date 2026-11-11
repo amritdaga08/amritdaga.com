@@ -193,3 +193,13 @@
     }, 260);
   }, 2800);
 })();
+
+/* Naturalé: slider fill, tooltip on tap, tab bar */
+(function () {
+  var sl = document.getElementById('ds-sl'), o = document.getElementById('ds-sl-o');
+  if (sl) { var f = function () { var p = (sl.value - sl.min) / (sl.max - sl.min) * 100; sl.style.setProperty('--v', p + '%'); if (o) o.textContent = (+sl.value).toFixed(1) + 's'; }; sl.addEventListener('input', f); f(); }
+  Array.prototype.forEach.call(document.querySelectorAll('.tip-btn'), function (b) { b.addEventListener('click', function () { b.parentNode.classList.toggle('show'); }); b.addEventListener('blur', function () { b.parentNode.classList.remove('show'); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('.tabbar-demo'), function (bar) { bar.addEventListener('click', function (e) { var t = e.target.closest('button'); if (!t) return; Array.prototype.forEach.call(bar.children, function (x) { x.classList.toggle('on', x === t); x.setAttribute('aria-pressed', x === t); }); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('.pager'), function (pg) { var d = pg.querySelectorAll('.ripples i'), s = pg.querySelector('.pg span'), i = 1, n = 6; function r() { s.textContent = (i + 1) + ' of ' + n; Array.prototype.forEach.call(d, function (x, k) { x.classList.toggle('on', k === Math.min(3, Math.round(i * 3 / (n - 1)))); }); } var b = pg.querySelectorAll('.pg button'); b[0].addEventListener('click', function () { i = Math.max(0, i - 1); r(); }); b[1].addEventListener('click', function () { i = Math.min(n - 1, i + 1); r(); }); r(); });
+  Array.prototype.forEach.call(document.querySelectorAll('a[href="#nav-demo"]'), function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
+})();
