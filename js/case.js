@@ -241,12 +241,13 @@
     var t = document.querySelector(a.getAttribute('href')); if (!t) return;
     var y = t.getBoundingClientRect().top + scrollY - 90;
     if (calm) { scrollTo(0, y); return; }
-    btn.classList.remove('landed'); btn.classList.add('jumping');
-    scrollTo({ top: y, behavior: 'smooth' });
-    var last = -1, still = 0, t0 = performance.now();
-    (function watch() { var cy = scrollY; if (Math.abs(cy - last) < 1) still++; else still = 0; last = cy;
-      if (still > 6 || performance.now() - t0 > 3000) { btn.classList.remove('jumping'); void btn.offsetWidth; btn.classList.add('landed'); setTimeout(function () { btn.classList.remove('landed'); }, 400); history.replaceState(null, '', a.getAttribute('href')); return; }
-      requestAnimationFrame(watch); })();
+    var from = scrollY, dist = y - from, dur = Math.round(Math.min(1400, Math.max(700, Math.abs(dist) * .35)));
+    btn.style.setProperty('--jd', dur + 'ms'); btn.classList.remove('jumping', 'landed'); void btn.offsetWidth; btn.classList.add('jumping');
+    var html = document.documentElement, prev = html.style.scrollBehavior; html.style.scrollBehavior = 'auto';
+    var t0 = performance.now(), ease = function (k) { return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
+    (function step(t) { var k = Math.min(1, (t - t0) / dur); scrollTo(0, from + dist * ease(k));
+      if (k < 1) { requestAnimationFrame(step); return; }
+      html.style.scrollBehavior = prev; btn.classList.remove('jumping'); history.replaceState(null, '', a.getAttribute('href')); })(t0);
   });
   document.addEventListener('click', function (e) { if (!m.contains(e.target) && !pop.hidden) open(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) { open(false); btn.focus(); } });
