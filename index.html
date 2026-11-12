@@ -1498,6 +1498,65 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   });
 })();
 </script>
+<script>
+/* Shape centred text: longest line on top, each line below a little shorter.
+   Only touches centred, block-level text of 2–5 lines. Falls back to text-wrap: balance. */
+(function () {
+  var SEL = 'h1,h2,h3,h4,p,blockquote,figcaption';
+  var lastW = 0, timer;
+  function lines(el) {
+    var r = document.createRange(); r.selectNodeContents(el);
+    var rows = [];
+    Array.prototype.forEach.call(r.getClientRects(), function (q) {
+      if (q.width < 1) return;
+      var row = rows.find(function (x) { return Math.abs(x.mid - (q.top + q.bottom) / 2) < q.height / 2; });
+      if (row) { row.l = Math.min(row.l, q.left); row.r = Math.max(row.r, q.right); }
+      else rows.push({ mid: (q.top + q.bottom) / 2, l: q.left, r: q.right });
+    });
+    rows.sort(function (a, b) { return a.mid - b.mid; });
+    return rows.map(function (x) { return x.r - x.l; });
+  }
+  function eligible(el) {
+    if (el.closest('button,li,[hidden],.no-shape') || el.querySelector('br,img,svg,button')) return false;
+    var cs = getComputedStyle(el);
+    for (var c = el.firstElementChild; c; c = c.nextElementSibling) if (getComputedStyle(c).display !== 'inline') return false;
+    return cs.textAlign === 'center' && cs.display === 'block' && el.offsetWidth > 0 && el.textContent.trim().length > 12;
+  }
+  function reset(el) { el.style.paddingLeft = el.style.paddingRight = el.style.textWrap = ''; }
+  // How far a lower line pokes out past the line above, as a share of the top line (0 = perfect shape).
+  function bulge(w) { var s = 0; for (var i = 1; i < w.length; i++) s = Math.max(s, (w[i] - w[i - 1]) / w[0]); return s; }
+  function shape(el) {
+    reset(el);
+    if (!eligible(el)) return;
+    var cs = getComputedStyle(el), pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight);
+    var wb = lines(el);                          // what CSS balance gives
+    el.style.textWrap = 'wrap';
+    var n = lines(el).length;
+    if (n < 2 || n > 5) { reset(el); return; }
+    var cw = el.clientWidth - pl - pr, best = null, bestN = 9, near = null, nearS = bulge(wb);
+    for (var d = 0; d < cw / 2; d += 4) {
+      el.style.paddingLeft = (pl + d) + 'px'; el.style.paddingRight = (pr + d) + 'px';
+      var w = lines(el), m = w.length;
+      if (m > Math.min(n + 1, 5)) break;
+      if (w[m - 1] < w[0] * 0.3) continue;       // no stranded last word
+      var s = bulge(w);
+      if (s <= 0.03 && m <= bestN) { best = d; bestN = m; }   // true shape: fewest lines, then tightest
+      if (s < nearS) { near = d; nearS = s; }                 // otherwise: closest to it
+    }
+    if (best === null) best = near;
+    if (best === null) { reset(el); return; }    // balance was already the best shape
+    el.style.paddingLeft = (pl + best) + 'px'; el.style.paddingRight = (pr + best) + 'px';
+  }
+  function run() { lastW = innerWidth; document.querySelectorAll(SEL).forEach(shape); }
+  window.shapeText = run;
+  function start() { (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(run); }); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  addEventListener('resize', function () {
+    if (innerWidth === lastW) return;
+    clearTimeout(timer); timer = setTimeout(run, 150);
+  });
+})();
+</script>
 
 </body>
 </html>
