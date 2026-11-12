@@ -317,7 +317,7 @@
     for (var d = 0; d < cw / 2; d += 4) {
       el.style.paddingLeft = (pl + d) + 'px'; el.style.paddingRight = (pr + d) + 'px';
       var w = lines(el), m = w.length;
-      if (m > Math.min(n + 1, 5)) break;
+      if (m > wb.length) break;                 // never add a line: no layout shift
       if (w[m - 1] < w[0] * 0.3) continue;       // no stranded last word
       var s = bulge(w);
       if (s <= 0.03 && m <= bestN) { best = d; bestN = m; }   // true shape: fewest lines, then tightest
