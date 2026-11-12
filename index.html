@@ -162,7 +162,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .btn { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; font-family: var(--font-body); font-weight: 500; font-size: var(--step--1); line-height: 1; padding: 14px 20px; border-radius: 999px; text-decoration: none; border: 1px solid transparent; transition: background .2s, color .2s, border-color .2s, transform .3s cubic-bezier(.34, 1.56, .64, 1); cursor: pointer; }
 .btn:active { transform: scale(.97); }
 .ico { width: 16px; height: 16px; flex: none; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
-@media (prefers-reduced-motion: no-preference) { .btn:hover .ico-dl { transform: translateY(2px); } .btn:hover .ico-go { transform: translateY(3px); } .ico-go.nudge { animation: nudge 1.3s cubic-bezier(.45, 0, .25, 1); } @keyframes nudge { 0%, 50%, 100% { transform: none; } 22%, 72% { transform: translateY(3px); } } }
+@media (prefers-reduced-motion: no-preference) { .btn:hover .ico-dl { transform: translateY(2px); } .btn:hover .ico-go { transform: translateX(3px); } .ico-go.nudge { animation: nudge 1.3s cubic-bezier(.45, 0, .25, 1); } @keyframes nudge { 0%, 50%, 100% { transform: none; } 22%, 72% { transform: translateX(3px); } } }
 .chip .ci { width: 13px; height: 13px; flex: none; margin-left: -2px; }
 @media (prefers-reduced-motion: no-preference) { .card:is(.hov, .auto) .chip .ci { animation: wiggle .7s cubic-bezier(.34, 1.56, .64, 1); } @keyframes wiggle { 0% { transform: none; } 30% { transform: rotate(-14deg) scale(1.2); } 60% { transform: rotate(10deg) scale(1.1); } 100% { transform: none; } } }
 .btn-primary { background: var(--bark); color: var(--paper); }
@@ -709,7 +709,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <p class="lead">9+ years designing fintech and edtech products used by millions.</p>
         <p class="role-line">AVP – Product Design at <span>Kotak811</span></p>
         <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India</p>
-        <div class="ctas"><a class="btn btn-primary" href="#projects">See my work<svg class="ico ico-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a><a class="btn btn-ghost" href="Amrit-Daga-Resume.pdf" download>Download resumé<svg class="ico ico-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a></div>
+        <div class="ctas"><a class="btn btn-primary" href="#projects">See my work<svg class="ico ico-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn btn-ghost" href="Amrit-Daga-Resume.pdf" download>Download resumé<svg class="ico ico-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a></div>
       </div>
 
       <figure class="pond bio">
@@ -1558,7 +1558,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 })();
 </script>
 <script>
-/* See my work: one gentle downward nudge after landing, only if the visitor hasn't scrolled yet */
+/* See my work: one gentle nudge after landing, only if the visitor hasn't scrolled yet */
 (function () {
   var ico = document.querySelector('.ctas .ico-go');
   if (!ico || !window.matchMedia || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
