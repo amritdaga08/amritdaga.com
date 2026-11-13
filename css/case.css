@@ -1148,7 +1148,8 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .note-card { --ln: 1.8rem; position: relative; margin-top: 8px; padding: var(--ln) clamp(20px, 4vw, 36px) calc(var(--ln) * .5) clamp(48px, 7vw, 64px); border-radius: 8px; background-color: var(--paper); background-image: repeating-linear-gradient(to bottom, transparent 0 calc(var(--ln) - 1px), color-mix(in srgb, var(--rain) 22%, transparent) calc(var(--ln) - 1px) var(--ln)); background-origin: content-box; background-clip: content-box; box-shadow: 0 18px 36px -22px rgba(59, 47, 37, .45), 0 1px 3px rgba(59, 47, 37, .1); transform: rotate(-.6deg); }
 .note-card::before { content: ""; position: absolute; top: 0; bottom: 0; left: clamp(34px, 5vw, 46px); width: 1.5px; background: color-mix(in srgb, var(--fire) 40%, transparent); }
 .note-card::after { content: ""; position: absolute; top: -12px; left: 50%; width: 92px; height: 26px; transform: translateX(-50%) rotate(2deg); background: color-mix(in srgb, var(--sage) 32%, transparent); border-radius: 2px; }
-.note-card p { margin: 0 0 var(--ln); line-height: var(--ln); color: var(--bark); }
-.note-card .note-sign { margin: 0; text-align: right; font-family: var(--font-display); font-size: 1.25rem; color: var(--moss-ink); }
-.note-card .note-sign::before { content: "— "; }
+.note-card p { margin: 0 0 var(--ln);
+}
+.note-card p:last-child { margin-bottom: 0; }
+.note-card p { line-height: var(--ln); color: var(--bark); }
 @media (max-width: 480px) { .note-card { transform: none; } }
