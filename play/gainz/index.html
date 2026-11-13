@@ -372,7 +372,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   // optional per-profile gym label shown next to a day name, e.g. {"Upper A":"RBD"}
   const dayLabel = d => { const g = ((prof().gyms)||{})[d]; return g ? `${d} · ${g}` : d; };
   // Weights are always stored in kg. Each gym can default to lb (profile.gymUnits), and tapping the unit overrides it per exercise and gym (profile.units).
-  const KG2LB = 2.20462;
+  const KG2LB = 2.2; // rounded on purpose: 1 kg = 2.2 lb
   const isWt = ex => !ex.unit || ex.unit==="kg" || ex.unit==="kg/side";
   const gymOfDay = d => ((prof().gyms)||{})[d] || "";
   const unitKey = (ex, d) => gymOfDay(d)+"|"+ex.id;
