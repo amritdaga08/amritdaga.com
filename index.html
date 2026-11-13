@@ -358,9 +358,9 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 @media (min-width: 860px) { .cards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .card.wide { grid-column: span 2; } .card.wide .shot { aspect-ratio: 8 / 3; } }
 .card .shot.photo { padding: 0; background: var(--linen); }
 .card .shot.photo img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.card .shot.photo picture { position: absolute; inset: 0; display: block; border-radius: inherit; }
 .card .shot.photo::before, .card .shot.photo::after { z-index: 2; mix-blend-mode: multiply; }
-@media (min-width: 860px) { .card.full { grid-column: 1 / -1; } }
-.card.full .shot { aspect-ratio: 3 / 1; } /* the v1 cover is 3:1, so show all of it at every width */
+@media (min-width: 860px) { .card.full { grid-column: 1 / -1; } .card.full .shot { aspect-ratio: 3 / 1; } }
 
 .acc { color: var(--moss); }
 .card h3 .play-btn { all: unset; cursor: pointer; }
@@ -837,7 +837,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
             </div>
           </article>
           <article class="card full">
-            <div class="shot photo"><img src="img/card-nds-v1.jpg" srcset="img/card-nds-v1-160.webp 160w, img/card-nds-v1-240.webp 240w, img/card-nds-v1-320.webp 320w, img/card-nds-v1-480.webp 480w, img/card-nds-v1-640.webp 640w, img/card-nds-v1-960.webp 960w, img/card-nds-v1-1280.webp 1280w, img/card-nds-v1-1600.webp 1600w, img/card-nds-v1-1800.webp 1800w" sizes="(max-width: 760px) 83vw, 1150px" width="1800" height="600" alt="" loading="lazy" decoding="async"></div>
+            <div class="shot photo"><picture><source media="(min-width: 860px)" srcset="img/card-nds-v1-160.webp 160w, img/card-nds-v1-240.webp 240w, img/card-nds-v1-320.webp 320w, img/card-nds-v1-480.webp 480w, img/card-nds-v1-640.webp 640w, img/card-nds-v1-960.webp 960w, img/card-nds-v1-1280.webp 1280w, img/card-nds-v1-1600.webp 1600w, img/card-nds-v1-1800.webp 1800w" sizes="1150px"><img src="img/card-nds-v1-cover.jpg" srcset="img/card-nds-v1-cover-320.webp 320w, img/card-nds-v1-cover-480.webp 480w, img/card-nds-v1-cover-640.webp 640w, img/card-nds-v1-cover-960.webp 960w, img/card-nds-v1-cover-1200.webp 1200w, img/card-nds-v1-cover-1600.webp 1600w" sizes="(max-width: 760px) 83vw, 420px" width="1200" height="900" alt="" loading="lazy" decoding="async"></picture></div>
             <div class="body">
               <ul class="chips"><li class="chip neutral">Version 1</li><li class="chip neutral"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-.9 2-1.9 0-1-1-1.6-1-2.6 0-.9.8-1.5 1.8-1.5H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15.5" cy="7.5" r="1"/></svg>Design system</li></ul>
               <h3><a href="work/natural-ds-v1.html">Natural Design System v1</a></h3>
