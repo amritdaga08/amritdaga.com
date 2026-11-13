@@ -1140,3 +1140,6 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .dc-day.today { box-shadow: none; outline: 2px solid var(--bark); outline-offset: 1px; }
 .dc-day[aria-pressed="true"], .dc-day.today[aria-pressed="true"] { box-shadow: none; outline: 2.5px solid var(--moss); outline-offset: 1px; }
 @media (max-width: 480px) { .dc-day i { padding: 0; } }
+/* calendar rings inside the cell so neighbours never overlap */
+.dc-day.today { outline: 0; box-shadow: inset 0 0 0 2px var(--bark), inset 0 0 0 3.5px var(--paper); }
+.dc-day[aria-pressed="true"], .dc-day.today[aria-pressed="true"] { outline: 0; box-shadow: inset 0 0 0 2.5px var(--moss), inset 0 0 0 4px var(--paper); }

@@ -165,8 +165,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .day.done{background:var(--c);color:var(--t-ink)}
 .day.done .tag{font-weight:600;opacity:.92}
 .day.rest .tag{color:var(--bark-soft);font-weight:500}
-.day.today{outline:2px solid var(--bark);outline-offset:1px}
-.day[aria-pressed="true"]{outline:2.5px solid var(--moss);outline-offset:1px}
+/* rings sit inside the cell, with a thin Earth line so they read on any colour */
+.day.today{box-shadow:inset 0 0 0 2px var(--bark),inset 0 0 0 3.5px var(--paper)}
+.day[aria-pressed="true"]{box-shadow:inset 0 0 0 2.5px var(--moss),inset 0 0 0 4px var(--paper)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:13px;color:var(--bark-soft)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .daydetail{margin-top:12px}
