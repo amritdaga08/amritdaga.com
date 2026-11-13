@@ -1093,3 +1093,40 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .thread.anim::after { transition-duration: 1.6s; }
 .tg-mode { font-weight: 600; color: var(--bark); font-size: 1rem; min-width: 3.2em; }
 .tg-mode { font-size: inherit; font-weight: 500; }
+/* ---------- calendar family (Gainz, Ghar/Bahar) ---------- */
+.s-rest { --c: var(--rule); }
+.calpair { align-items: start; }
+.dcal { width: 100%; max-width: 420px; padding: 14px; border-radius: 20px; border: 1px solid var(--rule); background: var(--paper); }
+.dc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.dc-head h4 { margin: 0; font: 400 1.25rem/1.2 var(--font-display); }
+.dc-nav { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--rule); background: var(--paper); color: var(--bark); font-size: 1.25rem; line-height: 1; cursor: pointer; transition: border-color .2s, background .2s; }
+.dc-nav:hover:not(:disabled) { border-color: var(--sage); background: var(--linen); }
+.dc-nav:disabled { opacity: .35; cursor: default; }
+.dc-nav:focus-visible, .dc-day:focus-visible { outline: 3px solid var(--bark); outline-offset: 2px; }
+.dc-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.dc-dow { padding-bottom: 4px; text-align: center; font-size: .75rem; font-weight: 600; color: var(--bark-soft); }
+.dc-day { min-width: 0; aspect-ratio: 1 / 1.15; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 5px 2px; border: 0; border-radius: 12px; background: var(--linen); color: var(--bark); font: 600 .8125rem/1 var(--font-body); font-variant-numeric: tabular-nums; cursor: pointer; }
+.dc-day i { max-width: 100%; overflow: hidden; white-space: nowrap; padding: 2px 4px; border-radius: 6px; font: 600 .6875rem/1.2 var(--font-body); font-style: normal; background: var(--c); color: var(--paper); }
+.dc-day.rest i { background: none; color: var(--bark-soft); font-weight: 500; }
+.dc-day.blank { background: none; cursor: default; }
+.dc-day.future { opacity: .4; cursor: default; }
+.dc-day.today { box-shadow: inset 0 0 0 2px var(--bark); }
+.dc-day[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--moss); }
+.dc-day.today[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--moss), inset 0 0 0 4px var(--paper); }
+.dstep { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 420px; }
+.dstep .dc-nav { width: 44px; height: 44px; }
+.dpick { position: relative; flex: 1; min-width: 0; min-height: 48px; display: grid; place-items: center; align-content: center; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); text-align: center; }
+.dpick b { font: 400 1.0625rem/1.2 var(--font-display); }
+.dpick small { font-size: .75rem; color: var(--bark-soft); }
+.dsum { width: 100%; max-width: 420px; margin: 0; padding: 4px 16px; list-style: none; border-radius: 20px; border: 1px solid var(--rule); background: var(--paper); }
+.dsum li { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--rule); }
+.dsum li:first-child { border-top: 0; }
+.dsum span { display: flex; align-items: center; gap: 10px; }
+.dsum i { width: 12px; height: 12px; border-radius: 4px; background: var(--c); }
+.dsum b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.dsum small { font-size: .8125rem; font-weight: 500; color: var(--bark-soft); }
+.calpair .notes { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; color: var(--bark-soft); line-height: 1.5; }
+.calpair .notes b { color: var(--bark); font-weight: 600; }
+.dpick input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: 0; cursor: pointer; font-size: 16px; }
+.dpick:focus-within { outline: 3px solid var(--bark); outline-offset: 2px; }
+@media (max-width: 480px) { .dcal { padding: 10px; } .dc-grid { gap: 3px; } .dc-day i { padding: 2px 3px; font-size: .625rem; letter-spacing: -.01em; } .at:has(.dcal) { padding-inline: 14px; } }

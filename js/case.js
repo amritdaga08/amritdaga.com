@@ -336,3 +336,28 @@
     clearTimeout(timer); timer = setTimeout(run, 150);
   });
 })();
+/* DS calendar family demos: pick a day, step dates */
+(function () {
+  var cal = document.getElementById('ds-cal');
+  if (cal) cal.addEventListener('click', function (e) {
+    var d = e.target.closest('.dc-day'); if (!d || d.disabled || d.classList.contains('blank')) return;
+    cal.querySelectorAll('.dc-day[aria-pressed="true"]').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+    d.setAttribute('aria-pressed', 'true');
+  });
+  var st = document.getElementById('ds-step'); if (!st) return;
+  var lab = document.getElementById('ds-step-l'), next = st.querySelector('[data-d="1"]'), off = 0;
+  function show() {
+    var d = new Date(); d.setDate(d.getDate() + off);
+    var t = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    lab.textContent = off === 0 ? 'Today, ' + t : t; next.disabled = off >= 0; if (inp) inp.value = iso(d);
+  }
+  var inp = document.getElementById('ds-step-i'), pad = function (n) { return String(n).padStart(2, '0'); };
+  var iso = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+  st.addEventListener('click', function (e) { var b = e.target.closest('[data-d]'); if (!b || b.disabled) return; off += +b.dataset.d; show(); });
+  if (inp) {
+    inp.max = iso(new Date());
+    inp.addEventListener('click', function () { try { inp.showPicker && inp.showPicker(); } catch (_) {} });
+    inp.addEventListener('change', function () { if (!inp.value) return; var t = new Date(); t.setHours(0, 0, 0, 0); off = Math.min(0, Math.round((new Date(inp.value + 'T00:00') - t) / 864e5)); show(); });
+  }
+  show();
+})();
