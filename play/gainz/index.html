@@ -335,7 +335,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   let filter = null, openId = null, editingId = null, remote = null, saveTimer = null, view = "workout", userPicked = false;
   const $ = s => document.querySelector(s);
   const uid = () => Math.random().toString(36).slice(2,10);
-  const fmt = n => (Math.round(n*100)/100).toString();
+  const fmt = n => (Math.round(n*10)/10).toString();
   const iso = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
   const today = () => iso(new Date());
   const days = (a,b) => Math.round((new Date(b+"T00:00") - new Date(a+"T00:00"))/864e5);
