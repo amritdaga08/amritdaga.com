@@ -946,7 +946,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <p class="eyebrow">Get in touch</p>
       <h2><span class="nb">Let's build something</span> <span class="nb">people trust.</span></h2>
       <div class="row">
-        <span class="mail"><span class="email" id="email">amritdaga08@gmail.com</span><button class="icon-btn" id="copy-email" type="button" aria-label="Copy email" title="Copy email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+        <span class="mail"><span class="email" id="email" data-u="80agadtirma" data-d="moc.liamg">amritdaga08 [at] gmail [dot] com</span><button class="icon-btn" id="copy-email" type="button" aria-label="Copy email" title="Copy email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
         <a class="btn btn-primary" href="Amrit-Daga-Resume.pdf" download>Download resumé<svg class="ico ico-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a>
       </div>
       <p class="copied" id="copied" aria-live="polite"></p>
@@ -1484,6 +1484,9 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     rot.parentNode.addEventListener('click', function () { go((idx + 1) % phrases.length); auto(); });
   }
 
+  // the address is stored reversed in the markup so simple scrapers don't find it, then rebuilt here
+  (function () { var e = document.getElementById('email'); if (!e || !e.dataset.u) return;
+    var r = function (x) { return x.split('').reverse().join(''); }; e.textContent = r(e.dataset.u) + '@' + r(e.dataset.d); })();
   var btn = document.getElementById('copy-email');
   var out = document.getElementById('copied');
   var email = document.getElementById('email');

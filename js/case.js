@@ -361,3 +361,11 @@
   }
   show();
 })();
+
+/* email links: address stored reversed so simple scrapers miss it, rebuilt for people */
+(function () {
+  document.querySelectorAll('[data-mail]').forEach(function (a) {
+    var r = function (x) { return x.split('').reverse().join(''); }, m = r(a.dataset.u) + '@' + r(a.dataset.d);
+    a.textContent = m; a.href = 'mailto:' + m;
+  });
+})();
