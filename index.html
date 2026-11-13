@@ -182,6 +182,16 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .panel { margin-top: 0; text-align: center; }
 .panel h1 { font-size: var(--step-4); line-height: var(--lh-4); max-width: 22ch; margin: 0 auto; }
 .panel h1 em { font-style: normal; color: var(--moss); }
+/* hero: headline settles in word by word, the rest follows, then "systems, craft" gets a soft underline. Plays once. */
+.panel h1 em { background: linear-gradient(transparent 66%, color-mix(in srgb, var(--sage) 30%, transparent) 66%) no-repeat 0 0 / 100% 100%; -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 .04em; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-in .panel h1 .w { display: inline-block; opacity: 0; transform: translateY(.32em); animation: wIn .7s var(--breeze, cubic-bezier(.2, .8, .2, 1)) forwards; animation-delay: calc(80ms + var(--i) * 45ms); }
+  .hero-in .panel > :not(h1) { opacity: 0; transform: translateY(10px); animation: wIn .7s var(--breeze, cubic-bezier(.2, .8, .2, 1)) forwards; animation-delay: calc(var(--d) * 1ms); }
+  .hero-in .panel h1 em { background-size: 0% 100%; animation: hl .9s cubic-bezier(.65, 0, .35, 1) forwards; animation-delay: calc(var(--hl) * 1ms); }
+  @keyframes wIn { to { opacity: 1; transform: none; } }
+  @keyframes hl { to { background-size: 100% 100%; } }
+}
+
 .panel .lead { font-size: var(--step-1); line-height: var(--lh-1); color: var(--bark-soft); margin: 24px auto 0; max-width: 48ch; text-wrap: balance; }
 .role-line { margin-top: 28px; font-size: var(--step-0); font-weight: 500; color: var(--bark); }
 .role-line span { color: var(--moss); }
@@ -711,6 +721,32 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <p class="role-line">AVP – Product Design at <span>Kotak811</span></p>
         <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India</p>
         <div class="ctas"><a class="btn btn-primary" href="#projects">See my work<svg class="ico ico-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn btn-ghost" href="Amrit-Daga-Resume.pdf" download>Download resumé<svg class="ico ico-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a></div>
+<script>
+/* hero entrance: wrap the headline's words so they can rise in one after another (runs before first paint) */
+(function () {
+  if (!window.matchMedia || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var panel = document.querySelector('.hero .panel'), h1 = panel && panel.querySelector('h1'); if (!h1) return;
+  var i = 0;
+  (function wrap(node) {
+    [].slice.call(node.childNodes).forEach(function (n) {
+      if (n.nodeType === 1) return wrap(n);
+      if (n.nodeType !== 3) return;
+      var frag = document.createDocumentFragment();
+      n.textContent.split(/(\s+)/).forEach(function (part) {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+        var w = document.createElement('span'); w.className = 'w'; w.style.setProperty('--i', i++); w.textContent = part; frag.appendChild(w);
+      });
+      node.replaceChild(frag, n);
+    });
+  })(h1);
+  h1.setAttribute('aria-label', h1.textContent.replace(/\s+/g, ' ').trim());
+  var end = 80 + i * 45 + 350, d = end;
+  [].slice.call(panel.children).forEach(function (el) { if (el === h1) return; el.style.setProperty('--d', d); d += 90; });
+  h1.querySelectorAll('em').forEach(function (em) { em.style.setProperty('--hl', end + 450); });
+  document.documentElement.classList.add('hero-in');
+})();
+</script>
       </div>
 
       <figure class="pond bio">
@@ -1581,7 +1617,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     onScreen = es[0].isIntersecting; clearTimeout(t); if (onScreen && !stopped) t = setTimeout(nudge, 5000);
   }).observe(btn);
   document.addEventListener('visibilitychange', function () { clearTimeout(t); if (!document.hidden && !stopped) t = setTimeout(nudge, 5000); });
-  addEventListener('load', function () { clearTimeout(t); t = setTimeout(nudge, 1400); });
+  addEventListener('load', function () { clearTimeout(t); t = setTimeout(nudge, 2600); }); // after the hero has settled in
 })();
 </script>
 
