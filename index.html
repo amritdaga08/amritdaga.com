@@ -705,6 +705,13 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   .pl-stage { position: absolute; }
   .pl-close { position: absolute; }
 }
+
+/* green highlight with a soft Moss underline, drawn in when it scrolls into view (same as the hero) */
+em.hl { font-style: normal; color: var(--moss); background: linear-gradient(transparent 66%, color-mix(in srgb, var(--sage) 30%, transparent) 66%) no-repeat 0 0 / 100% 100%; -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 .04em; }
+@media (prefers-reduced-motion: no-preference) {
+  .js-hl em.hl { background-size: 0% 100%; }
+  .js-hl em.hl.lit { background-size: 100% 100%; transition: background-size .9s cubic-bezier(.65, 0, .35, 1) .25s; }
+}
 </style>
 
 <script>
@@ -789,7 +796,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div class="head center">
         <div>
           <p class="eyebrow">Projects</p>
-          <h2 class="lines"><span class="nb">I don't believe in just designing products.</span> <span class="nb">I believe in building them.</span></h2>
+          <h2 class="lines"><span class="nb">I don't believe in just designing products.</span> <span class="nb">I believe in <em class="hl">building them.</em></span></h2>
         </div>
       </div>
 
@@ -1634,6 +1641,16 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   addEventListener('load', function () { clearTimeout(t); t = setTimeout(nudge, 2600); }); // after the hero has settled in
 })();
 </script>
+<script>
+/* draw each .hl underline once it's on screen */
+(function () {
+  var els = document.querySelectorAll('em.hl'); if (!els.length || !('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('js-hl');
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('lit'); io.unobserve(e.target); } }); }, { threshold: 1, rootMargin: '0px 0px -12% 0px' });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
+
 
 </body>
 </html>
