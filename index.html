@@ -1189,7 +1189,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     function R(a, b) { return a + Math.random() * (b - a); }
     function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
     function hexA(h, a) { var n = parseInt(h.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')'; }
-    function size() { var r = wrap.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); seed(); }
+    // phones fire resize when the address bar slides; only reseed when the panel itself changed size, or everything jumps
+    function size() { var r = wrap.getBoundingClientRect(); if (Math.abs(r.width - W) < 1 && Math.abs(r.height - H) < 1) return; W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); seed(); }
     var narrow;
     function seed() {
       parts = []; narrow = W < 600;
@@ -1219,7 +1220,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       spawn.push(b);
     }
     function diya(x, y, ph, now) {
-      ctx.save();
+      ctx.save(); ctx.globalAlpha = 1; // start clean: never inherit a firework spark's fading opacity
       var f = 1 + .12 * Math.sin(now / 180 + ph) + .06 * Math.sin(now / 77 + ph * 2);
       var g = ctx.createRadialGradient(x, y - 10, 0, x, y - 10, 40 * f); g.addColorStop(0, 'rgba(242,193,78,.38)'); g.addColorStop(1, 'rgba(242,193,78,0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y - 10, 40 * f, 0, TAU); ctx.fill();
@@ -1255,11 +1256,11 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(x + 15, y - 14); ctx.lineTo(x + 12, y - 22); ctx.lineTo(x + 8, y - 25); ctx.moveTo(x + 12, y - 22); ctx.lineTo(x + 15, y - 27); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x - 12, y - 2); ctx.lineTo(x - 16, y - 5); ctx.stroke();
     }
-    function drawSleigh(f, now) {
+    function drawSleigh(f, now, dt) {
       var e = f.t / f.dur, x = f.x0 + (f.x1 - f.x0) * e, y = f.y0 + (f.y1 - f.y0) * e + Math.sin(e * Math.PI * 2) * 8;
       var ang = Math.atan2((f.y1 - f.y0) / f.dur + Math.cos(e * Math.PI * 2) * 8 * Math.PI * 2 / f.dur, Math.abs(f.x1 - f.x0) / f.dur) * .8;
-      f.trail.push({ x: x - f.dir * 60 * f.s, y: y + 10 * f.s, t: 0 }); if (f.trail.length > 70) f.trail.shift();
-      f.trail.forEach(function (p) { p.t += .016; ctx.globalAlpha = Math.max(0, .55 - p.t * .5); ctx.fillStyle = P.trail; ctx.beginPath(); ctx.arc(p.x + R(-1, 1), p.y + p.t * 12, 1.4, 0, TAU); ctx.fill(); });
+      f.trail.push({ x: x - f.dir * 60 * f.s + R(-1, 1), y: y + 10 * f.s, t: 0 }); if (f.trail.length > 70) f.trail.shift();
+      f.trail.forEach(function (p) { p.t += dt; ctx.globalAlpha = Math.max(0, .55 - p.t * .5); ctx.fillStyle = P.trail; ctx.beginPath(); ctx.arc(p.x, p.y + p.t * 12, 1.4, 0, TAU); ctx.fill(); });
       ctx.save(); ctx.translate(x, y); ctx.scale(f.dir * f.s, f.s); ctx.rotate(ang * f.dir);
       ctx.globalAlpha = .88; ctx.fillStyle = ctx.strokeStyle = P.ink; ctx.lineCap = 'round';
       var g = now / 110;
@@ -1288,7 +1289,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
     function frame(now) {
       var dt = Math.min(.05, (now - last) / 1000); last = now; if (still) dt = 0;
-      ctx.clearRect(0, 0, W, H);
+      ctx.clearRect(0, 0, W, H); ctx.globalAlpha = 1;
       timer -= dt * 1000;
       if (fest === 'christmas') {
         parts.forEach(function (p) { p.y += p.v * dt; p.x += Math.sin(now / 1400 + p.w) * 6 * dt; if (p.y > H + 4) { p.y = -4; p.x = R(0, W); } ctx.globalAlpha = p.a; ctx.fillStyle = P.snow; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); });
@@ -1296,7 +1297,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         for (var i = 0; i <= n; i++) { var x = i * W / n, y = 12 + Math.sin(i / n * Math.PI * 6) * 6; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
         for (var k = 1; k < n; k++) { var on = .5 + .5 * Math.sin(now / 700 + k); ctx.globalAlpha = .3 + .6 * on; ctx.fillStyle = P.bulbs[k % 4]; ctx.beginPath(); ctx.arc(k * W / n, 16 + Math.sin(k / n * Math.PI * 6) * 6, 3, 0, TAU); ctx.fill(); }
         if (timer <= 0 && !fx.length) { sleigh(); timer = R(2500, 5000); }
-        fx = fx.filter(function (f) { f.t += dt; if (f.t > f.dur) return false; drawSleigh(f, now); return true; });
+        fx = fx.filter(function (f) { f.t += dt; if (f.t > f.dur) return false; drawSleigh(f, now, dt); return true; });
+        ctx.globalAlpha = 1;
         parts.trees.forEach(function (t) { tree(t.x, H - 10, t.h, t.ph, now); });
       }
       if (fest === 'newyear') {
@@ -1319,10 +1321,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
           }
           var k = f.t / f.life; if (k >= 1) return false;
           if (f.t < .12) { ctx.globalAlpha = .5 * (1 - f.t / .12); var fl = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, 60); fl.addColorStop(0, hexA(f.c, .8)); fl.addColorStop(1, hexA(f.c, 0)); ctx.fillStyle = fl; ctx.beginPath(); ctx.arc(f.x, f.y, 60, 0, TAU); ctx.fill(); }
-          f.p.forEach(function (p) {
+          f.p.forEach(function (p, i) {
             var e = 1 - Math.pow(1 - Math.min(1, f.t / 1.1), 3), e0 = 1 - Math.pow(1 - Math.min(1, Math.max(0, f.t - .1) / 1.1), 3), gv = 26 * f.t * f.t;
             var x = f.x + p.vx * e, y = f.y + p.vy * e + gv, x0 = f.x + p.vx * e0, y0 = f.y + p.vy * e0 + 26 * Math.pow(Math.max(0, f.t - .1), 2);
-            var a = (1 - k) * (k > .7 && Math.random() < .3 ? .3 : 1);
+            var a = (1 - k) * (k > .7 ? .65 + .35 * Math.sin(now / 45 + i * 2.3) : 1); // smooth crackle as sparks die, not a random strobe
             ctx.globalAlpha = a * .5; ctx.strokeStyle = p.two ? f.c2 : f.c; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x, y); ctx.stroke();
             ctx.globalAlpha = a; ctx.fillStyle = p.two ? f.c2 : f.c; ctx.beginPath(); ctx.arc(x, y, 2, 0, TAU); ctx.fill();
           });
