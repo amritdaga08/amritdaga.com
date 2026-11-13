@@ -1564,21 +1564,24 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 })();
 </script>
 <script>
-/* See my work: one gentle nudge after landing, only if the visitor hasn't scrolled yet */
+/* See my work: a gentle nudge after landing, then again after every 5 s pause.
+   Only while the button is on screen and the tab is visible; stops once it's been used or hovered. */
 (function () {
-  var ico = document.querySelector('.ctas .ico-go');
+  var ico = document.querySelector('.ctas .ico-go'), btn = ico && ico.closest('a');
   if (!ico || !window.matchMedia || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var t, done = false;
-  function cancel() { done = true; clearTimeout(t); removeEventListener('scroll', cancel); }
-  addEventListener('scroll', cancel, { passive: true });
-  addEventListener('load', function () {
-    t = setTimeout(function () {
-      if (done || scrollY > 40) return cancel();
-      removeEventListener('scroll', cancel);
-      ico.classList.add('nudge');
-      ico.addEventListener('animationend', function () { ico.classList.remove('nudge'); }, { once: true });
-    }, 1400);
-  });
+  var t, onScreen = true, stopped = false;
+  function nudge() {
+    if (stopped || !onScreen || document.hidden) return;
+    ico.classList.remove('nudge'); void ico.offsetWidth; ico.classList.add('nudge');
+  }
+  ico.addEventListener('animationend', function () { ico.classList.remove('nudge'); clearTimeout(t); t = setTimeout(nudge, 5000); });
+  function stop() { stopped = true; clearTimeout(t); ico.classList.remove('nudge'); }
+  btn.addEventListener('click', stop); btn.addEventListener('pointerenter', stop); btn.addEventListener('focus', stop);
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+    onScreen = es[0].isIntersecting; clearTimeout(t); if (onScreen && !stopped) t = setTimeout(nudge, 5000);
+  }).observe(btn);
+  document.addEventListener('visibilitychange', function () { clearTimeout(t); if (!document.hidden && !stopped) t = setTimeout(nudge, 5000); });
+  addEventListener('load', function () { clearTimeout(t); t = setTimeout(nudge, 1400); });
 })();
 </script>
 
