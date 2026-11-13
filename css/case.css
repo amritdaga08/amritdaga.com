@@ -1144,3 +1144,11 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .dc-day.today { outline: 0; box-shadow: inset 0 0 0 2px var(--bark), inset 0 0 0 3.5px var(--paper); }
 .dc-day[aria-pressed="true"], .dc-day.today[aria-pressed="true"] { outline: 0; box-shadow: inset 0 0 0 2.5px var(--moss), inset 0 0 0 4px var(--paper); }
 .dpick.is-today { border-color: var(--bark); box-shadow: inset 0 0 0 1px var(--bark); }
+/* ---------- personal note (In-Class Notes · Why I care): a ruled notebook page ---------- */
+.note-card { --ln: 1.8rem; position: relative; margin-top: 8px; padding: var(--ln) clamp(20px, 4vw, 36px) calc(var(--ln) * .5) clamp(48px, 7vw, 64px); border-radius: 8px; background-color: var(--paper); background-image: repeating-linear-gradient(to bottom, transparent 0 calc(var(--ln) - 1px), color-mix(in srgb, var(--rain) 22%, transparent) calc(var(--ln) - 1px) var(--ln)); background-origin: content-box; background-clip: content-box; box-shadow: 0 18px 36px -22px rgba(59, 47, 37, .45), 0 1px 3px rgba(59, 47, 37, .1); transform: rotate(-.6deg); }
+.note-card::before { content: ""; position: absolute; top: 0; bottom: 0; left: clamp(34px, 5vw, 46px); width: 1.5px; background: color-mix(in srgb, var(--fire) 40%, transparent); }
+.note-card::after { content: ""; position: absolute; top: -12px; left: 50%; width: 92px; height: 26px; transform: translateX(-50%) rotate(2deg); background: color-mix(in srgb, var(--sage) 32%, transparent); border-radius: 2px; }
+.note-card p { margin: 0 0 var(--ln); line-height: var(--ln); color: var(--bark); }
+.note-card .note-sign { margin: 0; text-align: right; font-family: var(--font-display); font-size: 1.25rem; color: var(--moss-ink); }
+.note-card .note-sign::before { content: "— "; }
+@media (max-width: 480px) { .note-card { transform: none; } }

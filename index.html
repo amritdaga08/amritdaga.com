@@ -691,6 +691,20 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 .card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .card p, .card h3 { -webkit-user-select: text; user-select: text; }
+
+/* Mobile browsers (Chrome on iOS especially) slide their toolbars in and out as you scroll. Size the player and the app
+   sheet to the visible viewport (dvh) and pin their buttons inside it, so Close never slips under the browser's bar. */
+.player { inset: 0 auto auto 0; width: 100%; height: 100vh; height: 100dvh; }
+.sh-panel { max-height: min(88vh, 900px); max-height: min(88dvh, 900px); }
+@media (max-width: 719px) { .sh-panel { max-height: 92vh; max-height: 92dvh; } }
+@media (max-width: 859px) {
+  .pl-info { position: absolute; }
+  .player.info .pl-side { position: absolute; max-height: 78vh; max-height: 78dvh; }
+}
+@media (max-width: 719px), (max-height: 520px) {
+  .pl-stage { position: absolute; }
+  .pl-close { position: absolute; }
+}
 </style>
 
 <script>
