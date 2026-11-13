@@ -84,6 +84,20 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .tick.on{background:var(--open-bg);border-color:var(--open-bg);color:var(--open-fg)}
 .tick.on:active{transform:scale(.92)}
 .detail{display:none;padding:0 14px 14px}
+.trend{margin:2px 0 12px;padding:12px 12px 8px;border-radius:16px;background:var(--linen)}
+.trend figcaption{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--bark-soft)}
+.trend figcaption b{font-size:14px;letter-spacing:0;text-transform:none;color:var(--bark);font-variant-numeric:tabular-nums}
+.trend figcaption b.up{color:var(--sprout)} .trend figcaption b.down{color:var(--fire)}
+.trend svg{display:block;width:100%;height:auto;overflow:visible}
+.t-base{stroke:var(--rule);stroke-width:1}
+.t-line{fill:none;stroke:var(--open-bg);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.t-dot{fill:var(--paper);stroke:var(--open-bg);stroke-width:2}
+.t-dot.last{fill:var(--open-bg)}
+.t-dot.best:not(.last){fill:var(--sun);stroke:var(--sun)}
+.t-lbl{font:600 11px var(--body);fill:var(--bark-soft);font-variant-numeric:tabular-nums}
+.t-lbl.strong{fill:var(--bark);font-size:12px} .t-lbl.best{fill:var(--sun)}
+.trend-x{display:flex;justify-content:space-between;font-size:12px;color:var(--bark-soft)}
+.trend-empty{margin:2px 0 12px;padding:12px 14px;border-radius:16px;background:var(--linen);font-size:14px;color:var(--bark-soft)}
 .ex.open .detail{display:block}
 .hist{list-style:none;margin:0 0 10px;padding:0;font-size:14px;color:var(--bark-soft)}
 .hist li{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--rule)}
@@ -261,7 +275,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   <div class="ronote" id="roNote" hidden></div>
   <div class="tabs" role="tablist"><button class="tab" role="tab" data-view="workout" aria-selected="true">Workout</button><button class="tab" role="tab" data-view="history" aria-selected="false">History</button></div>
   <section id="workoutView">
-    <div class="datebar"><button class="nav" id="prevDay" aria-label="Previous day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><div class="datepick"><b id="dateLabel"></b><small>Tap to pick a date</small><input type="date" id="wDate" aria-label="Workout date"></div><button class="nav" id="nextDay" aria-label="Next day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
+    <div class="datebar"><button class="nav" id="prevDay" aria-label="Previous day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><div class="datepick"><b id="dateLabel"></b><input type="date" id="wDate" aria-label="Workout date"></div><button class="nav" id="nextDay" aria-label="Next day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
     <div id="plan"></div>
     <nav class="chips" id="chips" aria-label="Workout days"></nav>
     <main class="list" id="list"></main>
@@ -528,6 +542,39 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     $("#plan").innerHTML = `<div class="plan ${p.rest?"rest":""}"><span>${p.rest?"Today":p.done?"Today":"Up next today"}</span><b>${p.rest?"Rest":esc(dayLabel(p.group))}</b><span>${esc(p.note)}</span></div>`;
   }
 
+  // Progress chart for one exercise: every logged max in order, starting max first.
+  function trend(ex, ls, d){
+    const pts = ls.filter(l=>typeof l.value==="number");
+    if(pts.length < 2) return `<p class="trend-empty">Log ${esc(ex.name)} a couple more times to see your progress here.</p>`;
+    const vals = pts.map(l=>toDisp(l.value, ex, d)), u = unitText(ex, d);
+    const W = 320, H = 120, PX = 14, PT = 22, PB = 14;
+    let lo = Math.min(...vals), hi = Math.max(...vals);
+    if(hi === lo){ hi += 1; lo = Math.max(0, lo - 1); }
+    const x = i => PX + (W - 2*PX) * (vals.length===1 ? .5 : i/(vals.length-1));
+    const y = v => PT + (H - PT - PB) * (1 - (v - lo)/(hi - lo));
+    const line = vals.map((v,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+    const area = `${line}L${x(vals.length-1).toFixed(1)},${H-PB}L${x(0).toFixed(1)},${H-PB}Z`;
+    const best = Math.max(...vals), bi = vals.lastIndexOf(best), last = vals.length-1;
+    const diff = vals[last] - vals[0], gid = "tg-"+ex.id;
+    const when = l => l.base ? "Start" : niceDate(l.date);
+    const lblX = i => Math.min(W - PX, Math.max(PX, x(i)));
+    const anchor = i => i===0 ? "start" : i===last ? "end" : "middle";
+    const label = (i, txt, cls) => `<text class="${cls}" x="${lblX(i).toFixed(1)}" y="${(y(vals[i]) - 9).toFixed(1)}" text-anchor="${anchor(i)}">${txt}</text>`;
+    const desc = `${ex.name}: ${fmt(vals[0])} to ${fmt(vals[last])} ${u} over ${vals.length} entries, best ${fmt(best)} ${u}.`;
+    return `<figure class="trend">
+      <figcaption><span>Progress</span><b class="${diff>0?"up":diff<0?"down":""}">${diff>0?"+":""}${fmt(diff)} ${u}</b></figcaption>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(desc)}">
+        <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--moss);stop-opacity:.28"/><stop offset="1" style="stop-color:var(--moss);stop-opacity:0"/></linearGradient></defs>
+        <line class="t-base" x1="${PX}" x2="${W-PX}" y1="${H-PB}" y2="${H-PB}"/>
+        <path d="${area}" fill="url(#${gid})"/>
+        <path class="t-line" d="${line}"/>
+        ${vals.map((v,i)=>`<circle class="t-dot${i===bi?" best":""}${i===last?" last":""}" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${i===last||i===bi?4.5:3}"/>`).join("")}
+        ${label(0, fmt(vals[0]), "t-lbl")}${bi!==0 && bi!==last ? label(bi, fmt(best), "t-lbl best") : ""}${last!==0 ? label(last, fmt(vals[last]), "t-lbl strong") : ""}
+      </svg>
+      <div class="trend-x"><span>${when(pts[0])}</span><span>${pts.length} entries</span><span>${when(pts[last])}</span></div>
+    </figure>`;
+  }
+
   function renderWorkout(){
     const gs = dayNames(), p = plan(), wd = $("#wDate");
     const shown = em ? em.moveTo : ad();
@@ -586,6 +633,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
         </div>
         <div class="detail">
           ${others.length ? `<div class="extags">Also on: ${others.map(esc).join(", ")}</div>` : ""}
+          ${open ? trend(ex, ls, filter) : ""}
           ${ls.length ? `<ul class="hist">${ls.slice(-8).reverse().map(l=>`<li><span>${l.base?"Starting max":niceDate(l.date)}</span><b>${fmtW(l.value, ex, filter)}</b></li>`).join("")}</ul>` : ""}
           <div class="links">
             <button class="link" data-act="edit">Edit</button>
