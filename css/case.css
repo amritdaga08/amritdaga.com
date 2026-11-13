@@ -1130,3 +1130,13 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .dpick input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: 0; cursor: pointer; font-size: 16px; }
 .dpick:focus-within { outline: 3px solid var(--bark); outline-offset: 2px; }
 @media (max-width: 480px) { .dcal { padding: 10px; } .dc-grid { gap: 3px; } .dc-day i { padding: 2px 3px; font-size: .625rem; letter-spacing: -.01em; } .at:has(.dcal) { padding-inline: 14px; } }
+/* calendar v2: whole-day colour, chevron icons */
+.dc-nav { padding: 0; line-height: 0; }
+.dc-nav svg { display: block; width: 20px; height: 20px; }
+.dc-day i { padding: 0; border-radius: 0; background: none; color: inherit; font-weight: 500; }
+.dc-day.done { background: var(--c); color: var(--paper); }
+.dc-day.done i { font-weight: 600; opacity: .92; }
+.dc-day.rest i { color: var(--bark-soft); }
+.dc-day.today { box-shadow: none; outline: 2px solid var(--bark); outline-offset: 1px; }
+.dc-day[aria-pressed="true"], .dc-day.today[aria-pressed="true"] { box-shadow: none; outline: 2.5px solid var(--moss); outline-offset: 1px; }
+@media (max-width: 480px) { .dc-day i { padding: 0; } }

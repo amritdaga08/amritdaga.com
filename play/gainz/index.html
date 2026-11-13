@@ -127,7 +127,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 /* date stepper */
 .datebar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.nav{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);background:var(--paper);color:var(--bark);font-size:20px;line-height:1;cursor:pointer;transition:border-color .2s,background .2s}
+.nav{flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--rule);background:var(--paper);color:var(--bark);font-size:20px;line-height:0;cursor:pointer;transition:border-color .2s,background .2s}
 .nav:hover:not(:disabled){border-color:var(--sage);background:var(--linen)}
 .nav:disabled{opacity:.35;cursor:default}
 .datepick{position:relative;flex:1;background:var(--paper);border:1px solid var(--rule);border-radius:999px;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 12px}
@@ -146,11 +146,13 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .day{aspect-ratio:1/1.15;border-radius:12px;border:0;background:var(--linen);color:var(--bark);padding:5px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;font:600 13px var(--body);font-variant-numeric:tabular-nums;cursor:pointer;min-width:0}
 .day.blank{background:transparent;cursor:default}
 .day.future{opacity:.4;cursor:default}
-.day .tag{font:600 11px/1.2 var(--body);border-radius:6px;padding:2px 4px;max-width:100%;overflow:hidden;white-space:nowrap}
+.nav svg{display:block;width:20px;height:20px}
+.day .tag{font:500 11px/1.2 var(--body);max-width:100%;overflow:hidden;text-overflow:clip;white-space:nowrap}
+.day.done{background:var(--c);color:var(--t-ink)}
+.day.done .tag{font-weight:600;opacity:.92}
 .day.rest .tag{color:var(--bark-soft);font-weight:500}
-.day.today{box-shadow:inset 0 0 0 2px var(--bark)}
-.day[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--moss)}
-.day.today[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--moss),inset 0 0 0 4px var(--paper)}
+.day.today{outline:2px solid var(--bark);outline-offset:1px}
+.day[aria-pressed="true"]{outline:2.5px solid var(--moss);outline-offset:1px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:13px;color:var(--bark-soft)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .daydetail{margin-top:12px}
@@ -249,7 +251,7 @@ body.ro .tick,body.ro .save,body.ro .restchip,body.ro .add,body.ro .handle,body.
 body.ro .val input{pointer-events:none;background:transparent}
 body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !important}
 [hidden]{display:none !important}
-@media (max-width:380px){.cal{padding:10px}.grid7{gap:3px}.day .tag{font-size:10px;padding:2px 3px;letter-spacing:-.01em}}
+@media (max-width:380px){.cal{padding:10px}.grid7{gap:3px}.day .tag{font-size:10px;letter-spacing:-.01em}}
 @media (prefers-reduced-motion:reduce){.toast,.tick,.tab,.chip{transition:none}}
 </style>
 </head>
@@ -259,7 +261,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   <div class="ronote" id="roNote" hidden></div>
   <div class="tabs" role="tablist"><button class="tab" role="tab" data-view="workout" aria-selected="true">Workout</button><button class="tab" role="tab" data-view="history" aria-selected="false">History</button></div>
   <section id="workoutView">
-    <div class="datebar"><button class="nav" id="prevDay" aria-label="Previous day">‹</button><div class="datepick"><b id="dateLabel"></b><small>Tap to pick a date</small><input type="date" id="wDate" aria-label="Workout date"></div><button class="nav" id="nextDay" aria-label="Next day">›</button></div>
+    <div class="datebar"><button class="nav" id="prevDay" aria-label="Previous day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><div class="datepick"><b id="dateLabel"></b><small>Tap to pick a date</small><input type="date" id="wDate" aria-label="Workout date"></div><button class="nav" id="nextDay" aria-label="Next day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
     <div id="plan"></div>
     <nav class="chips" id="chips" aria-label="Workout days"></nav>
     <main class="list" id="list"></main>
@@ -619,12 +621,12 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     for(let i=0;i<startPad;i++) cells += `<div class="day blank"></div>`;
     for(let d=1; d<=dim; d++){
       const ds = iso(new Date(y,m,d)), sess = byDate[ds];
-      let cls="day", tag="";
+      let cls="day", tag="", sty="";
       if(ds > t) cls += " future";
-      else if(sess){ const c = colorOf(sess.group); tag = `<span class="tag" style="background:${c};color:var(--t-ink)">${esc(shortOf(sess.group))}</span>`; }
+      else if(sess){ cls += " done"; sty = ` style="--c:${colorOf(sess.group)}"`; tag = `<span class="tag">${esc(shortOf(sess.group))}</span>`; }
       else if(isRest(ds) || (firstDate && ds >= firstDate && ds < t)){ cls += " rest"; tag = `<span class="tag">Rest</span>`; }
       if(ds===t) cls += " today";
-      cells += `<button class="${cls}" data-date="${ds}" aria-pressed="${ds===selDate}" ${ds>t?"disabled":""} aria-label="${longDate(ds)}${sess?", "+esc(sess.group):""}"><span>${d}</span>${tag}</button>`;
+      cells += `<button class="${cls}"${sty} data-date="${ds}" aria-pressed="${ds===selDate}" ${ds>t?"disabled":""} aria-label="${longDate(ds)}${sess?", "+esc(sess.group):""}"><span>${d}</span>${tag}</button>`;
     }
     const sel = byDate[selDate];
     let detail;
@@ -652,7 +654,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     const summary = `<div class="summary"><h3>${calMonth.toLocaleDateString(undefined,{month:"long"})} summary</h3><ul>${rows}</ul>
       <div class="tot">All time: ${allTotal} workout ${plural(allTotal)}${allGroups.map(g=>`, ${esc(g)} ${ac[g]||0}`).join("")}, rest ${aRest}.</div></div>`;
     $("#historyView").innerHTML = `<div class="cal">
-      <div class="cal-head"><button class="nav" data-cal="-1" aria-label="Previous month" ${atFirst?"disabled":""}>‹</button><h3>${calMonth.toLocaleDateString(undefined,{month:"long",year:"numeric"})}</h3><button class="nav" data-cal="1" aria-label="Next month" ${atCurrent?"disabled":""}>›</button></div>
+      <div class="cal-head"><button class="nav" data-cal="-1" aria-label="Previous month" ${atFirst?"disabled":""}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h3>${calMonth.toLocaleDateString(undefined,{month:"long",year:"numeric"})}</h3><button class="nav" data-cal="1" aria-label="Next month" ${atCurrent?"disabled":""}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
       <div class="grid7">${cells}</div>
     </div><div class="daydetail">${detail}</div>${summary}`;
   }
