@@ -1600,7 +1600,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 })();
 </script>
 <script>
-/* See my work: a gentle nudge after landing, then again after every 3 s pause.
+/* See my work: a gentle nudge after landing, then again every 3 s (nudge plus rest).
    Only while the button is on screen and the tab is visible; stops once it's been used or hovered. */
 (function () {
   var ico = document.querySelector('.ctas .ico-go'), btn = ico && ico.closest('a');
@@ -1610,7 +1610,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     if (stopped || !onScreen || document.hidden) return;
     ico.classList.remove('nudge'); void ico.offsetWidth; ico.classList.add('nudge');
   }
-  ico.addEventListener('animationend', function () { ico.classList.remove('nudge'); clearTimeout(t); t = setTimeout(nudge, 3000); });
+  ico.addEventListener('animationend', function () { ico.classList.remove('nudge'); clearTimeout(t); t = setTimeout(nudge, 1700); }); // 1.3 s nudge + 1.7 s rest = one every 3 s
   function stop() { stopped = true; clearTimeout(t); ico.classList.remove('nudge'); }
   btn.addEventListener('click', stop); btn.addEventListener('pointerenter', stop); btn.addEventListener('focus', stop);
   if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
