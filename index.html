@@ -359,7 +359,8 @@ section.block { padding-block: clamp(72px, 10vw, 136px); }
 .card .shot.photo { padding: 0; background: var(--linen); }
 .card .shot.photo img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .card .shot.photo::before, .card .shot.photo::after { z-index: 2; mix-blend-mode: multiply; }
-@media (min-width: 860px) { .card.full { grid-column: 1 / -1; } .card.full .shot { aspect-ratio: 3 / 1; } }
+@media (min-width: 860px) { .card.full { grid-column: 1 / -1; } }
+.card.full .shot { aspect-ratio: 3 / 1; } /* the v1 cover is 3:1, so show all of it at every width */
 
 .acc { color: var(--moss); }
 .card h3 .play-btn { all: unset; cursor: pointer; }
