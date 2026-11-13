@@ -716,7 +716,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   <section class="hero" id="intro">
     <div class="wrap hero-grid">
       <div class="panel">
-        <h1>I care about <em>systems, craft</em> and the people behind the pixels.</h1>
+        <h1>I care about <em>systems, craft</em> and the <em>people behind the pixels.</em></h1>
         <p class="lead">9+ years designing fintech and edtech products used by millions.</p>
         <p class="role-line">AVP – Product Design at <span>Kotak811</span></p>
         <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India</p>
@@ -743,7 +743,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   h1.setAttribute('aria-label', h1.textContent.replace(/\s+/g, ' ').trim());
   var end = 80 + i * 45 + 350, d = end;
   [].slice.call(panel.children).forEach(function (el) { if (el === h1) return; el.style.setProperty('--d', d); d += 90; });
-  h1.querySelectorAll('em').forEach(function (em) { em.style.setProperty('--hl', end + 450); });
+  h1.querySelectorAll('em').forEach(function (em, k) { em.style.setProperty('--hl', end + 450 + k * 650); }); // one highlight after the other
   document.documentElement.classList.add('hero-in');
 })();
 </script>
@@ -1600,7 +1600,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 })();
 </script>
 <script>
-/* See my work: a gentle nudge after landing, then again after every 5 s pause.
+/* See my work: a gentle nudge after landing, then again after every 3 s pause.
    Only while the button is on screen and the tab is visible; stops once it's been used or hovered. */
 (function () {
   var ico = document.querySelector('.ctas .ico-go'), btn = ico && ico.closest('a');
@@ -1610,13 +1610,13 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     if (stopped || !onScreen || document.hidden) return;
     ico.classList.remove('nudge'); void ico.offsetWidth; ico.classList.add('nudge');
   }
-  ico.addEventListener('animationend', function () { ico.classList.remove('nudge'); clearTimeout(t); t = setTimeout(nudge, 5000); });
+  ico.addEventListener('animationend', function () { ico.classList.remove('nudge'); clearTimeout(t); t = setTimeout(nudge, 3000); });
   function stop() { stopped = true; clearTimeout(t); ico.classList.remove('nudge'); }
   btn.addEventListener('click', stop); btn.addEventListener('pointerenter', stop); btn.addEventListener('focus', stop);
   if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
-    onScreen = es[0].isIntersecting; clearTimeout(t); if (onScreen && !stopped) t = setTimeout(nudge, 5000);
+    onScreen = es[0].isIntersecting; clearTimeout(t); if (onScreen && !stopped) t = setTimeout(nudge, 3000);
   }).observe(btn);
-  document.addEventListener('visibilitychange', function () { clearTimeout(t); if (!document.hidden && !stopped) t = setTimeout(nudge, 5000); });
+  document.addEventListener('visibilitychange', function () { clearTimeout(t); if (!document.hidden && !stopped) t = setTimeout(nudge, 3000); });
   addEventListener('load', function () { clearTimeout(t); t = setTimeout(nudge, 2600); }); // after the hero has settled in
 })();
 </script>
