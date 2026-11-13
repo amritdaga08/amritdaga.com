@@ -1143,3 +1143,4 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 /* calendar rings inside the cell so neighbours never overlap */
 .dc-day.today { outline: 0; box-shadow: inset 0 0 0 2px var(--bark), inset 0 0 0 3.5px var(--paper); }
 .dc-day[aria-pressed="true"], .dc-day.today[aria-pressed="true"] { outline: 0; box-shadow: inset 0 0 0 2.5px var(--moss), inset 0 0 0 4px var(--paper); }
+.dpick.is-today { border-color: var(--bark); box-shadow: inset 0 0 0 1px var(--bark); }

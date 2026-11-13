@@ -349,7 +349,7 @@
   function show() {
     var d = new Date(); d.setDate(d.getDate() + off);
     var t = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-    lab.textContent = off === 0 ? 'Today, ' + t : t; next.disabled = off >= 0; if (inp) inp.value = iso(d);
+    lab.textContent = off === 0 ? 'Today, ' + t : t; next.disabled = off >= 0; lab.parentNode.classList.toggle('is-today', off === 0); if (inp) inp.value = iso(d);
   }
   var inp = document.getElementById('ds-step-i'), pad = function (n) { return String(n).padStart(2, '0'); };
   var iso = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };

@@ -149,6 +149,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .datepick small{font-size:12px;color:var(--bark-soft)}
 .datepick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;margin:0;font-size:16px}
 .datepick:focus-within{outline:3px solid var(--bark);outline-offset:2px}
+.datepick.is-today{border-color:var(--bark);box-shadow:inset 0 0 0 1px var(--bark)}
 
 /* history: calendar, day detail, summary */
 .cal{background:var(--paper);border:1px solid var(--rule);border-radius:20px;padding:14px}
@@ -583,6 +584,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     const dl = new Date(shown+"T00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
     $("#dateLabel").textContent = (em && em.moveTo!==em.orig ? "Move to " : "") + (shown===today() ? `Today, ${dl}` : dl);
     $("#nextDay").disabled = shown >= today();
+    document.querySelector(".datepick").classList.toggle("is-today", shown === today());
     if(em){
       $("#plan").innerHTML = `<div class="plan back"><span>Editing</span><b>${longDate(em.orig)}</b><span>${em.moveTo!==em.orig ? `This workout will move to ${longDate(em.moveTo)} when you save.` : "Change weights, tick or untick exercises, or change the date. Nothing is saved until you tap Save."}</span></div>`;
     }
