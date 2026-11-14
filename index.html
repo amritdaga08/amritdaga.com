@@ -180,10 +180,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .seg button:hover { color: var(--bark); }
 .seg button[aria-selected="true"] { background: var(--moss); color: var(--paper); }
 .panel { margin-top: 0; text-align: center; }
-.panel h1 { font-size: var(--step-4); line-height: var(--lh-4); max-width: 22ch; margin: 0 auto; }
+.panel h1 { font-size: var(--step-4); line-height: 1.24; max-width: 22ch; margin: 0 auto; } /* room for the highlight between lines */
 .panel h1 em { font-style: normal; color: var(--moss); }
 /* hero: headline settles in word by word, the rest follows, then "systems, craft" gets a soft underline. Plays once. */
-.panel h1 em { background: linear-gradient(transparent 66%, color-mix(in srgb, var(--sage) 30%, transparent) 66%) no-repeat 0 0 / 100% 100%; -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 .04em; }
+.panel h1 em { background: linear-gradient(transparent 62%, color-mix(in srgb, var(--sage) 30%, transparent) 62% 90%, transparent 90%) no-repeat 0 0 / 100% 100%; -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 .04em; }
 @media (prefers-reduced-motion: no-preference) {
   .hero-in .panel h1 .w { display: inline-block; opacity: 0; transform: translateY(.32em); animation: wIn .7s var(--breeze, cubic-bezier(.2, .8, .2, 1)) forwards; animation-delay: calc(80ms + var(--i) * 45ms); }
   .hero-in .panel > :not(h1) { opacity: 0; transform: translateY(10px); animation: wIn .7s var(--breeze, cubic-bezier(.2, .8, .2, 1)) forwards; animation-delay: calc(var(--d) * 1ms); }
@@ -707,7 +707,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 }
 
 /* green highlight with a soft Moss underline, drawn in when it scrolls into view (same as the hero) */
-em.hl { font-style: normal; color: var(--moss); background: linear-gradient(transparent 66%, color-mix(in srgb, var(--sage) 30%, transparent) 66%) no-repeat 0 0 / 100% 100%; -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 .04em; }
+em.hl { font-style: normal; color: var(--moss); background: linear-gradient(transparent 62%, color-mix(in srgb, var(--sage) 30%, transparent) 62% 90%, transparent 90%) no-repeat 0 0 / 100% 100%; -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 .04em; }
 @media (prefers-reduced-motion: no-preference) {
   .js-hl em.hl { background-size: 0% 100%; }
   .js-hl em.hl.lit { background-size: 100% 100%; transition: background-size .9s cubic-bezier(.65, 0, .35, 1) .25s; }
