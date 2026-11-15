@@ -323,7 +323,7 @@ dialog.sheet h2{font-size:24px;margin:0 0 10px}
 .pill svg{color:var(--bark-soft);flex:none}
 .pfpick{font:400 20px/1.2 var(--display)}
 .pfpick svg{width:20px;height:20px}
-.splitpick{font:600 15px var(--body);color:var(--bark);flex:none;min-height:44px;padding:0 var(--s1) 0 var(--s3);gap:var(--s1)}
+.splitpick{font:400 20px/1.2 var(--display);color:var(--bark);flex:none;min-height:44px;padding:0;gap:var(--s1)}
 .splitpick.ro{color:var(--bark-soft);cursor:default}
 .splitrow{flex:none;display:flex;flex-direction:column;gap:var(--s2)}
 .pfpick{gap:var(--s2)}
@@ -375,6 +375,7 @@ dialog:focus,dialog:focus-visible{outline:none}
 .set-hint{margin:0;font-size:13px;color:var(--bark-soft)}
 
 /* people */
+.hright #splitBtn{margin-right:var(--s1)}
 .hright{display:flex;align-items:center;gap:10px}
 .avatar{width:44px;height:44px;min-width:44px;aspect-ratio:1;padding:0;line-height:1;border-radius:50%;border:0;color:#FFFDF8;font:400 17px var(--display);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--rule)}
 #avatarBtn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
@@ -480,7 +481,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
 </head>
 <body>
 <div class="wrap">
-  <header><h1>Gainz</h1><div class="hright"><span class="sync" id="sync" hidden></span><button class="avatar" id="avatarBtn" aria-haspopup="dialog"></button></div></header>
+  <header><h1>Gainz</h1><div class="hright"><span class="sync" id="sync" hidden></span><button class="nav" id="splitBtn" aria-haspopup="dialog" aria-label="Split and muscle coverage"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 10v10"/></svg></button><button class="avatar" id="avatarBtn" aria-haspopup="dialog"></button></div></header>
   <div class="ronote" id="roNote" hidden></div>
   <div class="tabs" role="tablist"><button class="tab" role="tab" data-view="workout" aria-selected="true">Workout</button><button class="tab" role="tab" data-view="history" aria-selected="false">History</button></div>
   <section id="workoutView">
@@ -1172,7 +1173,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   function render(){
     const me = prof(), ab = $("#avatarBtn");
     ab.textContent = initial(me); ab.style.background = PCOLORS[me.id] || "#6B5A4A";
-    ab.setAttribute("aria-label", `${me.name}: profile and settings`);
+    ab.setAttribute("aria-label", `${me.name}. Switch profile`);
     document.body.classList.toggle("editing", !!em);
     document.body.classList.toggle("ro", ro());
     document.body.classList.toggle("nodir", !role.all);
@@ -1232,6 +1233,10 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   document.addEventListener("click", e=>{
     if(e.target.closest("#avatarBtn") && lpFired){ lpFired = false; return; }
     if(e.target.closest("#avatarBtn")){
+      if(em){ toast("Save or discard your edit first"); return; }
+      openProfiles(); return;
+    }
+    if(e.target.closest("#splitBtn")){
       if(em){ toast("Save or discard your edit first"); return; }
       renderSplitBox(); fitSheet(); $("#setSheet").showModal(); $("#setSheet").focus(); $("#splitBox").scrollTop = 0; return;
     }
@@ -1366,9 +1371,6 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     const chip = (d, label) => `<button class="utab" role="tab" data-cday="${esc(d)}" aria-selected="${(covDay||"")===d}">${label}</button>`;
     const chev = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`;
     $("#splitBox").innerHTML = `<div class="setbar">
-        <button class="pill pfpick" data-act="pfopen" aria-haspopup="dialog" aria-label="${esc(me.name)}. Switch profile">
-          <span class="avatar sm" style="background:${PCOLORS[me.id]||"#6B5A4A"}">${esc(initial(me))}</span><span class="pfname">${esc(me.name)}</span>${chev}
-        </button>
         ${can ? `<button class="pill splitpick" data-act="spopen" aria-haspopup="dialog" aria-label="Split: ${esc(kind)}. Change split">${esc(kind)}${chev}</button>` : `<span class="pill splitpick ro">${esc(kind)}</span>`}
       </div>
       <div class="splitrow">
