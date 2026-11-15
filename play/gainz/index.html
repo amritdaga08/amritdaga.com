@@ -921,14 +921,10 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     box.hidden = false;
     const ids = new Set(state.logs.filter(l=>mine(l) && !l.base && l.date===ad()).map(l=>l.exId));
     const cv = coverage([...ids].map(exById).filter(Boolean));
-    // denominator = groups the day's planned lifts work directly; fall back to everything logged
-    const plannedCv = filter && filter!==REST ? coverage(dayIds(filter).map(exById).filter(e=>e && visible(e))) : null;
-    const planned = plannedCv ? Object.keys(MUSCLES).filter(g=>(plannedCv.grp[g]||0)>=1) : [];
-    const groups = planned.length ? planned : Object.keys(MUSCLES).filter(g=>(cv.grp[g]||0)>=1);
-    const hit = groups.filter(g=>(cv.grp[g]||0)>=1);
+    const groups = Object.keys(MUSCLES), hit = groups.filter(g=>(cv.grp[g]||0)>=1);
     const levelOf = (g,h) => lvl(h ? cv.head[g+"."+h] : cv.grp[g]);
     const dayName = ad()===today() ? "today" : niceDate(ad());
-    let html = `<div class="cov-title"><h3>${ad()===today() ? "Muscles trained today" : `Muscles trained on ${esc(niceDate(ad()))}`}</h3>${ids.size ? `<small>${hit.length===groups.length ? `All ${groups.length} planned muscle groups` : `${hit.length} of ${groups.length} planned muscle groups`}</small>` : ""}</div>${figs("wk", levelOf)}`;
+    let html = `<div class="cov-title"><h3>${ad()===today() ? "Muscles trained today" : `Muscles trained on ${esc(niceDate(ad()))}`}</h3></div>${figs("wk", levelOf)}`;
     if(ids.size){
       html += `<div class="cov-key">${sw("l0","Not worked")}${sw("l1","Assisting")}${sw("l2","1 exercise")}${sw("l3","2")}${sw("l4","3+")}</div>`;
       const g = covSel.wk;
