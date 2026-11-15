@@ -205,11 +205,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .tab[aria-selected="true"]{background:var(--pick);color:var(--moss-ink);font-weight:600}
 
 /* plan card: Moss when there's work to do */
-.plan{background:var(--open-bg);color:var(--open-fg);border-radius:20px;padding:16px 18px;margin-bottom:14px}
+.plan{background:var(--open-bg);color:var(--open-fg);border-radius:20px;padding:12px 16px;margin-bottom:14px}
 .plan.rest{background:var(--paper);color:var(--bark);border:1px solid var(--rule)}
 .plan.back{background:color-mix(in srgb,var(--sun) 12%,var(--paper));color:var(--bark);border:1px solid color-mix(in srgb,var(--sun) 35%,transparent)}
 .plan > span:first-child{display:block;font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-.plan b{display:block;margin:4px 0 4px;font:400 30px/1.1 var(--display);letter-spacing:-.01em}
+.plan b{display:block;margin:2px 0 0;font:400 24px/1.15 var(--display);letter-spacing:-.01em}
+.plan b + span{display:block;margin-top:2px}
 .plan span{font-size:14px;opacity:.9}
 .plan .link{color:inherit;min-height:0}
 
@@ -420,7 +421,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
 .muscles{opacity:.62}
 .muscles .m{fill:var(--lz);fill-rule:nonzero;stroke:none;cursor:pointer;transition:fill .25s}
 .m:focus{outline:none}
-.cov{background:var(--paper);border:1px solid var(--rule);border-radius:20px;margin:12px 0;padding:14px 12px}
+.cov{background:var(--paper);border:1px solid var(--rule);border-radius:20px;margin:12px 0;padding:14px 12px var(--s6)}
 .cov-title{padding:var(--s1) 4px var(--s6);text-align:center;display:flex;flex-direction:column;gap:2px}
 .cov-title h3{margin:0}
 #cov .figs,.cov-set .figs{gap:var(--s5);padding:0 var(--s2)}
@@ -719,22 +720,22 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     const nextTrain = p => { for(let k=0;k<C.length;k++){ const g = C[(p+k)%C.length]; if(g!=="Rest") return g; } return C[0]; };
     const todays = all.find(x=>x.date===t);
     const last = all.find(x=>x.date<t && C.includes(x.group));
-    if(isRest(t)){ const nx = nextTrain(C[pos]==="Rest" ? pos+1 : pos); return {rest:true, group:nx, note:`Marked as rest. ${dayLabel(nx)} is next in your cycle.`, marked:true}; }
+    if(isRest(t)){ const nx = nextTrain(C[pos]==="Rest" ? pos+1 : pos); return {rest:true, group:nx, note:`${dayLabel(nx)} next`, marked:true}; }
     if(todays){
       let p2 = pos; for(let k=0;k<C.length;k++){ const jx=(pos+k)%C.length; if(C[jx]===todays.group){ p2=(jx+1)%C.length; break; } }
       const nx = nextTrain(p2);
-      return {group:todays.group, note:`Logged today.${finisher(todays.group)} ${C[p2]==="Rest" ? `Rest tomorrow, then ${dayLabel(nx)}.` : `${dayLabel(nx)} is next in your cycle.`}`, done:true};
+      return {group:todays.group, note:finisher(todays.group).trim(), done:true};
     }
-    if(C[pos]==="Rest"){ const nx = nextTrain(pos+1); return {rest:true, group:nx, note:`Rest day in your split. ${dayLabel(nx)} is next.`}; }
+    if(C[pos]==="Rest"){ const nx = nextTrain(pos+1); return {rest:true, group:nx, note:`${dayLabel(nx)} next`}; }
     const g = C[pos];
     const n = restAfter();
     let streak = 0; for(let k=1;k<=n;k++){ const d = new Date(t+"T00:00"); d.setDate(d.getDate()-k); if(all.some(x=>x.date===iso(d))) streak++; else break; }
     if(streak >= n) return {rest:true, group:g, note:`You've trained ${n} days in a row. If you're training anyway, do ${dayLabel(g)}.`};
-    return {group:g, note:(last ? `${dayLabel(last.group)} was last on ${niceDate(last.date)}. ${dayLabel(g)} is next in your cycle.` : `Start of your cycle.`) + finisher(g)};
+    return {group:g, note:finisher(g).trim()};
   }
 
   function renderPlan(p){
-    $("#plan").innerHTML = `<div class="plan ${p.rest?"rest":""}"><span>${p.rest?"Today":p.done?"Today":"Up next today"}</span><b>${p.rest?"Rest":esc(dayLabel(p.group))}</b><span>${esc(p.note)}</span></div>`;
+    $("#plan").innerHTML = `<div class="plan ${p.rest?"rest":""}"><span>Today</span><b>${p.rest?"Rest":esc(dayLabel(p.group))}</b>${p.note ? `<span>${esc(p.note)}</span>` : ""}</div>`;
   }
 
   // Progress chart for one exercise: every logged max in order, starting max first.
