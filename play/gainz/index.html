@@ -205,12 +205,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .tab[aria-selected="true"]{background:var(--pick);color:var(--moss-ink);font-weight:600}
 
 /* plan card: Moss when there's work to do */
-.plan{background:var(--open-bg);color:var(--open-fg);border-radius:20px;padding:12px 16px;margin-bottom:14px}
+.plan{background:var(--open-bg);color:var(--open-fg);border-radius:20px;padding:var(--s4) 18px 18px;margin-bottom:var(--s4);display:flex;flex-direction:column;gap:6px}
 .plan.rest{background:var(--paper);color:var(--bark);border:1px solid var(--rule)}
 .plan.back{background:color-mix(in srgb,var(--sun) 12%,var(--paper));color:var(--bark);border:1px solid color-mix(in srgb,var(--sun) 35%,transparent)}
 .plan > span:first-child{display:block;font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-.plan b{display:block;margin:2px 0 0;font:400 24px/1.15 var(--display);letter-spacing:-.01em}
-.plan b + span{display:block;margin-top:2px}
+.plan b{display:block;margin:0;font:400 26px/1.15 var(--display);letter-spacing:-.01em}
 .plan span{font-size:14px;opacity:.9}
 .plan .link{color:inherit;min-height:0}
 
@@ -735,7 +734,9 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   }
 
   function renderPlan(p){
-    $("#plan").innerHTML = `<div class="plan ${p.rest?"rest":""}"><span>Today</span><b>${p.rest?"Rest":esc(dayLabel(p.group))}</b>${p.note ? `<span>${esc(p.note)}</span>` : ""}</div>`;
+    const n = p.rest ? 0 : dayIds(p.group).map(exById).filter(e=>e && visible(e)).length;
+    const sub = p.rest ? p.note : [n ? `${n} exercise${n===1?"":"s"}` : "", p.note.replace(/^Finish with /,"").replace(/\.$/,"").replace(/^10/,"Finish with 10")].filter(Boolean).join(" • ");
+    $("#plan").innerHTML = `<div class="plan ${p.rest?"rest":""}"><span>Today</span><b>${p.rest?"Rest":esc(dayLabel(p.group))}</b>${sub ? `<span>${esc(sub)}</span>` : ""}</div>`;
   }
 
   // Progress chart for one exercise: every logged max in order, starting max first.
