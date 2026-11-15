@@ -24,70 +24,70 @@ body{margin:0}
   --ok:#6FD3A8; --line:#FBE7B433; color-scheme:dark }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45}
-.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:flex;flex-direction:column;gap:28px}
+.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:32px 64px;display:flex;flex-direction:column;gap:32px}
 h1{font-family:var(--display);font-weight:400;font-size:clamp(2.2rem,10vw,3.4rem);line-height:1;margin:0;text-wrap:balance}
 .sub{margin:8px 0 0;color:var(--muted)}
-.eyebrow{margin:0 0 6px;font-family:var(--body);font-size:.95rem;font-weight:600;letter-spacing:.04em;color:var(--muted)}
+.eyebrow{margin:0 0 8px;font-family:var(--body);font-size:.95rem;font-weight:600;letter-spacing:.04em;color:var(--muted)}
 h2{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:3px solid var(--fg);outline-offset:2px}
 
-.machine{background:var(--surface);border:3px solid var(--fg);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:14px;box-shadow:6px 6px 0 var(--fg)}
+.machine{background:var(--surface);border:3px solid var(--fg);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:16px;box-shadow:6px 6px 0 var(--fg)}
 .window{height:var(--row);overflow:hidden;border-radius:12px;border:2px solid var(--fg);background:var(--bg);position:relative}
 .reel{will-change:transform}
 .reel div{height:var(--row);display:flex;align-items:center;justify-content:center;text-align:center;padding:0 12px;
   font-family:var(--display);font-size:clamp(1.25rem,5.6vw,1.8rem);line-height:1.1;overflow-wrap:anywhere}
 .reel.spin{transition:transform 2.4s cubic-bezier(.12,.72,.12,1)}
 .window.blur .reel div{filter:blur(1.2px)}
-.pull{background:var(--accent);color:var(--on-accent);border:2px solid var(--fg);border-radius:14px;padding:14px 16px;
+.pull{background:var(--accent);color:var(--on-accent);border:2px solid var(--fg);border-radius:16px;padding:16px 16px;
   font-family:var(--display);font-size:1.35rem;width:100%}
 .pull:active{transform:translateY(2px)}
 .pull:disabled{opacity:.6;cursor:default}
 
 .detail{display:flex;flex-direction:column;gap:12px}
 .stats{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
-.stats li{border:1.5px solid var(--line);border-radius:999px;padding:3px 12px;font-variant-numeric:tabular-nums}
+.stats li{border:1.5px solid var(--line);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums}
 .stats b{font-weight:600}
 .note{color:var(--muted);margin:0;font-size:.95rem}
 .ings{display:flex;flex-wrap:wrap;gap:8px}
-.ing{background:transparent;border:1.5px solid var(--fg);border-radius:10px;padding:6px 12px}
+.ing{background:transparent;border:1.5px solid var(--fg);border-radius:8px;padding:8px 12px}
 .ing[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
 .ing[aria-pressed="true"]::before{content:"✓ "}
 .have{font-weight:600}
 .have.all{color:var(--ok)}
 
 .head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.ghost{background:transparent;border:2px solid var(--fg);border-radius:10px;padding:7px 14px;font-weight:600}
+.ghost{background:transparent;border:2px solid var(--fg);border-radius:8px;padding:8px 16px;font-weight:600}
 .list{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--line)}
 .list li{border-bottom:1.5px solid var(--line);display:flex;align-items:center;gap:8px}
-.list li.g{font-family:var(--display);font-size:1.15rem;padding:16px 2px 6px;justify-content:space-between}
+.list li.g{font-family:var(--display);font-size:1.15rem;padding:16px 2px 8px;justify-content:space-between}
 .list li.g small{font-family:var(--body);font-size:.85rem;color:var(--muted)}
 .list .item{flex:1;min-width:0}
-.x{background:transparent;border:1.5px solid var(--line);border-radius:8px;padding:4px 10px;color:var(--accent);font-weight:600;white-space:nowrap}
+.x{background:transparent;border:1.5px solid var(--line);border-radius:8px;padding:4px 12px;color:var(--accent);font-weight:600;white-space:nowrap}
 .x.sure{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .tabs{display:flex;gap:8px}
-.tab{flex:1;min-width:0;background:transparent;border:2px solid var(--fg);border-radius:999px;padding:7px 4px;font-weight:600}
+.tab{flex:1;min-width:0;background:transparent;border:2px solid var(--fg);border-radius:999px;padding:8px 4px;font-weight:600}
 .tab[aria-pressed="true"]{background:var(--fg);color:var(--surface)}
-select{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--fg);border-radius:8px;padding:9px 10px;width:100%}
-.item{display:flex;align-items:baseline;gap:10px;width:100%;background:none;border:0;padding:12px 2px;text-align:left}
+select{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--fg);border-radius:8px;padding:8px 12px;width:100%}
+.item{display:flex;align-items:baseline;gap:12px;width:100%;background:none;border:0;padding:12px 2px;text-align:left}
 .item .n{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
 .item .m{color:var(--muted);font-size:.9rem;white-space:nowrap;font-variant-numeric:tabular-nums}
-.tag{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--muted)}
+.tag{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:1px 4px;color:var(--muted)}
 
 form{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
 label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;font-weight:600;min-width:0}
 label small{font-weight:400;color:var(--muted)}
-input,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--fg);border-radius:8px;padding:9px 10px;width:100%}
+input,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--fg);border-radius:8px;padding:8px 12px;width:100%}
 textarea{resize:vertical;min-height:64px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 @media (max-width:440px){.grid{grid-template-columns:repeat(2,1fr)}}
-.actions{display:flex;gap:10px;flex-wrap:wrap}
-.save{background:var(--fg);color:var(--surface);border:2px solid var(--fg);border-radius:10px;padding:8px 18px;font-weight:600}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.save{background:var(--fg);color:var(--surface);border:2px solid var(--fg);border-radius:8px;padding:8px 16px;font-weight:600}
 .del{margin-left:auto;color:var(--accent);border-color:var(--accent)}
 .err{color:var(--accent);margin:0;font-weight:600}
 @media (prefers-reduced-motion: reduce){.reel.spin{transition:none}.window.blur .reel div{filter:none}}
 /* ---------- polish ---------- */
-.wrap{padding-block:36px 120px;gap:32px}
+.wrap{padding-block:32px 96px;gap:32px}
 h1{font-size:clamp(2.1rem,9.5vw,3.2rem);line-height:1.02}
 .machine{gap:16px;padding:16px}
 .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border:2px solid var(--fg);border-radius:999px;background:var(--bg)}
@@ -103,7 +103,7 @@ h1{font-size:clamp(2.1rem,9.5vw,3.2rem);line-height:1.02}
 .list li.g{display:flex;align-items:baseline;justify-content:space-between;font-family:var(--display);font-size:1.25rem;padding:24px 0 8px;border-bottom:2px solid var(--fg)}
 .list li.g:first-child{padding-top:4px}
 .list li.g small{font-family:var(--body);font-size:.8rem;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
-.list li.empty{padding:14px 0;color:var(--muted);font-size:.9rem}
+.list li.empty{padding:16px 0;color:var(--muted);font-size:.9rem}
 .list li.sw{position:relative;overflow:hidden;display:block;transition:height .26s ease,opacity .2s}
 .list li.sw.gone{opacity:0}
 .list li.sw .x{position:absolute;inset:0 0 0 auto;width:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;border-radius:0;padding:0;background:var(--accent);color:var(--on-accent);font-size:.8rem;font-weight:600}
@@ -112,28 +112,28 @@ h1{font-size:clamp(2.1rem,9.5vw,3.2rem);line-height:1.02}
 .list li.sw.drag .item{transition:none}
 .item .n{font-weight:600;font-size:1.05rem;line-height:1.3}
 .item .m{font-size:.85rem;line-height:1.3;color:var(--muted);white-space:normal}
-.fab{position:fixed;z-index:20;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 22px 0 18px;border-radius:999px;border:2px solid var(--fg);background:var(--accent);color:var(--on-accent);font-weight:600;font-size:1rem;box-shadow:4px 4px 0 var(--fg);transition:transform .15s,box-shadow .15s}
+.fab{position:fixed;z-index:20;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 24px 0 16px;border-radius:999px;border:2px solid var(--fg);background:var(--accent);color:var(--on-accent);font-weight:600;font-size:1rem;box-shadow:4px 4px 0 var(--fg);transition:transform .15s,box-shadow .15s}
 .fab svg{width:22px;height:22px}
 .fab:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--fg)}
 html.embedded .fab{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 html.sheet-open .fab{opacity:0;pointer-events:none}
 .scrim{position:fixed;inset:0;z-index:30;background:rgba(40,10,16,.45)}
-.sheet{position:fixed;z-index:31;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;max-height:88vh;overflow:auto;border-radius:22px 22px 0 0;border-bottom:0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 30px -10px rgba(0,0,0,.35)}
+.sheet{position:fixed;z-index:31;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;max-height:88vh;overflow:auto;border-radius:24px 22px 0 0;border-bottom:0;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 30px -10px rgba(0,0,0,.35)}
 .sheet-head{display:flex;align-items:center;justify-content:space-between}
 .sheet-head h3{margin:0;font-family:var(--display);font-weight:400;font-size:1.5rem}
 .sheet label{display:block;font-size:.9rem;font-weight:600}
-.sheet label small{display:inline;margin-left:6px;font-weight:400;font-size:.8rem;color:var(--muted)}
-.sheet input,.sheet select,.sheet textarea{display:block;margin-top:6px;background:#FFFDF6;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px}
+.sheet label small{display:inline;margin-left:8px;font-weight:400;font-size:.8rem;color:var(--muted)}
+.sheet input,.sheet select,.sheet textarea{display:block;margin-top:8px;background:#FFFDF6;border:1.5px solid var(--line);border-radius:8px;padding:12px 12px}
 .sheet input:focus,.sheet select:focus,.sheet textarea:focus{border-color:var(--fg);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
 .sheet .grid{gap:12px}
-.sheet .actions .save{flex:1;padding:12px 18px;border-radius:12px}
-.sheet .actions .ghost{padding:12px 18px;border-radius:12px}
+.sheet .actions .save{flex:1;padding:12px 16px;border-radius:12px}
+.sheet .actions .ghost{padding:12px 16px;border-radius:12px}
 .icon{background:transparent;border:1.5px solid var(--line);border-radius:999px;width:36px;height:36px}
 
 :root{--field:#FFFDF6;--edge:#7A4A35}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--field:#1C080D;--edge:#D3A98A} }
 :root[data-theme="dark"]{--field:#1C080D;--edge:#D3A98A}
-.sheet{display:flex;flex-direction:column;gap:14px}
+.sheet{display:flex;flex-direction:column;gap:16px}
 .sheet[hidden],.scrim[hidden]{display:none}
 .sheet label{margin:0}
 .sheet label[for]{margin-bottom:-8px}
@@ -143,11 +143,11 @@ html.sheet-open .fab{opacity:0;pointer-events:none}
 .sheet [aria-invalid="true"]{border-color:var(--accent);outline-color:var(--accent)}
 .sheet .macros{border:0;margin:0;padding:0;min-width:0}
 .sheet .macros legend{padding:0;margin-bottom:8px;font-size:.9rem;font-weight:600}
-.sheet .macros legend small{margin-left:6px;font-weight:400;font-size:.8rem;color:var(--muted)}
+.sheet .macros legend small{margin-left:8px;font-weight:400;font-size:.8rem;color:var(--muted)}
 .sheet label.num{font-weight:500}
 .sheet label.num small{margin-left:2px}
-.sheet .hint{margin:-6px 0 0;font-size:.85rem;color:var(--muted)}
-.sheet .err{padding:10px 12px;border-radius:10px;border:1.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.sheet .hint{margin:-8px 0 0;font-size:.85rem;color:var(--muted)}
+.sheet .err{padding:12px 12px;border-radius:8px;border:1.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
 .sheet .actions .save,.sheet .actions .ghost{min-height:48px}
 .sheet .del{color:var(--accent);border-color:var(--accent)}
 .icon{display:grid;place-items:center;color:var(--fg);border-color:var(--edge);width:44px;height:44px}
@@ -155,16 +155,16 @@ html.sheet-open .fab{opacity:0;pointer-events:none}
 @media (prefers-reduced-motion: reduce){ .item,.list li.sw{transition:none} }
 
 /* ---------- food directory ---------- */
-.dir{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:var(--bg);border:1.5px solid var(--line)}
+.dir{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:16px;background:var(--bg);border:1.5px solid var(--line)}
 .dir > label{margin:0}
 .sheet .dir input{margin-top:0}
-.dres,.picked{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.dres-i{display:grid;gap:1px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px}
+.dres,.picked{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.dres-i{display:grid;gap:1px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:8px 12px}
 .dres-i:hover{border-color:var(--fg)}
 .dres-i .n,.picked .n{font-weight:600;line-height:1.25;overflow-wrap:anywhere}
 .dres-i .m,.picked small{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:400}
 .dres .none{font-size:.88rem;color:var(--muted);padding:4px 2px}
-.picked li{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--fg);border-radius:10px;padding:8px 8px 8px 12px}
+.picked li{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--fg);border-radius:8px;padding:8px 8px 8px 12px}
 .picked .n{flex:1;min-width:0;display:grid;gap:1px}
 .qty{display:flex;align-items:center;gap:2px}
 .qty b{min-width:30px;text-align:center;font-variant-numeric:tabular-nums}
@@ -207,7 +207,7 @@ html.sheet-open .fab{opacity:0;pointer-events:none}
         <input id="f-q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Search 900+ Indian dishes, e.g. rajma">
         <ul class="dres" id="f-res" hidden></ul>
         <ul class="picked" id="f-items" hidden></ul>
-        <p class="hint" id="f-dirhint">Add one or more dishes and the macros and ingredients fill in. You can still edit everything below.</p>
+        <p class="hint" id="f-dirhint">Macros and ingredients fill in from the dishes you add.</p>
       </div>
       <label for="f-name">Meal name</label><input id="f-name" required aria-required="true" aria-describedby="f-err" maxlength="80" autocomplete="off" autocapitalize="sentences" enterkeyhint="next" placeholder="e.g. Rajma chawal">
       <label for="f-cat">Category</label><select id="f-cat"><option>Brunch</option><option>Dinner</option><option>Dessert</option></select>
@@ -306,7 +306,7 @@ function renderIdle(){
 }
 
 function renderList(){
-  if (!meals.length){ $('list').innerHTML = '<li class="note" style="padding:14px 2px">No meals yet. Add the things you usually eat and the machine will pick from them.</li>'; return; }
+  if (!meals.length){ $('list').innerHTML = '<li class="note" style="padding:16px 2px">No meals yet. Add the things you usually eat and the machine will pick from them.</li>'; return; }
   const row = m => {
     const bits = [];
     if (m.calories != null) bits.push(m.calories + ' kcal');
@@ -547,7 +547,7 @@ function applyPicked(prev){
   if (picked.length && !missing.length){
     const sum = k => picked.reduce((a, x) => a + dirMap[x.c][k] * x.q, 0);
     $('f-cal').value = Math.round(sum('k')); $('f-p').value = r1(sum('p')); $('f-c').value = r1(sum('cb')); $('f-f').value = r1(sum('f'));
-    $('f-dirhint').textContent = 'Macros and ingredients filled in from the directory. You can still edit them below.';
+    $('f-dirhint').textContent = 'Filled in from the directory.';
   } else if (missing.length){
     ['f-cal','f-p','f-c','f-f'].forEach(k => { $(k).value = ''; });
     $('f-dirhint').textContent = 'The directory has no macros for ' + missing.map(e => shortName(e.n)).join(', ') + '. Add them yourself if you know them.';
@@ -566,7 +566,7 @@ function pickInit(m){
   picked = m && m.items ? m.items.map(x => ({ ...x })) : [];
   nameTouched = !!m;
   $('f-q').value = ''; $('f-res').hidden = true; $('f-res').innerHTML = '';
-  $('f-dirhint').textContent = 'Add one or more dishes and the macros and ingredients fill in. You can still edit everything below.';
+  $('f-dirhint').textContent = 'Macros and ingredients fill in from the dishes you add.';
   if (picked.length) loadDir().then(renderPicked);
   renderPicked();
 }

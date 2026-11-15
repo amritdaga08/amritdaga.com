@@ -29,8 +29,8 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--paper);color:var(--ink);
   font:16px/1.5 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
-main{max-width:520px;margin:0 auto;padding:20px 18px 48px}
-h1{font-size:2rem;line-height:1.05;font-weight:800;margin:4px 0 18px;letter-spacing:-.02em}
+main{max-width:520px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:2rem;line-height:1.05;font-weight:800;margin:4px 0 16px;letter-spacing:-.02em}
 h2{font-size:1.1rem;font-weight:600;margin:0 0 12px}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible{outline:2px solid var(--home);outline-offset:2px}
@@ -42,57 +42,57 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--home);outline-o
 .daylabel strong{display:block;font-size:1.15rem}
 .daylabel span{color:var(--muted);font-size:.9rem}
 
-.meals{background:var(--card);border-radius:18px;padding:6px 16px;border:1px solid var(--line)}
-.meal{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 0}
+.meals{background:var(--card);border-radius:24px;padding:8px 16px;border:1px solid var(--line)}
+.meal{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 0}
 .meal + .meal{border-top:1px solid var(--line)}
 .meal-name{font-weight:600}
 .meal-note{grid-column:1 / -1;display:none}
 .meal.is-out .meal-note{display:block}
 .meal-note input{width:100%;border:1px solid var(--line);background:var(--paper);color:var(--ink);
-  border-radius:10px;padding:8px 10px;font:inherit;font-size:.95rem}
-.seg{display:flex;background:var(--empty);border-radius:999px;padding:3px}
-.seg button{display:inline-flex;align-items:center;gap:6px;border:0;background:none;border-radius:999px;padding:7px 14px 7px 11px;font-weight:600;font-size:.95rem;color:var(--muted)}
+  border-radius:8px;padding:8px 12px;font:inherit;font-size:.95rem}
+.seg{display:flex;background:var(--empty);border-radius:999px;padding:4px}
+.seg button{display:inline-flex;align-items:center;gap:8px;border:0;background:none;border-radius:999px;padding:8px 16px 8px 12px;font-weight:600;font-size:.95rem;color:var(--muted)}
 .seg button[aria-pressed="true"][data-v="home"]{background:var(--home);color:#fff}
 .seg button[aria-pressed="true"][data-v="out"]{background:var(--out);color:#1C1606}
 .ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .hint{color:var(--muted);font-size:.85rem;margin:8px 2px 0}
 
 .summary{margin-top:32px}
-.periods{display:flex;gap:6px;margin-bottom:16px}
-.periods button{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 14px;font-size:.9rem}
+.periods{display:flex;gap:8px;margin-bottom:16px}
+.periods button{border:1px solid var(--line);background:none;border-radius:999px;padding:8px 16px;font-size:.9rem}
 .periods button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.headline{font-size:1.6rem;line-height:1.2;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+.headline{font-size:1.6rem;line-height:1.2;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
 .headline b{font-size:3.2rem;font-weight:800;color:var(--out);display:block;line-height:1;letter-spacing:-.03em}
-.sub{color:var(--muted);margin:0 0 18px}
+.sub{color:var(--muted);margin:0 0 16px}
 .ratio{display:flex;height:12px;border-radius:999px;overflow:hidden;background:var(--empty);margin-bottom:8px}
 .ratio i{display:block;height:100%}
 .legend{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted)}
 .legend b{color:var(--ink)}
-.bymeal{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}
-.bymeal div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.bymeal{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:24px}
+.bymeal div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
 .bymeal strong{display:block;font-size:1.6rem;line-height:1.1}
 .bymeal span{color:var(--muted);font-size:.85rem}
-.places{margin-top:18px;font-size:.95rem}
-.places p{margin:0 0 6px;color:var(--muted)}
+.places{margin-top:16px;font-size:.95rem}
+.places p{margin:0 0 8px;color:var(--muted)}
 .places ol{margin:0;padding-left:1.2em}
 
 .month{margin-top:32px}
-.monthhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.monthhead button{background:none;border:0;font-size:1.1rem;padding:4px 10px}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.monthhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.monthhead button{background:none;border:0;font-size:1.1rem;padding:4px 12px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
 .dow{text-align:center;font-size:.75rem;color:var(--muted)}
-.cell{border:0;background:var(--card);border-radius:10px;padding:6px 0 7px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:52px}
+.cell{border:0;background:var(--card);border-radius:8px;padding:8px 0 8px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:52px}
 .cell.blank{background:none}
 .cell.sel{box-shadow:inset 0 0 0 2px var(--ink)}
 .cell.future{opacity:.4}
 .cell .n{font-size:.8rem;line-height:1}
-.pips{display:flex;gap:3px}
+.pips{display:flex;gap:4px}
 .pips i{width:8px;height:8px;border-radius:50%;background:var(--empty)}
 .pips i.home{background:var(--home)}
 .pips i.out{background:var(--out)}
-.key{display:flex;gap:16px;font-size:.85rem;color:var(--muted);margin-top:10px}
-.key i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.status{font-size:.85rem;color:var(--muted);margin-top:28px;text-align:center}
+.key{display:flex;gap:16px;font-size:.85rem;color:var(--muted);margin-top:12px}
+.key i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.status{font-size:.85rem;color:var(--muted);margin-top:32px;text-align:center}
 @media (prefers-reduced-motion:no-preference){.seg button{transition:background .15s}}
 </style>
 </head>
@@ -357,7 +357,7 @@ if (!startDate) ensureStart(todayISO());
     snap.docs.forEach(d => { const v = d.data(); if (v && v.date && MEAL_KEYS.includes(v.meal)) next[d.id] = v; });
     entries = next;
     renderAll();
-    setStatus("Synced — anyone you share this with sees the same log.");
+    setStatus("");
   }, err => {
     if (err.code === "revoked" || err.code === "not_granted") { col = null; setStatus("Saved on this device only."); }
     else setStatus("Sync paused. Changes will show once the connection is back.");
