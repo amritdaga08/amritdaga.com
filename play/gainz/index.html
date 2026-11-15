@@ -441,6 +441,16 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
 .figs figure{margin:0;text-align:center}
 .figs figcaption{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--bark-soft);margin-bottom:2px}
 .figs svg{width:100%;height:auto;max-height:380px;display:block;isolation:isolate}
+.figs.breathe .muscles .m:not(.l0){animation:breathe 1.6s var(--breeze) .25s 1 both}
+@keyframes breathe{0%{opacity:.35}45%{opacity:1;filter:brightness(1.12)}100%{opacity:1;filter:none}}
+.tapcue{pointer-events:none}
+.tapcue circle{fill:none;stroke:var(--paper);stroke-width:3;transform-box:fill-box;transform-origin:center;opacity:0;animation:ripple 2.2s var(--breeze) 1s 3}
+.tapcue .dot{fill:var(--paper);stroke:none;animation:tapdot 2.2s var(--breeze) 1s 3}
+@keyframes ripple{0%{opacity:0;transform:scale(.4)}20%{opacity:.95}100%{opacity:0;transform:scale(1.6)}}
+@keyframes tapdot{0%,100%{opacity:0;transform:scale(.6)}15%{opacity:.9;transform:scale(1)}35%{opacity:.9;transform:scale(.85)}60%{opacity:0}}
+.msel path{animation:selin .35s var(--breeze) both}
+@keyframes selin{from{opacity:0;stroke-width:5}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.figs.breathe .muscles .m,.tapcue circle,.msel path{animation:none}}
 .msel path{fill:none;stroke:var(--bark);stroke-width:1.5;stroke-linejoin:round;pointer-events:none}
 .l0{--lz:transparent} .l1{--lz:#B9E0AE} .l2{--lz:#6FC160} .l3{--lz:#3B9B3A} .l4{--lz:#1E6B24}
 .l0{--lv:#E9B9A0} .l1{--lv:#CFD3B0} .l2{--lv:#9EBF86} .l3{--lv:#749F5E} .l4{--lv:#4F7A40}
@@ -883,6 +893,28 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   const sw = (c,t)=>`<span><i class="${c}"></i>${t}</span>`;
 
   // Workout tab: only what has been logged on the shown date
+  // Gentle cue that muscles are tappable: worked muscles breathe once, a tap ripple lands on the most-worked one.
+  // Stops for good after the first tap. Skipped for reduced motion.
+  let musTapped = false; try{ musTapped = localStorage.getItem("gainz-mtap")==="1"; }catch(e){}
+  const tapped = () => { if(musTapped) return; musTapped = true; try{ localStorage.setItem("gainz-mtap","1"); }catch(e){} };
+  const nudgeKey = {};
+  function nudgeFigs(root){
+    if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const svg = root.querySelector(".figs svg"); if(!svg) return;
+    const lit = [...root.querySelectorAll(".figs .m")].filter(m=>!m.classList.contains("l0"));
+    if(!lit.length) return;
+    // breathe once whenever what's lit changes (new log, new day, new tab)
+    const sig = root.id + lit.map(m=>m.dataset.mus+m.getAttribute("class")).join();
+    if(nudgeKey[root.id] !== sig){ nudgeKey[root.id] = sig; root.querySelector(".figs").classList.add("breathe"); }
+    if(musTapped) return;
+    const best = lit.reduce((a,b)=> (+b.getAttribute("class").match(/l(\d)/)[1]) > (+a.getAttribute("class").match(/l(\d)/)[1]) ? b : a);
+    let bb; try{ bb = best.getBBox(); }catch(e){ return; }
+    const own = best.ownerSVGElement, r = Math.max(10, Math.min(bb.width, bb.height)*0.28);
+    const g = document.createElementNS("http://www.w3.org/2000/svg","g");
+    g.setAttribute("class","tapcue"); g.setAttribute("aria-hidden","true");
+    g.innerHTML = `<circle cx="${bb.x+bb.width/2}" cy="${bb.y+bb.height*0.45}" r="${r}"/><circle cx="${bb.x+bb.width/2}" cy="${bb.y+bb.height*0.45}" r="${r*0.32}" class="dot"/>`;
+    own.appendChild(g);
+  }
   function renderCoverage(){
     const box = $("#cov");
     if(filter===REST){ box.hidden = true; return; }
@@ -906,6 +938,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
       if(cv.unmapped.length) html += `<p class="cov-note">Not counted: ${cv.unmapped.map(esc).join(", ")}.</p>`;
     }
     box.innerHTML = html;
+    nudgeFigs(box);
   }
 
   // Settings: how often a split hits each muscle per week
@@ -1205,7 +1238,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
       view = tab.dataset.view; render(); return; }
     const nav = e.target.closest("[data-cal]"); if(nav && !nav.disabled){ calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + +nav.dataset.cal, 1); render(); return; }
     const day = e.target.closest(".day[data-date]"); if(day && !day.disabled){ selDate = day.dataset.date; render(); return; }
-    const mus = e.target.closest("#cov [data-mus]"); if(mus){ covSel.wk = covSel.wk===mus.dataset.mus ? null : mus.dataset.mus; renderCoverage(); return; }
+    const mus = e.target.closest("#cov [data-mus]"); if(mus){ covSel.wk = covSel.wk===mus.dataset.mus ? null : mus.dataset.mus; tapped(); renderCoverage(); return; }
     const chip = e.target.closest(".chip"); if(chip){ filter = chip.dataset.g; userPicked = true; openId=null; render(); return; }
     const a = e.target.closest("[data-act]"); if(!a) return;
     const WRITE = ["unit","save","tick","rest","unrest","editday","deleteday","logday","edit","delete","saveEdit"];
@@ -1314,6 +1347,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
         <div class="daychips utabs" role="tablist" aria-label="Show coverage for">${chip("", "All")}${days.map(d=>chip(d, esc(d))).join("")}</div>
       </div>
       ${renderSplitCoverage(kind)}`;
+    nudgeFigs($("#splitBox"));
   }
   function setSplit(name){
     const me = prof(); if(!canWriteProfile(me.id) || splitKind(splitOf(me))===name) return;
@@ -1326,7 +1360,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   });
   $("#splitBox").addEventListener("click", e=>{
     const c = e.target.closest("[data-cday]"); if(c){ covDay = c.dataset.cday || null; covSel.set = null; renderSplitBox(); return; }
-    const mus = e.target.closest("[data-mus]"); if(mus){ covSel.set = covSel.set===mus.dataset.mus ? null : mus.dataset.mus; renderSplitBox(); }
+    const mus = e.target.closest("[data-mus]"); if(mus){ covSel.set = covSel.set===mus.dataset.mus ? null : mus.dataset.mus; tapped(); renderSplitBox(); }
   });
 
   function setDate(d){
