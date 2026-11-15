@@ -891,7 +891,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     const groups = Object.keys(MUSCLES), hit = groups.filter(g=>(cv.grp[g]||0)>=1);
     const levelOf = (g,h) => lvl(h ? cv.head[g+"."+h] : cv.grp[g]);
     const dayName = ad()===today() ? "today" : niceDate(ad());
-    let html = `<div class="cov-title"><h3>Muscle coverage</h3><small>${ids.size ? `${hit.length} of ${groups.length} groups worked ${esc(dayName)}` : `Fills in as you log exercises`}</small></div>${figs("wk", levelOf)}`;
+    let html = `<div class="cov-title"><h3>${ad()===today() ? "Muscles trained today" : `Muscles trained on ${esc(niceDate(ad()))}`}</h3><small>${ids.size ? `${hit.length} of ${groups.length} muscle groups` : `Fills in as you log exercises`}</small></div>${figs("wk", levelOf)}`;
     if(ids.size){
       html += `<div class="cov-key">${sw("l0","Not worked")}${sw("l1","Assisting")}${sw("l2","1 exercise")}${sw("l3","2")}${sw("l4","3+")}</div>`;
       const g = covSel.wk;
@@ -903,7 +903,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
         }).join("")}</ul></div>`;
       } else html += `<p class="cov-note">Tap a muscle to see which heads were hit and by what.</p>`;
       if(cv.unmapped.length) html += `<p class="cov-note">Not counted: ${cv.unmapped.map(esc).join(", ")}.</p>`;
-    } else html += `<p class="cov-note">Nothing logged ${esc(dayName)} yet. Tick an exercise and the muscles it works turn green.</p>`;
+    } else html += `<p class="cov-note">Nothing logged ${ad()===today() ? "today" : `on ${esc(niceDate(ad()))}`} yet. Tick an exercise and the muscles it works turn green.</p>`;
     box.innerHTML = html;
   }
 
