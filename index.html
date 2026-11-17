@@ -314,6 +314,7 @@ section.block { padding-block:clamp(64px, 10vw, 96px); }
 .ic-gainz { background: linear-gradient(160deg, #7FAE76, #3F6E3A); }
 .ic-closet { background: linear-gradient(160deg, #F2D9A0, #D9A84E); }
 .ic-ghar-bahar { background: linear-gradient(160deg, #8FC3BB, #3E7D75); }
+.ic-plate { background: linear-gradient(160deg, #FAF5EA, #D9C9A8); }
 .ic-kuchh-bhi-chalega { background: linear-gradient(160deg, #EE9467, #B5532E); }
 .kbc-glyph { font-family: 'Tiro Devanagari Hindi', serif; line-height: 1; color: #FFFDF8; -webkit-text-stroke: .02em currentColor; paint-order: stroke fill; transform: translateY(-.04em); font-size: 1.6rem; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .store { background: linear-gradient(180deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .03)); border-color: rgba(255, 255, 255, .12); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 24px 50px -30px rgba(0, 0, 0, .7); } :root:not([data-theme="light"]) .home::before { opacity: .35; } }
@@ -825,6 +826,12 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
             <button class="open-btn" type="button" data-play="ghar-bahar" aria-label="Open Ghar/Bahar">Open</button>
           </li>
           <li class="lst-row">
+            <button class="lst-hit" type="button" data-sheet="plate" aria-label="Plate: details"></button>
+            <span class="ic ic-plate" aria-hidden="true"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="24" fill="#EADFCB" stroke="#3B2F25" stroke-width="2.6"/><g stroke="#6B5A4A" stroke-opacity=".7" stroke-width="2.2" stroke-linecap="round"><path d="M48.2 30.0L51.0 30.0"/><path d="M45.8 39.1L48.2 40.5"/><path d="M39.1 45.8L40.5 48.2"/><path d="M30.0 48.2L30.0 51.0"/><path d="M20.9 45.8L19.5 48.2"/><path d="M14.2 39.1L11.8 40.5"/><path d="M11.8 30.0L9.0 30.0"/><path d="M14.2 20.9L11.8 19.5"/><path d="M20.9 14.2L19.5 11.8"/><path d="M30.0 11.8L30.0 9.0"/><path d="M39.1 14.2L40.5 11.8"/><path d="M45.8 20.9L48.2 19.5"/></g><circle cx="30" cy="30" r="15.5" fill="#F4EFE6" stroke="#6B5A4A" stroke-width="1.8"/></svg></span>
+            <span class="lst-txt"><b class="lst-name">Plate</b><span class="lst-sub">A daily meal plan with protein and energy rings. Tap what you ate, tweak any ingredient.</span><span class="lst-cat">Nutrition</span></span>
+            <button class="open-btn" type="button" data-play="plate" aria-label="Open Plate">Open</button>
+          </li>
+          <li class="lst-row">
             <button class="lst-hit" type="button" data-sheet="kuchh-bhi-chalega" aria-label="Kuchh bhi chalega: details"></button>
             <span class="ic ic-kuchh-bhi-chalega" aria-hidden="true"><span class="kbc-glyph" lang="hi" aria-hidden="true">कुछ</span></span>
             <span class="lst-txt"><b class="lst-name"><span lang="hi" class="hi">कुछ</span> bhi chalega</b><span class="lst-sub">Can’t decide what to eat? Pull the lever and let your own menu choose.</span><span class="lst-cat">Food</span></span>
@@ -1091,6 +1098,8 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       steps: ['Tap Dress me and pick an occasion.', 'Swipe right to wear an outfit, left for another.', 'Tap ? to see why the colours and fit work.'] },
     'ghar-bahar': { title: 'Ghar/Bahar', tag: 'How often do you really eat out?', why: 'Eating out creeps up. No single meal feels like much, but over a month it adds up in money and health.', how: 'Two taps mark each meal as home or out. The month view shows the real ratio and where you eat out most.', src: 'play/ghar-bahar/',
       steps: ['Switch a meal to Bahar and add where you ate.', 'Watch the month and the totals update.', 'Tap any day in the calendar to edit it.'] },
+    'plate': { title: 'Plate', tag: 'A daily meal plan tuned to your goal.', why: 'Counting calories ingredient by ingredient is a chore, so most trackers get dropped by the second week. Plate does the planning, so logging a day takes a few taps.', how: 'Each day comes with suggested meals built from ingredients you own. Tap I ate this, or adjust any ingredient to what really landed on the plate. Two rings keep the day\u2019s protein and energy in view.', src: 'play/plate/',
+      steps: ['Tap I ate this on a meal, or Add item for anything extra.', 'Open the \u22ef menu to adjust ingredients or swap the meal.', 'Tap the date to see the month at a glance.'] },
     'kuchh-bhi-chalega': { title: 'Kuchh bhi chalega', titleHtml: '<span lang="hi" class="hi">कुछ</span> bhi chalega', tag: 'Let your own menu decide.', why: '“Aaj kya khaana hai?” The daily debate over what to eat usually ends with the same three dishes.', how: 'Build your own menu once, then pull the lever for a random pick, with its macros and the ingredients you already have.', src: 'play/kuchh-bhi-chalega/',
       steps: ['Pick Brunch, Dinner or Dessert.', 'Pull the lever and let the reel spin.', 'Tap the ingredients you already have at home.'] }
   };
@@ -1476,7 +1485,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       q('#sh-name').innerHTML = row.querySelector('.lst-name').innerHTML; q('.sh-sub').innerHTML = row.querySelector('.lst-sub').innerHTML;
       q('.sh-head .open-btn').setAttribute('data-play', k); q('.sh-head .open-btn').setAttribute('aria-label', 'Open ' + (P.title || ''));
       var nm = (P.title || '');
-      var cnt = { 'gainz': 3, 'closet': 3, 'ghar-bahar': 2, 'kuchh-bhi-chalega': 3 }[k] || 3, ns = []; for (var n = 1; n <= cnt; n++) ns.push(n);
+      var cnt = { 'gainz': 3, 'closet': 3, 'ghar-bahar': 2, 'plate': 3, 'kuchh-bhi-chalega': 3 }[k] || 3, ns = []; for (var n = 1; n <= cnt; n++) ns.push(n);
       q('.sh-shots').innerHTML = ns.map(function (n) { return '<img src="img/shots/' + k + '-' + n + '.jpg?v=2" width="600" height="965" alt="' + nm + ' screen ' + n + ' of ' + cnt + '" decoding="async">'; }).join('');
       q('.sh-shots').scrollLeft = 0;
       q('.sh-why').textContent = P.why; q('.sh-how').textContent = P.how;
