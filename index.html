@@ -718,6 +718,9 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
 .feats { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
 .feats li { padding-left: 14px; border-left: 2px solid color-mix(in srgb, var(--sage) 45%, transparent); color: var(--bark-soft); line-height: 1.6; }
 .feats b { display: block; color: var(--bark); font-weight: 600; }
+.feats strong, .sh-how strong, #pl-how strong { font-weight: 600; color: var(--bark); }
+.pl-why strong, .pl-steps strong { color: #FFFDF8; }
+.sh-steps strong { color: var(--bark); font-weight: 600; }
 .pl-why .feats li { color: #EFE6D8; border-left-color: rgba(207, 227, 201, .45); }
 .pl-why .feats b { color: #FFFDF8; }
 </style>
@@ -1107,8 +1110,8 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       steps: ['Tap Dress me and pick an occasion.', 'Swipe right to wear an outfit, left for another.', 'Tap ? to see why the colours and fit work.'] },
     'ghar-bahar': { title: 'Ghar/Bahar', tag: 'How often do you really eat out?', why: 'Eating out creeps up. No single meal feels like much, but over a month it adds up in money and health.', how: 'Two taps mark each meal as home or out. The month view shows the real ratio and where you eat out most.', src: 'play/ghar-bahar/',
       steps: ['Switch a meal to Bahar and add where you ate.', 'Watch the month and the totals update.', 'Tap any day in the calendar to edit it.'] },
-    'plate': { title: 'Plate', tag: 'A weekly meal plan built from your own pantry.', why: 'Deciding what to eat, meal after meal, is where most goals slip. Plate takes that decision off your plate.', features: [['What I ate', 'A plan, not a blank page. Plate suggests a day of meals for your goal, a week ahead, so there\u2019s nothing to decide. Tap I ate this, or swap in another meal you can make.'], ['What I have', 'Your pantry. Every ingredient you own and the meals they make, so nothing is typed twice.'], ['Shopping list', 'Order ahead, not over. It tells you what to stock before you run out, so you don\u2019t over-order, run short or buy the wrong things.']], how: 'The tabs are named after the two questions you actually ask yourself: what did I eat today, and what\u2019s in my fridge? Each answer is one tap away, and two rings keep protein and energy in view.', src: 'play/plate/',
-      steps: ['Tap I ate this on a meal, or Add item for anything extra.', 'Open the \u22ef menu to swap the meal or adjust ingredients.', 'Open Pantry to see what you own and what to order.'] },
+    'plate': { title: 'Plate', tag: 'A weekly meal plan built from your own pantry.', why: 'A protein target is easy to set and hard to follow. Every meal is a new decision: what to make, what is in the kitchen, whether it fits the day. Plate makes those decisions ahead of time, using the food you already own.', features: [['A day that is already planned', 'Open the app and today\u2019s meals are waiting, picked from your pantry to land on your calories and protein. Tap <strong>\u201cI ate this\u201d</strong> to log a meal in one tap, or <strong>\u201cChange meal\u201d</strong> to swap it for another.'], ['Two rings keep score', 'Protein and calories fill up against your target as you log, so you always know what is left for the day.'], ['A pantry that knows your meals', 'List what you own once. Every meal is built from those ingredients, so changing a quantity updates its calories and protein everywhere.'], ['A shopping list that looks ahead', 'It adds up the week\u2019s meals and tells you what to buy before you run out, so you never over-order or run short.']], how: 'The app has two tabs, named after the two questions you actually ask yourself: <strong>\u201cWhat I ate\u201d</strong> for today\u2019s plan and log, and <strong>\u201cWhat I have\u201d</strong> for your pantry and shopping list.', src: 'play/plate/',
+      steps: ['Tap <strong>\u201cI ate this\u201d</strong> on a meal, or <strong>\u201cAdd item\u201d</strong> for anything extra.', 'Open the <strong>\u22ef</strong> menu to swap the meal or adjust ingredients.', 'Open the <strong>\u201cWhat I have\u201d</strong> tab to see what you own and what to order.'] },
     'kuchh-bhi-chalega': { title: 'Kuchh bhi chalega', titleHtml: '<span lang="hi" class="hi">कुछ</span> bhi chalega', tag: 'Let your own menu decide.', why: '“Aaj kya khaana hai?” The daily debate over what to eat usually ends with the same three dishes.', how: 'Build your own menu once, then pull the lever for a random pick, with its macros and the ingredients you already have.', src: 'play/kuchh-bhi-chalega/',
       steps: ['Pick Brunch, Dinner or Dessert.', 'Pull the lever and let the reel spin.', 'Tap the ingredients you already have at home.'] }
   };
@@ -1122,7 +1125,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     var pt = document.getElementById('pl-title'); if (p.titleHtml) pt.innerHTML = p.titleHtml; else pt.textContent = p.title;
     document.getElementById('pl-tag').textContent = p.tag;
     document.getElementById('pl-why').textContent = p.why;
-    document.getElementById('pl-how').textContent = p.how;
+    document.getElementById('pl-how').innerHTML = p.how;
     var pf = document.getElementById('pl-feat'); pf.hidden = !p.features; pf.querySelector('.feats').innerHTML = feats(p);
     player.classList.remove('info');
     document.getElementById('pl-steps').innerHTML = p.steps.map(function (t) { return '<li><span>' + t + '</span></li>'; }).join('');
@@ -1498,7 +1501,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       var cnt = { 'gainz': 3, 'closet': 3, 'ghar-bahar': 2, 'plate': 3, 'kuchh-bhi-chalega': 3 }[k] || 3, ns = []; for (var n = 1; n <= cnt; n++) ns.push(n);
       q('.sh-shots').innerHTML = ns.map(function (n) { return '<img src="img/shots/' + k + '-' + n + '.jpg?v=2" width="600" height="965" alt="' + nm + ' screen ' + n + ' of ' + cnt + '" decoding="async">'; }).join('');
       q('.sh-shots').scrollLeft = 0;
-      q('.sh-why').textContent = P.why; q('.sh-how').textContent = P.how;
+      q('.sh-why').textContent = P.why; q('.sh-how').innerHTML = P.how;
       q('.sh-feat').hidden = !P.features; q('.sh-feat .feats').innerHTML = feats(P);
       q('.sh-steps').innerHTML = P.steps.map(function (x) { return '<li>' + x + '</li>'; }).join('');
       lastF = document.activeElement; sheet.hidden = false; sheet.classList.remove('out'); sheet.classList.add('in'); panel.scrollTop = 0;
