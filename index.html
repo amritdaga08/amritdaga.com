@@ -1498,8 +1498,8 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       q('#sh-name').innerHTML = row.querySelector('.lst-name').innerHTML; q('.sh-sub').innerHTML = row.querySelector('.lst-sub').innerHTML;
       q('.sh-head .open-btn').setAttribute('data-play', k); q('.sh-head .open-btn').setAttribute('aria-label', 'Open ' + (P.title || ''));
       var nm = (P.title || '');
-      var cnt = { 'gainz': 3, 'closet': 3, 'ghar-bahar': 2, 'plate': 3, 'kuchh-bhi-chalega': 3 }[k] || 3, ns = []; for (var n = 1; n <= cnt; n++) ns.push(n);
-      q('.sh-shots').innerHTML = ns.map(function (n) { return '<img src="img/shots/' + k + '-' + n + '.jpg?v=2" width="600" height="965" alt="' + nm + ' screen ' + n + ' of ' + cnt + '" decoding="async">'; }).join('');
+      var cnt = { 'gainz': 3, 'closet': 3, 'ghar-bahar': 3, 'plate': 3, 'kuchh-bhi-chalega': 3 }[k] || 3, ns = []; for (var n = 1; n <= cnt; n++) ns.push(n);
+      q('.sh-shots').innerHTML = ns.map(function (n) { return '<img src="img/shots/' + k + '-' + n + '.jpg?v=3" width="600" height="965" alt="' + nm + ' screen ' + n + ' of ' + cnt + '" decoding="async">'; }).join('');
       q('.sh-shots').scrollLeft = 0;
       q('.sh-why').textContent = P.why; q('.sh-how').innerHTML = P.how;
       q('.sh-feat').hidden = !P.features; q('.sh-feat .feats').innerHTML = feats(P);
