@@ -117,6 +117,7 @@ h1{display:flex;align-items:center;gap:12px}
 .step:disabled{opacity:.35;cursor:default}
 .skipped{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 16px 16px;font-size:14px;font-weight:600;color:var(--sun)}
 .slot.skip .name{color:var(--bark-soft)}
+.slot.blank .name small{margin:0;color:var(--bark-soft)}
 .portion .link{margin-left:auto}
 .slot .top:last-child{padding-bottom:16px}
 .g{color:var(--moss-ink);font-weight:600}
@@ -439,7 +440,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     let planned = {k:0,p:0}, eaten = {k:0,p:0};
     slotsFor(d).forEach(s=>{
       const l = r.logged && r.logged[s.id];
-      if(l && l.skip){ }
+      if(r.blank && r.blank[s.id]){ }
       else if(l){ eaten.k += l.k; eaten.p += l.p; planned.k += l.k; planned.p += l.p; }
       else { const m = chosen(d,s); if(m){ const v = macOf(m, ovOf(d,s.id)); planned.k += v.k; planned.p += v.p; } }
     });
@@ -458,8 +459,14 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
         const d = await wait(c.use("db"), 8000); if(!d) return null;
         const lg = await wait(d.doc("plate/log").get(), 8000);
         if(lg.exists){
-          const remote = (lg.data()||{}).days || {};
-          state = {days: Object.assign({}, remote, state.days), custom: Object.assign({}, (lg.data()||{}).custom||{}, state.custom||{}), pantry: Object.assign({}, (lg.data()||{}).pantry||{}, state.pantry||{}), shop: Object.assign({}, (lg.data()||{}).shop||{}, state.shop||{}), v:3}; if(!state.v){ Object.keys(state.days).forEach(d=>{ delete state.days[d].ov; }); }
+          const R = lg.data()||{}, rd = R.days||{};
+          const days = Object.assign({}, rd);
+          Object.keys(state.days||{}).forEach(k=>{
+            const L = state.days[k], X = rd[k];
+            if(!X){ days[k] = L; return; }
+            days[k] = Object.assign({}, X, L, {logged: Object.assign({}, X.logged||{}, L.logged||{}), picks: Object.assign({}, X.picks||{}, L.picks||{}), ov: Object.assign({}, X.ov||{}, L.ov||{}), blank: Object.assign({}, X.blank||{}, L.blank||{}), on: Object.assign({}, X.on||{}, L.on||{}), extra: (L.extra||[]).length >= (X.extra||[]).length ? (L.extra||[]) : (X.extra||[])});
+          });
+          state = {days, custom: Object.assign({}, R.custom||{}, state.custom||{}), pantry: Object.assign({}, R.pantry||{}, state.pantry||{}), shop: Object.assign({}, R.shop||{}, state.shop||{}), v:3};
           try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){}
         }
         db = d; return d;
@@ -516,13 +523,14 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     slotsFor(d).forEach(s=>{
       const l = r.logged && r.logged[s.id], m = chosen(d,s);
       if(!m) return;
+      if(r.blank && r.blank[s.id]){ h += `<section class="sec" data-slot="${s.id}"><div class="sech"><h3>${esc(s.label)}</h3></div><div class="slot blank"><div class="top"><div class="name"><small>Nothing planned</small></div><button class="btn ghost" data-act="unblank">Add a meal</button></div></div></section>`; return; }
       const ov = ovOf(d,s.id), v = macOf(m,ov), et = editText(m,ov);
       const skipped = l && l.skip;
       const tag = l ? (skipped?"Missed":"Logged") : "";
       const kk = l && !skipped ? l.k : v.k, pp = l && !skipped ? l.p : v.p;
       h += `<section class="sec" data-slot="${s.id}"><div class="sech"><h3>${esc(s.label)}</h3>${s.opt?`<button class="link" data-act="rmslot">Remove</button>`:""}${skipped?"":`<button class="addi" data-act="additem" aria-label="Add an item to ${esc(s.label.toLowerCase())}">${IC.plus}Add item</button>`}</div>
       <div class="slot ${l&&!skipped?"done":""} ${skipped?"skip":""}">
-        <div class="top"><button class="name" data-act="open">${tag?`<span class="when">${esc(tag)}</span>`:""}${esc(titleOf(m,ov))}<small>${skipped?"Counts as nothing today":`<b class="g">${kk} kcal</b> · <b class="g">${pp} g protein</b>`}</small></button>
+        <div class="top"><button class="name" data-act="open">${esc(titleOf(m,ov))}<small>${skipped?"Counts as nothing today":`<b class="g">${kk} kcal</b> · <b class="g">${pp} g protein</b>`}</small></button>
         ${l ? `<button class="link undo" data-act="undo">Undo</button>` : `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`}</div>
         ${l ? "" : `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn go" data-act="ate">${IC.check}I ate this</button></div>`}
       </div></section>`;
@@ -791,7 +799,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       if(t.dataset.more==="adjust") return openEditor(sid);
       if(t.dataset.more==="how") return openRecipe(sid);
       if(t.dataset.more==="dup") return openDup(sid);
-      if(t.dataset.more==="skip"){ rec(cur).logged[sid] = {skip:true}; persist(); return renderDay(); }
+      if(t.dataset.more==="skip"){ const r = rec(cur); delete r.logged[sid]; (r.blank ||= {})[sid] = true; persist(); return renderDay(); }
       return;
     }
     if(t.id==="moreCancel") return $("#moreSheet").close();
@@ -823,6 +831,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       const s = SLOTS.find(x=>x.id===sid), m = chosen(cur,s), v = macOf(m, ovOf(cur,sid));
       rec(cur).logged[sid] = {id:m.id,n:titleOf(m,ovOf(cur,sid)),k:v.k,p:v.p}; persist(); return renderDay();
     }
+    if(act==="unblank"){ const r = rec(cur); if(r.blank) delete r.blank[sid]; persist(); return renderDay(); }
     if(act==="undo"){ delete rec(cur).logged[sid]; persist(); return renderDay(); }
   });
   $("#edList").addEventListener("input", e=>{ const i = e.target.dataset && e.target.dataset.edin; if(!i) return; const q = parseFloat(e.target.value)||0, g = ING[i], sm = e.target.closest(".edrow").querySelector("[data-mac]"); if(sm) sm.textContent = `${Math.round(g.k*q)} kcal · ${Math.round(g.p*q*10)/10} g protein`; });
@@ -850,6 +859,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
 
   cur = todayIso();
   show("today");
+  getDb().then(d=>{ if(d && view==="today" && !document.querySelector("dialog[open]")) renderDay(); });
 })();
 </script>
 </body>
