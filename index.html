@@ -713,6 +713,13 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   .js-hl em.hl { background-size: 0% 100%; }
   .js-hl em.hl.lit { background-size: 100% 100%; transition: background-size .9s cubic-bezier(.65, 0, .35, 1) .25s; }
 }
+
+/* feature list in the app sheet and player: each feature named in bold, with what it solves */
+.feats { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.feats li { padding-left: 14px; border-left: 2px solid color-mix(in srgb, var(--sage) 45%, transparent); color: var(--bark-soft); line-height: 1.6; }
+.feats b { display: block; color: var(--bark); font-weight: 600; }
+.pl-why .feats li { color: #EFE6D8; border-left-color: rgba(207, 227, 201, .45); }
+.pl-why .feats b { color: #FFFDF8; }
 </style>
 
 <script>
@@ -1027,6 +1034,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       <div class="sh-ttl"><h3 id="sh-name"></h3><p class="sh-sub"></p><button class="open-btn big" type="button" data-play="">Open</button></div>
     </header>
     <section class="sh-sec"><h4>Why I built this</h4><p class="sh-why"></p></section>
+    <section class="sh-sec sh-feat" hidden><h4>What it does</h4><ul class="feats"></ul></section>
     <section class="sh-sec"><h4>How it works</h4><p class="sh-how"></p></section>
     <section class="sh-sec"><h4>Try this</h4><ol class="sh-steps"></ol></section>
     <section class="sh-sec"><h4>Preview</h4><div class="sh-shots" tabindex="0" aria-label="Screenshots"></div></section>
@@ -1042,7 +1050,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       <p class="pl-tag" id="pl-tag"></p>
       <div class="pl-qr"><div class="code" id="pl-qr" aria-hidden="true"></div><p>Scan to try it on your phone. Anything you add stays on your device.</p></div>
       <a class="pl-open" id="pl-open" href="#" target="_blank" rel="noopener">Open in a new tab<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
-      <dl class="pl-why"><div><dt>The problem</dt><dd id="pl-why"></dd></div><div><dt>How it solves it</dt><dd id="pl-how"></dd></div></dl>
+      <dl class="pl-why"><div><dt>The problem</dt><dd id="pl-why"></dd></div><div id="pl-feat" hidden><dt>What it does</dt><dd><ul class="feats"></ul></dd></div><div><dt>How it solves it</dt><dd id="pl-how"></dd></div></dl>
       <p class="pl-label">Try this</p>
       <ol class="pl-steps" id="pl-steps"></ol>
     </aside>
@@ -1091,6 +1099,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   });
 
   /* ---------- prototype player ---------- */
+  function feats(P) { return (P.features || []).map(function (f) { return '<li><b>' + f[0] + '</b> ' + f[1] + '</li>'; }).join(''); }
   var PLAY = {
     'gainz': { title: 'Gainz', tag: 'A gym tracker that always knows your next workout.', why: 'Most gym apps want every set, rep and weight logged, so tracking turns into a chore. Gainz is built for simplicity and progression: you see the exercises from today\u2019s split and enter one number for each, your max. Less typing keeps your rhythm, and watching that number climb keeps you consistent.', how: 'Gainz works out today\u2019s workout from your split, so a missed day never resets the cycle. Tap any exercise to see your progress on a chart.', src: 'play/gainz/',
       steps: ['Tick an exercise to log it at your last weight.', 'Type a higher number and save to set a new max.', 'Open History to see the month and your split.'] },
@@ -1098,7 +1107,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       steps: ['Tap Dress me and pick an occasion.', 'Swipe right to wear an outfit, left for another.', 'Tap ? to see why the colours and fit work.'] },
     'ghar-bahar': { title: 'Ghar/Bahar', tag: 'How often do you really eat out?', why: 'Eating out creeps up. No single meal feels like much, but over a month it adds up in money and health.', how: 'Two taps mark each meal as home or out. The month view shows the real ratio and where you eat out most.', src: 'play/ghar-bahar/',
       steps: ['Switch a meal to Bahar and add where you ate.', 'Watch the month and the totals update.', 'Tap any day in the calendar to edit it.'] },
-    'plate': { title: 'Plate', tag: 'A weekly meal plan built from your own pantry.', why: 'Deciding what to eat, meal after meal, is where most goals slip. Plate takes that decision off your plate: it plans your week from what you have, suggests what to eat to stay on track, and makes sure the right things are in your fridge before you need them.', how: 'Your pantry holds every ingredient you own and the meals you can make from them, so nothing is typed twice. Its shopping list reminds you to order ahead, so you don\u2019t over-order, run short or buy the wrong things. Each day follows the plan: tap I ate this, swap in another meal you can make, or adjust an ingredient. Two rings keep protein and energy in view.', src: 'play/plate/',
+    'plate': { title: 'Plate', tag: 'A weekly meal plan built from your own pantry.', why: 'Deciding what to eat, meal after meal, is where most goals slip. Plate takes that decision off your plate.', features: [['What I ate', 'A plan, not a blank page. Plate suggests a day of meals for your goal, a week ahead, so there\u2019s nothing to decide. Tap I ate this, or swap in another meal you can make.'], ['What I have', 'Your pantry. Every ingredient you own and the meals they make, so nothing is typed twice.'], ['Shopping list', 'Order ahead, not over. It tells you what to stock before you run out, so you don\u2019t over-order, run short or buy the wrong things.']], how: 'The tabs are named after the two questions you actually ask yourself: what did I eat today, and what\u2019s in my fridge? Each answer is one tap away, and two rings keep protein and energy in view.', src: 'play/plate/',
       steps: ['Tap I ate this on a meal, or Add item for anything extra.', 'Open the \u22ef menu to swap the meal or adjust ingredients.', 'Open Pantry to see what you own and what to order.'] },
     'kuchh-bhi-chalega': { title: 'Kuchh bhi chalega', titleHtml: '<span lang="hi" class="hi">कुछ</span> bhi chalega', tag: 'Let your own menu decide.', why: '“Aaj kya khaana hai?” The daily debate over what to eat usually ends with the same three dishes.', how: 'Build your own menu once, then pull the lever for a random pick, with its macros and the ingredients you already have.', src: 'play/kuchh-bhi-chalega/',
       steps: ['Pick Brunch, Dinner or Dessert.', 'Pull the lever and let the reel spin.', 'Tap the ingredients you already have at home.'] }
@@ -1114,6 +1123,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     document.getElementById('pl-tag').textContent = p.tag;
     document.getElementById('pl-why').textContent = p.why;
     document.getElementById('pl-how').textContent = p.how;
+    var pf = document.getElementById('pl-feat'); pf.hidden = !p.features; pf.querySelector('.feats').innerHTML = feats(p);
     player.classList.remove('info');
     document.getElementById('pl-steps').innerHTML = p.steps.map(function (t) { return '<li><span>' + t + '</span></li>'; }).join('');
     document.getElementById('pl-open').href = url;
@@ -1489,6 +1499,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       q('.sh-shots').innerHTML = ns.map(function (n) { return '<img src="img/shots/' + k + '-' + n + '.jpg?v=2" width="600" height="965" alt="' + nm + ' screen ' + n + ' of ' + cnt + '" decoding="async">'; }).join('');
       q('.sh-shots').scrollLeft = 0;
       q('.sh-why').textContent = P.why; q('.sh-how').textContent = P.how;
+      q('.sh-feat').hidden = !P.features; q('.sh-feat .feats').innerHTML = feats(P);
       q('.sh-steps').innerHTML = P.steps.map(function (x) { return '<li>' + x + '</li>'; }).join('');
       lastF = document.activeElement; sheet.hidden = false; sheet.classList.remove('out'); sheet.classList.add('in'); panel.scrollTop = 0;
       document.documentElement.style.overflow = 'hidden';
