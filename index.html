@@ -984,7 +984,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   document.body.appendChild(sw);
   function paintSw() {
     var m = night() ? 'night' : 'day';
-    sw.innerHTML = WX.map(function (k) { return '<button type="button" role="radio" data-wx="' + k + '" aria-checked="' + (k === wx) + '" aria-label="' + NAMES[k] + '" title="' + NAMES[k] + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + (k === 'clear' ? ICONS[m].clear : ICONS[k]) + '</svg></button>'; }).join('');
+    sw.innerHTML = WX.map(function (k) { return '<button type="button" role="radio" data-wx="' + k + '" aria-checked="' + (k === wx) + '" aria-label="' + NAMES[k] + '" title="' + NAMES[k] + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + (k === 'clear' ? ICONS.day.clear : ICONS[k]) + '</svg></button>'; }).join('');
   }
   function openSw(on) {
     if (on) { paintSw(); sw.hidden = false; requestAnimationFrame(function () { sw.classList.add('on'); }); if (hero.getBoundingClientRect().bottom < innerHeight * .3) scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); var b = sw.querySelector('[aria-checked="true"]'); if (b) b.focus({ preventScroll: true }); }
