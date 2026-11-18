@@ -256,11 +256,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .sess .btn{margin-top:12px;min-height:44px;font-size:14px}
 .sess .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .sess .btns .btn{margin-top:0}
-.calkey{list-style:none;margin:var(--s4) 0 0;padding:var(--s4) 0 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:var(--s2);font-size:12px;color:var(--bark-soft)}
-.calkey li{display:flex;flex-direction:column;align-items:center;gap:var(--s1);min-width:0;text-align:center}
-.calkey span{display:flex;align-items:center;gap:var(--s1);white-space:nowrap}
-.calkey i{width:8px;height:8px;border-radius:50%;flex:none}
-.calkey b{font:600 18px/1 var(--body);color:var(--bark);font-variant-numeric:tabular-nums}
+.calkey{list-style:none;margin:var(--s3) 0 0;padding:var(--s3) 0 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2) var(--s4);font-size:13px;color:var(--bark-soft)}
+@media (min-width:560px){.calkey{grid-template-columns:repeat(var(--n),max-content);justify-content:space-between}}
+.calkey li{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.calkey i{width:12px;height:12px;border-radius:var(--r1);flex:none}
+.calkey b{font-weight:600;color:var(--bark);font-variant-numeric:tabular-nums}
 .day .tag{letter-spacing:-.02em}
 @media (max-width:400px){.day .tag{font-size:10px}}
 .summary{background:var(--paper);border:1px solid var(--rule);border-radius:var(--r5);padding:16px 16px;margin-top:12px}
@@ -1173,8 +1173,8 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
       }
     }
     const plural = n => n===1?"day":"days";
-    const rows = allGroups.map(g=>`<li><b>${mc[g]||0}</b><span><i style="background:${colorOf(g)}"></i>${esc(g)}</span></li>`).join("")
-      + `<li><b>${mRest}</b><span><i style="background:var(--linen);box-shadow:inset 0 0 0 1px var(--rule)"></i>Rest</span></li>`;
+    const rows = allGroups.map(g=>`<li><i style="background:${colorOf(g)}"></i>${esc(g)}<b>${mc[g]||0}</b></li>`).join("")
+      + `<li><i style="background:var(--linen);box-shadow:inset 0 0 0 1px var(--rule)"></i>Rest<b>${mRest}</b></li>`;
     const allTotal = Object.values(ac).reduce((a,b)=>a+b,0);
     const summary = `<ul class="calkey" style="--n:${allGroups.length+1}" aria-label="${calMonth.toLocaleDateString(undefined,{month:"long"})}: days per workout">${rows}</ul>`;
     $("#historyView").innerHTML = `<div class="cal">
