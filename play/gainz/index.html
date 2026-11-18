@@ -243,7 +243,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .day.rest .tag{color:var(--bark-soft);font-weight:500}
 /* rings sit inside the cell, with a thin Earth line so they read on any colour */
 .day.today{box-shadow:inset 0 0 0 2px var(--bark),inset 0 0 0 3.5px var(--paper)}
-.day[aria-pressed="true"]{box-shadow:inset 0 0 0 2.5px var(--moss),inset 0 0 0 4px var(--paper)}
+.day[aria-pressed="true"]{box-shadow:none;outline:2px solid var(--moss);outline-offset:2px}
 .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:13px;color:var(--bark-soft)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:var(--r1);margin-right:4px;vertical-align:-1px}
 .daydetail{margin-top:12px}
@@ -256,6 +256,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .sess .btn{margin-top:12px;min-height:44px;font-size:14px}
 .sess .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .sess .btns .btn{margin-top:0}
+.calkey{list-style:none;margin:var(--s3) 0 0;padding:var(--s3) 0 0;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);font-size:13px;color:var(--bark-soft)}
+.calkey li{display:flex;align-items:center;gap:6px}
+.calkey i{width:12px;height:12px;border-radius:var(--r1);flex:none}
+.calkey b{font-weight:600;color:var(--bark);font-variant-numeric:tabular-nums}
+.day .tag{letter-spacing:-.02em}
+@media (max-width:400px){.day .tag{font-size:10px}}
 .summary{background:var(--paper);border:1px solid var(--rule);border-radius:var(--r5);padding:16px 16px;margin-top:12px}
 .summary h3{margin:0 0 8px;font:400 20px var(--display)}
 .summary ul{list-style:none;margin:0;padding:0}
@@ -1121,7 +1127,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
 
   const COLORS = ["var(--t1)","var(--t2)","var(--t3)","var(--t4)","var(--t5)","var(--t6)"]; // Moss, Winter, Autumn, Summer, Soft Bark, Bark
   const colorOf = g => COLORS[Math.max(0, rot().indexOf(g) >= 0 ? rot().indexOf(g) : dayNames().indexOf(g)) % COLORS.length];
-  const shortOf = g => g.includes("&") ? g.split("&").map(w=>w.trim()[0]).join("&") : g.split(" ")[0].slice(0,6);
+  const shortOf = g => g.includes("&") ? g.split("&").map(w=>w.trim()[0]).join("&") : /^(Upper|Lower) [A-Z]$/.test(g) ? g : g.split(" ")[0].slice(0,6);
   let calMonth = null, selDate = null;
 
   function renderHistory(){
@@ -1166,14 +1172,15 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
       }
     }
     const plural = n => n===1?"day":"days";
-    const rows = allGroups.map(g=>`<li><span><i style="background:${colorOf(g)}"></i>${esc(g)}</span><b>${mc[g]||0} <small>${plural(mc[g]||0)}</small></b></li>`).join("")
-      + `<li><span><i style="background:var(--line)"></i>Rest</span><b>${mRest} <small>${plural(mRest)}</small></b></li>`;
+    const rows = allGroups.map(g=>`<li><i style="background:${colorOf(g)}"></i>${esc(g)}<b>${mc[g]||0}</b></li>`).join("")
+      + `<li><i style="background:var(--linen);box-shadow:inset 0 0 0 1px var(--rule)"></i>Rest<b>${mRest}</b></li>`;
     const allTotal = Object.values(ac).reduce((a,b)=>a+b,0);
-    const summary = `<div class="summary"><h3>${calMonth.toLocaleDateString(undefined,{month:"long"})} summary</h3><ul>${rows}</ul></div>`;
+    const summary = `<ul class="calkey" aria-label="${calMonth.toLocaleDateString(undefined,{month:"long"})}: days per workout">${rows}</ul>`;
     $("#historyView").innerHTML = `<div class="cal">
       <div class="cal-head"><button class="nav" data-cal="-1" aria-label="Previous month" ${atFirst?"disabled":""}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h3>${calMonth.toLocaleDateString(undefined,{month:"long",year:"numeric"})}</h3><button class="nav" data-cal="1" aria-label="Next month" ${atCurrent?"disabled":""}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
       <div class="grid7">${cells}</div>
-    </div><div class="daydetail">${detail}</div>${summary}`;
+      ${summary}
+    </div><div class="daydetail">${detail}</div>`;
   }
 
   function render(){
