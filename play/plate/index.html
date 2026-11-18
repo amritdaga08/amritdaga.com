@@ -9,6 +9,7 @@
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
+<link rel="icon" href="../../favicon-32.png">
 <script>addEventListener("DOMContentLoaded",function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400..700&display=swap";document.head.appendChild(l)})</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -327,6 +328,7 @@ html.kb #addSheet .sh-foot,html.kb #sheet .sh-foot{display:none}
     <button class="mrow" data-more="change"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>Change meal</button>
     <button class="mrow" data-more="adjust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Adjust items</button>
     <button class="mrow" data-more="dup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>Duplicate</button>
+    <button class="mrow" data-more="undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-3"/></svg>Undo, I haven't eaten this</button>
     <button class="mrow warn" data-more="skip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>I missed this meal</button>
   </div>
   <div class="sh-foot"><button class="btn ghost" id="moreCancel">Close</button></div>
@@ -542,8 +544,8 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       h += `<section class="sec" data-slot="${s.id}"><div class="sech"><h3>${esc(s.label)}</h3>${s.opt?`<button class="link" data-act="rmslot">Remove</button>`:""}${skipped?"":`<button class="addi" data-act="additem" aria-label="Add an item to ${esc(s.label.toLowerCase())}">${IC.plus}Add item</button>`}</div>
       <div class="slot ${l&&!skipped?"done":""} ${skipped?"skip":""}">
         <div class="top"><button class="name" data-act="open">${esc(titleOf(m,ov))}<small>${skipped?"Counts as nothing today":`<b class="g">${kk} kcal</b> · <b class="g">${pp} g protein</b>`}</small></button>
-        ${l ? `<button class="link undo" data-act="undo">Undo</button>` : `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`}</div>
-        ${l ? "" : `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn go" data-act="ate">${IC.check}I ate this</button></div>`}
+        ${l ? `` : `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`}</div>
+        ${l ? `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn ghost" data-act="how">How to make this</button></div>` : `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn go" data-act="ate">${IC.check}I ate this</button></div>`}
       </div></section>`;
     });
     if((r.extra||[]).length){
@@ -809,6 +811,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       if(t.dataset.more==="change") return openPicker("replace", sid);
       if(t.dataset.more==="adjust") return openEditor(sid);
       if(t.dataset.more==="how") return openRecipe(sid);
+      if(t.dataset.more==="undo"){ delete rec(cur).logged[sid]; persist(); return renderDay(); }
       if(t.dataset.more==="dup") return openDup(sid);
       if(t.dataset.more==="skip"){ const r = rec(cur); delete r.logged[sid]; (r.blank ||= {})[sid] = true; persist(); return renderDay(); }
       return;
@@ -837,7 +840,8 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(act==="rmslot"){ const r = rec(cur); (r.on ||= {})[sid] = false; delete r.logged[sid]; delete r.picks[sid]; if(r.ov) delete r.ov[sid]; persist(); return renderDay(); }
     if(act==="additem"){ editSlot = sid; return openAdd(); }
     if(act==="open") return tapSlot(sid);
-    if(act==="more"){ moreSlot = sid; return $("#moreSheet").showModal(); }
+    if(act==="how") return openRecipe(sid);
+    if(act==="more"){ moreSlot = sid; const lg = !!((state.days[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=undo]").hidden = !lg; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; return $("#moreSheet").showModal(); }
     if(act==="ate"){
       const s = SLOTS.find(x=>x.id===sid), m = chosen(cur,s), v = macOf(m, ovOf(cur,sid));
       rec(cur).logged[sid] = {id:m.id,n:titleOf(m,ovOf(cur,sid)),k:v.k,p:v.p}; persist(); return renderDay();
