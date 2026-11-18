@@ -175,7 +175,19 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* hero backdrop: a living sky over Bangalore, drawn on a canvas */
 .sky { position: absolute; z-index: -1; inset: -80px calc(50% - 50vw) auto; height: clamp(640px, 100vh, 1000px); pointer-events: none; -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
 .sky canvas { display: block; width: 100%; height: 100%; }
-.loc .wx::before { content: "·"; margin-right: .6em; }
+/* weather picker: a glass button beside the theme toggle that opens a row of weathers */
+.wxpick { position: fixed; z-index: 6; right: calc(16px + 76px + 8px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transition: opacity .35s, transform .35s; }
+.wxpick.away { opacity: 0; transform: translateY(8px); pointer-events: none; }
+.wxpick .wx-btn, .wxpick .wx-tray { background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: 0 0 0 1px var(--glass-ring), inset 0 1px 0 var(--glass-edge), 0 12px 32px -16px var(--glass-shadow); -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%); }
+.wxpick .wx-btn { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; color: var(--moss); cursor: pointer; }
+.wxpick svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.wxpick .wx-tray { position: absolute; right: 0; bottom: 48px; display: flex; gap: 2px; padding: 4px; border-radius: 999px; opacity: 0; transform: translateY(6px) scale(.96); transform-origin: right bottom; pointer-events: none; transition: opacity .25s, transform .35s cubic-bezier(.34, 1.56, .64, 1); }
+.wxpick.open .wx-tray { opacity: 1; transform: none; pointer-events: auto; }
+.wxpick .wx-tray button { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--bark-soft); cursor: pointer; }
+.wxpick .wx-tray button:hover { color: var(--bark); }
+.wxpick .wx-tray button[aria-checked="true"] { background: color-mix(in srgb, var(--moss) 18%, transparent); color: var(--moss); }
+.wxpick .moon-i { display: none; } .wxpick.night .moon-i { display: inline; } .wxpick.night .sun-i { display: none; }
+@media (prefers-reduced-motion: reduce) { .wxpick, .wxpick .wx-tray { transition: none; } }
 .hero-grid { display: grid; justify-items: center; gap:clamp(64px, 9vw, 96px); }
 .aud { display: flex; flex-wrap: wrap; align-items: center; gap:8px 12px; }
 .aud-label { font-size: var(--step--1); color: var(--bark-soft); }
@@ -734,6 +746,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
 (function () { try { var t = localStorage.getItem('ad-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
 </script>
 
+<div class="wxpick" id="wxpick"><button type="button" class="wx-btn" aria-expanded="false" aria-label="Change the weather"></button><div class="wx-tray" role="radiogroup" aria-label="Weather"><button type="button" role="radio" data-wx="clear" aria-label="Clear" aria-checked="false" title="Clear"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sun-i"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></g><path class="moon-i" d="M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5a7.5 7.5 0 1 0 10 10z"/></svg></button><button type="button" role="radio" data-wx="cloudy" aria-label="Cloudy" aria-checked="false" title="Cloudy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18.5h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 10.6a4 4 0 0 0 1 7.9z"/></svg></button><button type="button" role="radio" data-wx="rain" aria-label="Rain" aria-checked="false" title="Rain"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14.5h10a3.5 3.5 0 0 0 .4-7A5.3 5.3 0 0 0 6.6 7.2a3.6 3.6 0 0 0 .4 7.3z"/><path d="M8.5 18l-1 2.5M12.5 18l-1 2.5M16.5 18l-1 2.5"/></svg></button><button type="button" role="radio" data-wx="storm" aria-label="Storm" aria-checked="false" title="Storm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14.5h10a3.5 3.5 0 0 0 .4-7A5.3 5.3 0 0 0 6.6 7.2a3.6 3.6 0 0 0 .4 7.3z"/><path d="M12.5 15.5l-2 3.5h3l-2 3.5"/></svg></button><button type="button" role="radio" data-wx="snow" aria-label="Snow" aria-checked="false" title="Snow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 6l2.5-1.5M9.5 19.5L12 18l2.5 1.5"/></svg></button><button type="button" role="radio" data-wx="fog" aria-label="Fog" aria-checked="false" title="Fog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M6 12h12M4 16h16M8 20h8"/></svg></button><button type="button" role="radio" data-wx="wind" aria-label="Wind" aria-checked="false" title="Wind"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h10.5a2.5 2.5 0 1 0-2.5-2.5M3 15h14a3 3 0 1 1-3 3M3 12h7"/></svg></button></div></div>
 <div class="theme" id="theme" role="radiogroup" aria-label="Colour theme"><span class="knob" aria-hidden="true"></span><button type="button" role="radio" class="t-light" aria-checked="true" aria-label="Light mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><button type="button" role="radio" class="t-dark" aria-checked="false" aria-label="Dark mode"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div>
 
 <header class="top">
@@ -757,25 +770,25 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
         <h1>I care about <em>systems, craft</em> and the <em>people behind the pixels.</em></h1>
         <p class="lead">9+ years designing products used by millions.</p>
         <p class="role-line">AVP – Product Design at <span>Kotak811</span></p>
-        <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India<span class="wx" id="wx" hidden></span></p>
+        <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India</p>
         <div class="ctas"><a class="btn btn-primary" href="#projects">See my work<svg class="ico ico-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn btn-ghost" href="Amrit-Daga-Resume.pdf" download>Download resumé<svg class="ico ico-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a></div>
 <script>
-/* living sky: Bangalore's time of day and weather behind the hero. Stars and the real moon phase at night, sun glow by day,
-   clouds at the real cloud cover, leaves for rain, snow, fog, wind and the odd lightning flash. Layers drift at different depths. */
+/* living sky behind the hero. Light theme is day (with dawn and dusk by the visitor's clock), dark theme is night with stars
+   and tonight's moon phase. Visitors pick the weather: clear, cloudy, rain (falling leaves), storm, snow, fog or wind. */
 (function () {
   var cv = document.getElementById('sky'); if (!cv || !cv.getContext) return;
   var ctx = cv.getContext('2d'), box = cv.parentNode, hero = box.closest('.hero');
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var q = location.search, force = function (k) { var m = q.match(new RegExp('[?&]' + k + '=([a-z]+)')); return m && m[1]; };
   var W = 0, H = 0, dpr = 1, t0 = performance.now(), last = t0, raf = 0, onScreen = true, sy = 0, px = 0, cpx = 0;
-  // weather state; defaults until the live reading arrives
-  var wx = { code: 1, cloud: 25, wind: 8, sr: 6.25, ss: 18.1 };
-  var kind = 'clear';
-  function kindOf(c) { if (c >= 95) return 'storm'; if ((c >= 71 && c <= 77) || c === 85 || c === 86) return 'snow'; if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) return c >= 61 ? 'rain' : 'drizzle'; if (c === 45 || c === 48) return 'fog'; if (c === 3) return 'cloudy'; return 'clear'; }
-  function blrHour() { var d = new Date(), u = d.getUTCHours() + d.getUTCMinutes() / 60 + d.getUTCSeconds() / 3600; return (u + 5.5) % 24; }
-  function phaseAt(h) { var sr = wx.sr, ss = wx.ss; if (h < sr - .8 || h > ss + .8) return 'night'; if (h < sr + 1) return 'dawn'; if (h > ss - 1) return 'dusk'; return 'day'; }
-  var fp = force('sky'), fw = force('wx');
-  function phase() { return fp || phaseAt(blrHour()); }
+  var WXS = ['clear', 'cloudy', 'rain', 'storm', 'snow', 'fog', 'wind'];
+  var fp = force('sky'), fw = force('wx'), saved = null;
+  try { saved = localStorage.getItem('ad-sky'); } catch (e) {}
+  if (WXS.indexOf(fw) < 0) fw = WXS.indexOf(saved) >= 0 ? saved : 'clear';
+  function phase() {
+    if (fp) return fp; if (dark()) return 'night';
+    var d = new Date(), h = d.getHours() + d.getMinutes() / 60; return h >= 5.5 && h < 7.5 ? 'dawn' : h >= 17 && h < 19 ? 'dusk' : 'day';
+  }
   function dark() { var r = document.documentElement.getAttribute('data-theme'); return r ? r === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); }
   // moon: 0 new, .5 full
   var moonP = (((Date.now() / 864e5 - 10957.76) / 29.530588853) % 1 + 1) % 1;
@@ -784,7 +797,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   function build() {
     var area = W * H / 1e6;
     stars = []; for (var i = 0; i < Math.round(110 * area) + 30; i++) stars.push({ x: Math.random(), y: Math.pow(Math.random(), 1.4) * .62, r: R(.5, 1.4), tw: R(.6, 2.2), ph: R(0, 6.3) });
-    var cover = fw === 'clear' ? 8 : fw === 'cloudy' || fw === 'rain' || fw === 'storm' || fw === 'snow' ? 85 : fw === 'fog' ? 60 : fw === 'wind' ? 45 : wx.cloud;
+    var cover = fw === 'clear' ? 16 : fw === 'fog' ? 55 : fw === 'wind' ? 45 : 85;
     var n = Math.round(cover / 100 * 6 * Math.min(1.3, W / 1200)) + (cover > 8 ? 1 : 0);
     clouds = []; for (var c = 0; c < n; c++) { var cl = mkCloud(0); cl.x = (c + Math.random() * .8) / Math.max(1, n) * 1.1 - .1; clouds.push(cl); }
     fogs = []; for (var f = 0; f < 4; f++) fogs.push({ x: Math.random(), y: R(.25, .8), w: R(.5, .9), s: R(.004, .01) });
@@ -800,7 +813,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     g.fillRect(pad + h * .3, B - h * .3, w - h * .6, h * .3);
     return { x: x, y: R(.04, .36), d: d, sp: sp, w: sp.width, h: sp.height };
   }
-  function windK() { var w = fw === 'wind' ? 38 : fw ? 10 : wx.wind; return Math.min(3.2, .35 + w / 14); }
+  function windK() { var w = fw === 'wind' ? 38 : fw === 'storm' ? 24 : 8; return Math.min(3.2, .35 + w / 14); }
   function resize() {
     box.style.top = -(hero.getBoundingClientRect().top + scrollY) + 'px';
     dpr = Math.min(2, window.devicePixelRatio || 1); W = box.clientWidth; H = box.clientHeight;
@@ -809,7 +822,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   var WASH = { night: [[24, 34, 64], .62], dawn: [[233, 169, 122], .3], day: [[178, 208, 226], .34], dusk: [[217, 132, 98], .34] };
   function draw(now) {
     var dt = Math.min(.05, (now - last) / 1000); last = now; var t = (now - t0) / 1000;
-    var ph = phase(), dk = dark(), k = fw || kind, wet = k === 'rain' || k === 'storm' || k === 'drizzle', gloom = wet || k === 'snow' || k === 'cloudy' || k === 'fog';
+    var ph = phase(), dk = dark(), k = fw, wet = k === 'rain' || k === 'storm' || k === 'drizzle', gloom = wet || k === 'snow' || k === 'cloudy' || k === 'fog';
     var wk = windK(), oy = -sy * .18, ox = cpx * 14;
     ctx.clearRect(0, 0, W, H);
     // sky wash, greyer under heavy cloud
@@ -882,22 +895,25 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   if (window.matchMedia && matchMedia('(pointer: fine)').matches && !reduce) addEventListener('pointermove', function (e) { px = e.clientX / innerWidth - .5; }, { passive: true });
   setInterval(function () { cpx += (px - cpx) * .5; }, 60);
   if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener && matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { if (reduce) draw(performance.now()); });
-  // live reading for Bangalore (no key needed); quietly keeps the defaults if it can't be reached
-  var lab = document.getElementById('wx');
-  var WORD = { clear: 'Clear', cloudy: 'Cloudy', rain: 'Rain', drizzle: 'Drizzle', storm: 'Thunderstorm', snow: 'Snow', fog: 'Fog', wind: 'Windy' };
-  function label() {
-    if (!lab) return; var h = blrHour(), hh = Math.floor(h), mm = Math.floor((h - hh) * 60), ampm = hh < 12 ? 'am' : 'pm', h12 = hh % 12 || 12;
-    var k = fw || kind, word = k === 'clear' && wx.cloud > 35 ? 'Partly cloudy' : WORD[k]; if (!fw && k !== 'storm' && wx.wind > 30) word += ', windy';
-    lab.textContent = h12 + ':' + String(mm).padStart(2, '0') + ' ' + ampm + (word ? ' · ' + word : ''); lab.hidden = false;
+  // weather picker beside the theme toggle; shown while the sky is on screen
+  var pick = document.getElementById('wxpick');
+  if (pick) {
+    var btn = pick.querySelector('.wx-btn'), tray = pick.querySelector('.wx-tray');
+    function paint() {
+      var night = phase() === 'night';
+      pick.querySelectorAll('[data-wx]').forEach(function (b) { var on = b.getAttribute('data-wx') === fw; b.setAttribute('aria-checked', on ? 'true' : 'false'); });
+      var cur = tray.querySelector('[data-wx="' + fw + '"]'); btn.innerHTML = cur.innerHTML; btn.setAttribute('aria-label', 'Weather: ' + cur.getAttribute('aria-label') + '. Change it');
+      pick.classList.toggle('night', night);
+    }
+    function open(on) { pick.classList.toggle('open', on); btn.setAttribute('aria-expanded', on ? 'true' : 'false'); tray.hidden = false; }
+    btn.addEventListener('click', function () { open(!pick.classList.contains('open')); });
+    tray.addEventListener('click', function (e) { var b = e.target.closest('[data-wx]'); if (!b) return; fw = b.getAttribute('data-wx'); try { localStorage.setItem('ad-sky', fw); } catch (x) {} leaves.length = drops.length = flakes.length = 0; build(); paint(); open(false); if (reduce) draw(performance.now()); else kick(); });
+    document.addEventListener('click', function (e) { if (!pick.contains(e.target)) open(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') open(false); });
+    new MutationObserver(function () { paint(); if (reduce) draw(performance.now()); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { pick.classList.toggle('away', !e[0].isIntersecting); if (!e[0].isIntersecting) open(false); }, { rootMargin: '0px 0px -40% 0px' }).observe(box);
+    paint();
   }
-  label(); setInterval(label, 30000);
-  if (window.fetch) fetch('https://api.open-meteo.com/v1/forecast?latitude=12.97&longitude=77.59&current=weather_code,cloud_cover,wind_speed_10m&daily=sunrise,sunset&timezone=Asia%2FKolkata&forecast_days=1')
-    .then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-      if (!d || !d.current) return; var c = d.current, hm = function (s) { var m = /T(\d+):(\d+)/.exec(s || ''); return m ? +m[1] + m[2] / 60 : null; };
-      wx.code = c.weather_code; wx.cloud = c.cloud_cover; wx.wind = c.wind_speed_10m;
-      if (d.daily) { wx.sr = hm(d.daily.sunrise && d.daily.sunrise[0]) || wx.sr; wx.ss = hm(d.daily.sunset && d.daily.sunset[0]) || wx.ss; }
-      kind = kindOf(wx.code); if (kind === 'clear' && wx.cloud > 70) kind = 'cloudy'; build(); label(); if (reduce) draw(performance.now()); else kick();
-    }).catch(function () {});
 })();
 </script>
 <script>
