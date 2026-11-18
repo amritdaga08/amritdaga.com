@@ -173,12 +173,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* introduction */
 .hero { position: relative; isolation: isolate; padding-block:clamp(64px, 10vw, 96px) clamp(48px, 7vw, 96px); }
 /* weather switcher: opens above the theme toggle */
-.skysw { position: fixed; z-index: 7; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + 40px + 10px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 4px; padding: 4px; border-radius: 20px; background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: 0 0 0 1px var(--glass-ring), inset 0 1px 0 var(--glass-edge), 0 12px 32px -16px var(--glass-shadow); -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%); opacity: 0; transform: translateY(8px) scale(.96); transform-origin: right bottom; transition: opacity .2s, transform .35s cubic-bezier(.34, 1.56, .64, 1); }
+.skysw { position: fixed; z-index: 7; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + 40px + 10px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: 0 0 0 1px var(--glass-ring), inset 0 1px 0 var(--glass-edge), 0 12px 32px -16px var(--glass-shadow); -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%); opacity: 0; transform: translateY(8px) scale(.96); transform-origin: right bottom; transition: opacity .2s, transform .35s cubic-bezier(.34, 1.56, .64, 1); }
 .skysw.on { opacity: 1; transform: none; }
-.skysw button { display: grid; justify-items: center; gap: 4px; min-width: 64px; padding: 8px 8px 6px; border: 0; border-radius: 16px; background: transparent; color: var(--bark-soft); font: 500 11px/1 var(--font-body); cursor: pointer; }
+.skysw button { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--bark-soft); cursor: pointer; }
 .skysw button:hover { color: var(--bark); }
 .skysw button[aria-checked="true"] { background: color-mix(in srgb, var(--moss) 18%, transparent); color: var(--moss); }
-.skysw svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.skysw svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 @media (prefers-reduced-motion: reduce) { .skysw { transition: none; } }
 /* hero backdrop: a living sky, drawn on a canvas */
 .sky { position: absolute; z-index: -1; inset: -80px calc(50% - 50vw) auto; height: clamp(640px, 100vh, 1000px); pointer-events: none; opacity: .36; -webkit-mask-image: radial-gradient(ellipse 34% 30% at 50% 40%, rgba(0,0,0,.28), #000 100%), linear-gradient(#000 70%, transparent 98%); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 34% 30% at 50% 40%, rgba(0,0,0,.28), #000 100%), linear-gradient(#000 70%, transparent 98%); mask-composite: intersect; }
@@ -972,16 +972,19 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   setInterval(function () { cpx += (px - cpx) * .5; }, 60);
 
   // weather switcher, found by tapping the active day/night button again (or a long press on touch)
-  var NAMES = { day: { clear: 'Sunny', rain: 'Rainbow', snow: 'Snowman' }, night: { clear: 'Starry', rain: 'Thunder', snow: 'Aurora' } };
+  var NAMES = { clear: 'Clear', rain: 'Rain', snow: 'Snow' };
+  var CLOUD = '<path d="M7 14.5h10a3.5 3.5 0 0 0 .4-7A5.3 5.3 0 0 0 6.6 7.2a3.6 3.6 0 0 0 .4 7.3z"/>';
   var ICONS = {
-    day: { clear: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>', rain: '<path d="M3 18a9 9 0 0 1 18 0"/><path d="M6.5 18a5.5 5.5 0 0 1 11 0"/>', snow: '<circle cx="12" cy="16.5" r="4.5"/><circle cx="12" cy="8" r="3"/><path d="M11 8.5h.01M13 8.5h.01M12 9.6l1.6.4"/>' },
-    night: { clear: '<path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z"/><path d="M18 3v3M16.5 4.5h3"/>', rain: '<path d="M7 14.5h10a3.5 3.5 0 0 0 .4-7A5.3 5.3 0 0 0 6.6 7.2a3.6 3.6 0 0 0 .4 7.3z"/><path d="M12.5 15.5l-2 3.5h3l-2 3.5"/>', snow: '<path d="M3 15c3-6 6-6 9-2s6 4 9-2"/><path d="M3 20c3-4 6-4 9-1s6 3 9-1"/>' }
+    day: { clear: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>' },
+    night: { clear: '<path d="M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5a7.5 7.5 0 1 0 10 10z"/>' },
+    rain: CLOUD + '<path d="M8.5 18l-1 2.5M12.5 18l-1 2.5M16.5 18l-1 2.5"/>',
+    snow: '<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 6l2.5-1.5M9.5 19.5L12 18l2.5 1.5"/>'
   };
   var sw = document.createElement('div'); sw.className = 'skysw'; sw.setAttribute('role', 'radiogroup'); sw.setAttribute('aria-label', 'Weather'); sw.hidden = true;
   document.body.appendChild(sw);
   function paintSw() {
     var m = night() ? 'night' : 'day';
-    sw.innerHTML = WX.map(function (k) { return '<button type="button" role="radio" data-wx="' + k + '" aria-checked="' + (k === wx) + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[m][k] + '</svg><span>' + NAMES[m][k] + '</span></button>'; }).join('');
+    sw.innerHTML = WX.map(function (k) { return '<button type="button" role="radio" data-wx="' + k + '" aria-checked="' + (k === wx) + '" aria-label="' + NAMES[k] + '" title="' + NAMES[k] + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + (k === 'clear' ? ICONS[m].clear : ICONS[k]) + '</svg></button>'; }).join('');
   }
   function openSw(on) {
     if (on) { paintSw(); sw.hidden = false; requestAnimationFrame(function () { sw.classList.add('on'); }); if (hero.getBoundingClientRect().bottom < innerHeight * .3) scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); var b = sw.querySelector('[aria-checked="true"]'); if (b) b.focus({ preventScroll: true }); }
