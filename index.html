@@ -172,20 +172,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 
 /* introduction */
 .hero { position: relative; isolation: isolate; padding-block:clamp(64px, 10vw, 96px) clamp(48px, 7vw, 96px); }
-/* hero backdrop: contour lines of a site plan, a nod to architecture. Two hills on separate layers drift at different depths. */
-html { overflow-x: clip; }
-.contours { position: absolute; z-index: -1; inset: -80px calc(50% - 50vw) -40px; overflow: hidden; pointer-events: none; color: var(--moss); -webkit-mask-image: radial-gradient(ellipse 34% 40% at 50% 46%, transparent 0 40%, #000 100%), linear-gradient(transparent, #000 18%, #000 72%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 34% 40% at 50% 46%, transparent 0 40%, #000 100%), linear-gradient(transparent, #000 18%, #000 72%, transparent); mask-composite: intersect; }
-.contours svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.contours g { will-change: transform; }
-.contours path { fill: none; stroke: currentColor; stroke-width: 1; opacity: .22; }
-.contours path.ix { stroke-width: 1.6; opacity: .34; }
-.contours text { font: 500 11px/1 var(--font-body); letter-spacing: .08em; fill: currentColor; opacity: .5; }
-@media (prefers-reduced-motion: no-preference) {
-  .contours path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: cdraw 2.4s cubic-bezier(.65, 0, .35, 1) forwards; animation-delay: calc(200ms + var(--i, 0) * 70ms); }
-  .contours text { opacity: 0; animation: cfade .8s ease forwards 1.8s; }
-  @keyframes cdraw { to { stroke-dashoffset: 0; } }
-  @keyframes cfade { to { opacity: .5; } }
-}
+/* hero backdrop: a living sky over Bangalore, drawn on a canvas */
+.sky { position: absolute; z-index: -1; inset: -80px calc(50% - 50vw) auto; height: clamp(640px, 100vh, 1000px); pointer-events: none; -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
+.sky canvas { display: block; width: 100%; height: 100%; }
+.loc .wx::before { content: "·"; margin-right: .6em; }
 .hero-grid { display: grid; justify-items: center; gap:clamp(64px, 9vw, 96px); }
 .aud { display: flex; flex-wrap: wrap; align-items: center; gap:8px 12px; }
 .aud-label { font-size: var(--step--1); color: var(--bark-soft); }
@@ -761,65 +751,153 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
 
 <main>
   <section class="hero" id="intro">
-    <div class="contours" aria-hidden="true"><svg id="contours"></svg></div>
+    <div class="sky" aria-hidden="true"><canvas id="sky"></canvas></div>
     <div class="wrap hero-grid">
       <div class="panel">
         <h1>I care about <em>systems, craft</em> and the <em>people behind the pixels.</em></h1>
         <p class="lead">9+ years designing products used by millions.</p>
         <p class="role-line">AVP – Product Design at <span>Kotak811</span></p>
-        <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India</p>
+        <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India<span class="wx" id="wx" hidden></span></p>
         <div class="ctas"><a class="btn btn-primary" href="#projects">See my work<svg class="ico ico-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn btn-ghost" href="Amrit-Daga-Resume.pdf" download>Download resumé<svg class="ico ico-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a></div>
 <script>
-/* hero contours: nested rings around two "hills", drawn once, then layered parallax on scroll and pointer */
+/* living sky: Bangalore's time of day and weather behind the hero. Stars and the real moon phase at night, sun glow by day,
+   clouds at the real cloud cover, leaves for rain, snow, fog, wind and the odd lightning flash. Layers drift at different depths. */
 (function () {
-  var svg = document.getElementById('contours'); if (!svg) return;
-  var box = svg.parentNode, W = box.clientWidth || 1440; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + (box.clientHeight || 900));
-  var NS = 'http://www.w3.org/2000/svg', seed = 811;
-  function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
-  function ring(cx, cy, r, waves, t) {
-    var pts = [], n = 72;
-    for (var i = 0; i < n; i++) {
-      var a = i / n * Math.PI * 2, k = 1;
-      waves.forEach(function (w) { k += w[0] * Math.sin(w[1] * a + w[2] + t * w[3]); });
-      pts.push([cx + Math.cos(a) * r * k * 1.25, cy + Math.sin(a) * r * k]);
-    }
-    var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
-    for (var j = 0; j < n; j++) {
-      var p0 = pts[(j - 1 + n) % n], p1 = pts[j], p2 = pts[(j + 1) % n], p3 = pts[(j + 2) % n];
-      d += 'C' + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
-    }
-    return d + 'Z';
+  var cv = document.getElementById('sky'); if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d'), box = cv.parentNode, hero = box.closest('.hero');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var q = location.search, force = function (k) { var m = q.match(new RegExp('[?&]' + k + '=([a-z]+)')); return m && m[1]; };
+  var W = 0, H = 0, dpr = 1, t0 = performance.now(), last = t0, raf = 0, onScreen = true, sy = 0, px = 0, cpx = 0;
+  // weather state; defaults until the live reading arrives
+  var wx = { code: 1, cloud: 25, wind: 8, sr: 6.25, ss: 18.1 };
+  var kind = 'clear';
+  function kindOf(c) { if (c >= 95) return 'storm'; if ((c >= 71 && c <= 77) || c === 85 || c === 86) return 'snow'; if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) return c >= 61 ? 'rain' : 'drizzle'; if (c === 45 || c === 48) return 'fog'; if (c === 3) return 'cloudy'; return 'clear'; }
+  function blrHour() { var d = new Date(), u = d.getUTCHours() + d.getUTCMinutes() / 60 + d.getUTCSeconds() / 3600; return (u + 5.5) % 24; }
+  function phaseAt(h) { var sr = wx.sr, ss = wx.ss; if (h < sr - .8 || h > ss + .8) return 'night'; if (h < sr + 1) return 'dawn'; if (h > ss - 1) return 'dusk'; return 'day'; }
+  var fp = force('sky'), fw = force('wx');
+  function phase() { return fp || phaseAt(blrHour()); }
+  function dark() { var r = document.documentElement.getAttribute('data-theme'); return r ? r === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); }
+  // moon: 0 new, .5 full
+  var moonP = (((Date.now() / 864e5 - 10957.76) / 29.530588853) % 1 + 1) % 1;
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var stars = [], clouds = [], drops = [], leaves = [], flakes = [], fogs = [], flash = 0, nextFlash = 4;
+  function build() {
+    var area = W * H / 1e6;
+    stars = []; for (var i = 0; i < Math.round(110 * area) + 30; i++) stars.push({ x: Math.random(), y: Math.pow(Math.random(), 1.4) * .62, r: R(.5, 1.4), tw: R(.6, 2.2), ph: R(0, 6.3) });
+    var cover = fw === 'clear' ? 8 : fw === 'cloudy' || fw === 'rain' || fw === 'storm' || fw === 'snow' ? 85 : fw === 'fog' ? 60 : fw === 'wind' ? 45 : wx.cloud;
+    var n = Math.round(cover / 100 * 6 * Math.min(1.3, W / 1200)) + (cover > 8 ? 1 : 0);
+    clouds = []; for (var c = 0; c < n; c++) { var cl = mkCloud(0); cl.x = (c + Math.random() * .8) / Math.max(1, n) * 1.1 - .1; clouds.push(cl); }
+    fogs = []; for (var f = 0; f < 4; f++) fogs.push({ x: Math.random(), y: R(.25, .8), w: R(.5, .9), s: R(.004, .01) });
   }
-  // Bangalore sits about 920 m above sea level, so the index lines are labelled from there.
-  var hills = [
-    { x: W * .1, y: 300, rings: 11, gap: Math.max(22, Math.min(36, W / 44)), base: 900, depth: .5 },
-    { x: W * .92, y: 760, rings: 13, gap: Math.max(20, Math.min(34, W / 46)), base: 880, depth: 1 }
-  ];
-  var layers = [], idx = 0;
-  hills.forEach(function (h) {
-    var g = document.createElementNS(NS, 'g'); svg.appendChild(g);
-    var waves = [[.12 + rnd() * .06, 2, rnd() * 6, .5], [.07 + rnd() * .05, 3, rnd() * 6, 1.1], [.04, 5, rnd() * 6, 2.2]];
-    for (var i = h.rings; i >= 1; i--) {
-      var el = document.createElementNS(NS, 'path'), elev = h.base + (h.rings - i) * 5;
-      el.setAttribute('d', ring(h.x, h.y, (i + .35 * Math.sin(i * 1.7)) * h.gap, waves, i * .18));
-      el.setAttribute('pathLength', '1');
-      if (elev % 20 === 0) el.setAttribute('class', 'ix');
-      el.style.setProperty('--i', idx++);
-      g.appendChild(el);
-      if (elev === 920) { var tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', h.x + i * h.gap * 1.25 * .72); tx.setAttribute('y', h.y - i * h.gap * .72 - 6); tx.textContent = '920 m'; g.appendChild(tx); }
-    }
-    layers.push({ g: g, depth: h.depth });
-  });
-  if (!window.matchMedia || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var hero = svg.closest('.hero'), mx = 0, my = 0, cx = 0, cy = 0, sy = 0, raf = 0, fine = matchMedia('(pointer: fine)').matches;
-  function frame() {
-    raf = 0; cx += (mx - cx) * .08; cy += (my - cy) * .08;
-    layers.forEach(function (l) { l.g.style.transform = 'translate3d(' + (cx * 18 * l.depth).toFixed(2) + 'px,' + (sy * .25 * l.depth + cy * 12 * l.depth).toFixed(2) + 'px,0)'; });
-    if (Math.abs(mx - cx) > .002 || Math.abs(my - cy) > .002) raf = requestAnimationFrame(frame);
+  // a cloud is a row of puffs, tallest in the middle, with a flat base, blurred once into a sprite
+  function mkCloud(x) {
+    var d = R(.35, 1), w = R(170, 320) * (.55 + d * .6), h = w * R(.26, .34), sp = document.createElement('canvas'), pad = 26, top = h * .75 + pad;
+    sp.width = Math.ceil(w + pad * 2); sp.height = Math.ceil(top + h + pad); var g = sp.getContext('2d'), n = Math.round(R(6, 9)), B = top + h * .55;
+    g.filter = 'blur(' + Math.round(5 + 6 * (1 - d)) + 'px)'; g.fillStyle = '#fff';
+    function puff(cx, r) { g.beginPath(); g.arc(cx, B - r * .8, r, 0, 6.283); g.fill(); }
+    for (var i = 0; i < n; i++) { var u = i / (n - 1); puff(pad + h * .3 + u * (w - h * .6), h * (.28 + .34 * Math.sin(Math.PI * u)) * R(.85, 1.1)); }
+    for (var j = 0; j < 3; j++) { var v = R(.25, .75); g.beginPath(); g.arc(pad + v * w, B - h * R(.75, 1.05), h * R(.26, .38), 0, 6.283); g.fill(); }
+    g.fillRect(pad + h * .3, B - h * .3, w - h * .6, h * .3);
+    return { x: x, y: R(.04, .36), d: d, sp: sp, w: sp.width, h: sp.height };
   }
-  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
-  addEventListener('scroll', function () { var r = hero.getBoundingClientRect(); if (r.bottom < 0) return; sy = Math.min(scrollY, innerHeight); kick(); }, { passive: true });
-  if (fine) addEventListener('pointermove', function (e) { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; kick(); }, { passive: true });
+  function windK() { var w = fw === 'wind' ? 38 : fw ? 10 : wx.wind; return Math.min(3.2, .35 + w / 14); }
+  function resize() {
+    box.style.top = -(hero.getBoundingClientRect().top + scrollY) + 'px';
+    dpr = Math.min(2, window.devicePixelRatio || 1); W = box.clientWidth; H = box.clientHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); build();
+  }
+  var WASH = { night: [[24, 34, 64], .62], dawn: [[233, 169, 122], .3], day: [[178, 208, 226], .34], dusk: [[217, 132, 98], .34] };
+  function draw(now) {
+    var dt = Math.min(.05, (now - last) / 1000); last = now; var t = (now - t0) / 1000;
+    var ph = phase(), dk = dark(), k = fw || kind, wet = k === 'rain' || k === 'storm' || k === 'drizzle', gloom = wet || k === 'snow' || k === 'cloudy' || k === 'fog';
+    var wk = windK(), oy = -sy * .18, ox = cpx * 14;
+    ctx.clearRect(0, 0, W, H);
+    // sky wash, greyer under heavy cloud
+    var w = WASH[ph], col = w[0].slice(), a = w[1] * (dk ? .9 : ph === 'night' ? .8 : 1);
+    if (gloom) { col = col.map(function (v, i) { return Math.round(v * .45 + [130, 138, 146][i] * .55); }); if (ph !== 'night') a *= 1.1; }
+    var g = ctx.createLinearGradient(0, 0, 0, H * .8); g.addColorStop(0, 'rgba(' + col + ',' + a + ')'); g.addColorStop(.55, 'rgba(' + col + ',' + a * .35 + ')'); g.addColorStop(1, 'rgba(' + col + ',0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    // stars and moon
+    if (ph === 'night' || ph === 'dawn' || ph === 'dusk') {
+      var vis = (ph === 'night' ? 1 : .25) * (gloom ? .15 : 1);
+      if (vis > .02) stars.forEach(function (s) { var al = vis * (.45 + .55 * Math.sin(t * s.tw + s.ph)) * (dk ? 1 : .85); ctx.fillStyle = 'rgba(255,250,235,' + al.toFixed(3) + ')'; ctx.beginPath(); ctx.arc(s.x * W + ox * .2, s.y * H + oy * .2, s.r, 0, 6.283); ctx.fill(); });
+      if (ph === 'night') moon(W * (W < 600 ? .86 : .8) + ox * .3, H * (W < 600 ? .1 : .17) + oy * .3, Math.max(16, Math.min(26, W / 55)), gloom ? .35 : 1);
+    }
+    if (ph === 'day' || ph === 'dawn' || ph === 'dusk') {
+      var sx = ph === 'dawn' ? W * .14 : ph === 'dusk' ? W * .86 : W * .82, syy = ph === 'day' ? H * .1 : H * .3;
+      var sg = ctx.createRadialGradient(sx + ox * .3, syy + oy * .3, 0, sx + ox * .3, syy + oy * .3, Math.max(W, H) * .45);
+      var sa = (gloom ? .12 : .42) * (dk ? .6 : 1); sg.addColorStop(0, 'rgba(255,226,168,' + sa + ')'); sg.addColorStop(1, 'rgba(255,226,168,0)');
+      ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
+    }
+    // clouds
+    clouds.forEach(function (c) {
+      c.x += dt * wk * (.004 + c.d * .008); if (c.x * W > W + 40) { Object.assign(c, mkCloud(0)); c.x = -c.w / W; }
+      var cx = c.x * W + ox * c.d, cy = c.y * H + oy * c.d;
+      // white by day, grey under rain, faint moonlit grey at night; a grey copy underneath gives the base some shade
+      var ca = ph === 'night' ? (dk ? .16 : .3) : gloom ? (dk ? .2 : .55) : (dk ? .1 : .85);
+      if (ph !== 'night') { ctx.globalAlpha = ca * (gloom ? .9 : .35); ctx.filter = gloom ? 'brightness(.62)' : 'brightness(.86)'; ctx.drawImage(c.sp, cx + 3, cy + 6); ctx.filter = 'none'; }
+      ctx.globalAlpha = ca * (ph === 'night' ? 1 : gloom ? .55 : 1); ctx.drawImage(c.sp, cx, cy); ctx.globalAlpha = 1;
+    });
+    // fog
+    if (k === 'fog') fogs.forEach(function (f) { f.x += dt * f.s * wk; if (f.x > 1.4) f.x = -.6; var fx = f.x * W, fy = f.y * H + oy * .6, fw2 = f.w * W; var fg = ctx.createRadialGradient(fx, fy, 0, fx, fy, fw2 / 2); var fc = dk ? '200,200,196' : '255,255,252'; fg.addColorStop(0, 'rgba(' + fc + ',' + (dk ? .14 : .55) + ')'); fg.addColorStop(1, 'rgba(' + fc + ',0)'); ctx.save(); ctx.translate(fx, fy); ctx.scale(1, .22); ctx.translate(-fx, -fy); ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(fx, fy, fw2 / 2, 0, 6.283); ctx.fill(); ctx.restore(); });
+    // rain: a few fine drops, mostly leaves
+    var nLeaves = k === 'storm' ? 22 : k === 'rain' ? 16 : k === 'drizzle' ? 8 : (k === 'wind' || wk > 2.2) ? 7 : 0;
+    var nDrops = k === 'storm' ? 120 : k === 'rain' ? 70 : k === 'drizzle' ? 26 : 0;
+    var nFlakes = k === 'snow' ? Math.round(W / 9) : 0;
+    while (leaves.length < nLeaves) leaves.push(mkLeaf(true));
+    while (drops.length < nDrops) drops.push({ x: Math.random() * W, y: Math.random() * H, v: R(380, 620), l: R(8, 16) });
+    while (flakes.length < nFlakes) flakes.push({ x: Math.random() * W, y: Math.random() * H, r: R(1, 3.2), v: R(18, 46), ph: R(0, 6.3) });
+    drops.length = Math.min(drops.length, nDrops); flakes.length = Math.min(flakes.length, nFlakes);
+    if (drops.length) { ctx.strokeStyle = dk ? 'rgba(190,205,220,.22)' : 'rgba(90,110,130,.22)'; ctx.lineWidth = 1; ctx.beginPath(); drops.forEach(function (d) { d.y += d.v * dt; d.x += d.v * dt * .12 * wk; if (d.y > H) { d.y = -20; d.x = Math.random() * W; } if (d.x > W) d.x -= W; ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - d.l * .12 * wk, d.y - d.l); }); ctx.stroke(); }
+    flakes.forEach(function (f) { f.y += f.v * dt; f.x += Math.sin(t * .8 + f.ph) * 12 * dt + wk * 10 * dt; if (f.y > H) { f.y = -6; f.x = Math.random() * W; } if (f.x > W) f.x -= W; ctx.fillStyle = dk ? 'rgba(250,250,255,.8)' : 'rgba(150,170,190,.7)'; ctx.beginPath(); ctx.arc(f.x, f.y + oy * .5, f.r, 0, 6.283); ctx.fill(); });
+    for (var i = leaves.length - 1; i >= 0; i--) { var L = leaves[i]; L.y += L.v * dt; L.x += (L.dx + wk * 22) * dt + Math.sin(t * L.f + L.ph) * 26 * dt; L.rot += L.vr * dt; L.flip = Math.sin(t * L.f * 1.7 + L.ph);
+      if (L.y > H + 20 || L.x > W + 30) { if (leaves.length > nLeaves) leaves.splice(i, 1); else Object.assign(L, mkLeaf(false)); continue; } leaf(L); }
+    // lightning
+    if (k === 'storm') { nextFlash -= dt; if (nextFlash < 0) { flash = 1; nextFlash = R(6, 16); } }
+    if (flash > 0) { ctx.fillStyle = 'rgba(255,255,250,' + (flash * (dk ? .22 : .5)).toFixed(3) + ')'; ctx.fillRect(0, 0, W, H); flash = Math.max(0, flash - dt * (flash > .6 ? 2.5 : 1.2)); }
+    if (!reduce && onScreen && !document.hidden) raf = requestAnimationFrame(draw); else raf = 0;
+  }
+  var LEAF = [[107, 155, 99], [134, 150, 74], [176, 140, 64], [150, 96, 52], [93, 130, 84]];
+  function mkLeaf(any) { return { x: any ? Math.random() * W : R(-60, W * .6), y: any ? R(-H, H * .5) : R(-80, -20), s: R(7, 13), v: R(28, 60), dx: R(-10, 14), rot: R(0, 6.3), vr: R(-1.6, 1.6), f: R(.8, 1.8), ph: R(0, 6.3), c: LEAF[Math.floor(Math.random() * LEAF.length)], flip: 1 }; }
+  function leaf(L) {
+    ctx.save(); ctx.translate(L.x, L.y); ctx.rotate(L.rot); ctx.scale(1, Math.max(.2, Math.abs(L.flip)));
+    var s = L.s; ctx.fillStyle = 'rgba(' + L.c + ',.85)'; ctx.beginPath(); ctx.moveTo(-s, 0); ctx.quadraticCurveTo(-s * .2, -s * .62, s, 0); ctx.quadraticCurveTo(-s * .2, s * .62, -s, 0); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,253,240,.35)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(-s * 1.25, 0); ctx.lineTo(s * .85, 0); ctx.stroke(); ctx.restore();
+  }
+  var mc = document.createElement('canvas');
+  function moon(x, y, r, al) {
+    var S = Math.ceil(r * 2 + 4) * dpr; mc.width = mc.height = S; var m = mc.getContext('2d'); m.setTransform(dpr, 0, 0, dpr, 0, 0); var c = r + 2;
+    m.fillStyle = 'rgba(244,238,220,1)'; m.beginPath(); m.arc(c, c, r, 0, 6.283); m.fill();
+    var lit = (1 - Math.cos(moonP * 6.283)) / 2, dir = moonP < .5 ? -1 : 1; // waxing: lit on the right, shadow slides left
+    m.globalCompositeOperation = 'destination-out'; m.fillStyle = 'rgba(0,0,0,.88)'; m.beginPath(); m.arc(c + dir * lit * 2 * r, c, r * 1.02, 0, 6.283); m.fill(); m.globalCompositeOperation = 'source-over';
+    var gl = ctx.createRadialGradient(x, y, r * .8, x, y, r * 4.5); gl.addColorStop(0, 'rgba(244,238,220,' + (.18 * al * (.3 + lit * .7)) + ')'); gl.addColorStop(1, 'rgba(244,238,220,0)'); ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(x, y, r * 4.5, 0, 6.283); ctx.fill();
+    ctx.globalAlpha = al; ctx.drawImage(mc, x - c, y - c, S / dpr, S / dpr); ctx.globalAlpha = 1;
+  }
+  function kick() { if (!raf && !reduce && onScreen && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(draw); } }
+  resize(); draw(performance.now());
+  var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { resize(); if (reduce) draw(performance.now()); }, 150); });
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { onScreen = e[0].isIntersecting; kick(); }).observe(box);
+  document.addEventListener('visibilitychange', kick);
+  addEventListener('scroll', function () { sy = Math.min(scrollY, innerHeight); if (reduce) draw(performance.now()); }, { passive: true });
+  if (window.matchMedia && matchMedia('(pointer: fine)').matches && !reduce) addEventListener('pointermove', function (e) { px = e.clientX / innerWidth - .5; }, { passive: true });
+  setInterval(function () { cpx += (px - cpx) * .5; }, 60);
+  if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener && matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { if (reduce) draw(performance.now()); });
+  // live reading for Bangalore (no key needed); quietly keeps the defaults if it can't be reached
+  var lab = document.getElementById('wx');
+  var WORD = { clear: 'Clear', cloudy: 'Cloudy', rain: 'Rain', drizzle: 'Drizzle', storm: 'Thunderstorm', snow: 'Snow', fog: 'Fog', wind: 'Windy' };
+  function label() {
+    if (!lab) return; var h = blrHour(), hh = Math.floor(h), mm = Math.floor((h - hh) * 60), ampm = hh < 12 ? 'am' : 'pm', h12 = hh % 12 || 12;
+    var k = fw || kind, word = k === 'clear' && wx.cloud > 35 ? 'Partly cloudy' : WORD[k]; if (!fw && k !== 'storm' && wx.wind > 30) word += ', windy';
+    lab.textContent = h12 + ':' + String(mm).padStart(2, '0') + ' ' + ampm + (word ? ' · ' + word : ''); lab.hidden = false;
+  }
+  label(); setInterval(label, 30000);
+  if (window.fetch) fetch('https://api.open-meteo.com/v1/forecast?latitude=12.97&longitude=77.59&current=weather_code,cloud_cover,wind_speed_10m&daily=sunrise,sunset&timezone=Asia%2FKolkata&forecast_days=1')
+    .then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d || !d.current) return; var c = d.current, hm = function (s) { var m = /T(\d+):(\d+)/.exec(s || ''); return m ? +m[1] + m[2] / 60 : null; };
+      wx.code = c.weather_code; wx.cloud = c.cloud_cover; wx.wind = c.wind_speed_10m;
+      if (d.daily) { wx.sr = hm(d.daily.sunrise && d.daily.sunrise[0]) || wx.sr; wx.ss = hm(d.daily.sunset && d.daily.sunset[0]) || wx.ss; }
+      kind = kindOf(wx.code); if (kind === 'clear' && wx.cloud > 70) kind = 'cloudy'; build(); label(); if (reduce) draw(performance.now()); else kick();
+    }).catch(function () {});
 })();
 </script>
 <script>
