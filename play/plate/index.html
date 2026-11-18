@@ -11,6 +11,7 @@
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
+<link rel="icon" href="../../favicon-32.png">
 <script>addEventListener("DOMContentLoaded",function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400..700&display=swap";document.head.appendChild(l)})</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -329,7 +330,6 @@ html.kb #addSheet .sh-foot,html.kb #sheet .sh-foot{display:none}
     <button class="mrow" data-more="change"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>Change meal</button>
     <button class="mrow" data-more="adjust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Adjust items</button>
     <button class="mrow" data-more="dup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>Duplicate</button>
-    <button class="mrow" data-more="undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-3"/></svg>Undo, I haven't eaten this</button>
     <button class="mrow warn" data-more="skip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>I missed this meal</button>
   </div>
   <div class="sh-foot"><button class="btn ghost" id="moreCancel">Close</button></div>
@@ -476,6 +476,8 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
           Object.keys(state.days||{}).forEach(k=>{
             const L = state.days[k], X = rd[k];
             if(!X){ days[k] = L; return; }
+            // a day changed on this device wins whole, so an undo or remove is not brought back by the copy in the cloud
+            if(L.t || X.t){ days[k] = (L.t||0) >= (X.t||0) ? L : X; return; }
             days[k] = Object.assign({}, X, L, {logged: Object.assign({}, X.logged||{}, L.logged||{}), picks: Object.assign({}, X.picks||{}, L.picks||{}), ov: Object.assign({}, X.ov||{}, L.ov||{}), blank: Object.assign({}, X.blank||{}, L.blank||{}), on: Object.assign({}, X.on||{}, L.on||{}), extra: (L.extra||[]).length >= (X.extra||[]).length ? (L.extra||[]) : (X.extra||[])});
           });
           state = {days, custom: Object.assign({}, R.custom||{}, state.custom||{}), pantry: Object.assign({}, R.pantry||{}, state.pantry||{}), shop: Object.assign({}, R.shop||{}, state.shop||{}), v:3};
@@ -487,6 +489,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     })());
   }
   function persist(){
+    if(state.days && state.days[cur]) state.days[cur].t = Date.now();
     try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){}
     clearTimeout(saveTimer);
     saveTimer = setTimeout(async ()=>{
@@ -545,7 +548,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       <div class="slot ${l&&!skipped?"done":""} ${skipped?"skip":""}">
         <div class="top"><button class="name" data-act="open">${esc(titleOf(m,ov))}<small>${skipped?"Counts as nothing today":`<b class="g">${kk} kcal</b> · <b class="g">${pp} g protein</b>`}</small></button>
         ${l ? `` : `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`}</div>
-        ${l ? `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn ghost" data-act="how">How to make this</button></div>` : `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn go" data-act="ate">${IC.check}I ate this</button></div>`}
+        ${l ? `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn ghost" data-act="undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-3"/></svg>I didn’t eat this</button></div>` : `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn go" data-act="ate">${IC.check}I ate this</button></div>`}
       </div></section>`;
     });
     if((r.extra||[]).length){
@@ -839,7 +842,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(act==="additem"){ editSlot = sid; return openAdd(); }
     if(act==="open") return tapSlot(sid);
     if(act==="how") return openRecipe(sid);
-    if(act==="more"){ moreSlot = sid; const lg = !!((state.days[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=undo]").hidden = !lg; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; return $("#moreSheet").showModal(); }
+    if(act==="more"){ moreSlot = sid; const lg = !!((state.days[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; return $("#moreSheet").showModal(); }
     if(act==="ate"){
       const s = SLOTS.find(x=>x.id===sid), m = chosen(cur,s), v = macOf(m, ovOf(cur,sid));
       rec(cur).logged[sid] = {id:m.id,n:titleOf(m,ovOf(cur,sid)),k:v.k,p:v.p}; persist(); return renderDay();
