@@ -149,6 +149,8 @@ h1{display:flex;align-items:center;gap:12px}
 .recipe .mx{font-size:13px;color:var(--bark-soft);font-variant-numeric:tabular-nums}
 .add{margin-top:12px;width:100%;font:600 15px var(--body);background:transparent;color:var(--bark);border:1.5px dashed color-mix(in srgb,var(--bark-soft) 45%,var(--rule));border-radius:999px;min-height:48px;cursor:pointer}
 .add:hover{background:var(--paper)}
+.addmore{display:inline-flex;align-items:center;justify-content:center;gap:6px;align-self:flex-start;min-height:36px;padding:0 4px;border:0;background:none;color:var(--moss-ink);font:600 14px var(--body);cursor:pointer}
+.addmore svg{width:16px;height:16px}
 .x{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--linen);color:var(--fire);font-size:18px;cursor:pointer}
 .empty{padding:32px 16px;text-align:center;color:var(--bark-soft)}
 
@@ -330,6 +332,7 @@ html.kb #addSheet .sh-foot,html.kb #sheet .sh-foot{display:none}
     <button class="mrow" data-more="change"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>Change meal</button>
     <button class="mrow" data-more="adjust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Adjust items</button>
     <button class="mrow" data-more="dup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>Duplicate</button>
+    <button class="mrow warn" data-more="remove" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>Remove this dish</button>
     <button class="mrow warn" data-more="skip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>I missed this meal</button>
   </div>
   <div class="sh-foot"><button class="btn ghost" id="moreCancel">Close</button></div>
@@ -356,8 +359,17 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     {id:"shake", label:"Shake", when:"Shake", cat:"Shake"},
     {id:"shake2", label:"Second shake", when:"Second shake", cat:"Shake", opt:true}
   ];
-  // A second shake is optional: it only counts once you add it for that day.
-  const slotsFor = d => {
+  // A meal can hold more than one dish. Extra dishes live under their meal (r.adds); the old second shake and second snack sit under theirs.
+  const PARENT = {shake2:"shake", snack2:"snack"};
+  const parentOf = s => s.parent || PARENT[s.id] || s.id;
+  const dynSlot = (a) => { const P = SLOTS.find(x=>x.id===a.p); return P ? {id:a.id, label:P.label, when:P.when, cat:P.cat, opt:true, dyn:true, parent:a.p} : null; };
+  function slotById(id, d){
+    const b = SLOTS.find(x=>x.id===id); if(b) return b;
+    const r = state.days[d||cur], a = r && (r.adds||[]).find(x=>x.id===id);
+    return a ? dynSlot(a) : null;
+  }
+  const slotsFor = d => (slotsBase(d)).concat(((state.days[d]||{}).adds||[]).map(dynSlot).filter(Boolean));
+  const slotsBase = d => {
     const on = (state.days[d] && state.days[d].on) || {};
     return SLOTS.filter(s=>!s.opt || on[s.id]===true);
   };
@@ -439,7 +451,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     return main.length ? main.join(" + ") : m.n;
   }
   function suggested(d, slot){
-    const pool = POOL[slot.id], n = epochDay(d);
+    const pool = POOL[slot.id] || [], n = epochDay(d);
     for(let i=0;i<pool.length;i++){ const m = byId(pool[(((n+i)%pool.length)+pool.length)%pool.length]); if(m) return m; }
     return lib.find(x=>x.cat===slot.cat && !x.bahar && !x.lib) || null;
   }
@@ -536,20 +548,27 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   function renderList(){
     const d = cur, r = state.days[d] || {logged:{},extra:[]};
     let h = "";
-    slotsFor(d).forEach(s=>{
+    const all = slotsFor(d);
+    SLOTS.filter(b=>!b.opt).forEach(b=>{
+      const kids = all.filter(s=>s.opt && parentOf(s)===b.id);
+      const baseBlank = !!(r.blank && r.blank[b.id]);
+      const bl = r.logged && r.logged[b.id], baseSkip = bl && bl.skip;
+      let cards = "";
+      [b].concat(kids).forEach(s=>{
       const l = r.logged && r.logged[s.id], m = chosen(d,s);
       if(!m) return;
-      if(r.blank && r.blank[s.id]){ h += `<section class="sec" data-slot="${s.id}"><div class="sech"><h3>${esc(s.label)}</h3></div><div class="slot blank"><div class="top"><div class="name"><small>Nothing planned</small></div><button class="btn ghost" data-act="unblank">Add a meal</button></div></div></section>`; return; }
+      if(r.blank && r.blank[s.id]){ cards += `<div class="slot blank" data-slot="${s.id}"><div class="top"><div class="name"><small>Nothing planned</small></div><button class="btn ghost" data-act="unblank">Add a meal</button></div></div>`; return; }
       const ov = ovOf(d,s.id), v = macOf(m,ov), et = editText(m,ov);
       const skipped = l && l.skip;
       const tag = l ? (skipped?"Missed":"Logged") : "";
       const kk = l && !skipped ? l.k : v.k, pp = l && !skipped ? l.p : v.p;
-      h += `<section class="sec" data-slot="${s.id}"><div class="sech"><h3>${esc(s.opt && m.cat==="Dessert" ? "Dessert" : s.label)}</h3>${s.opt?`<button class="link" data-act="rmslot">Remove</button>`:""}${skipped?"":`<button class="addi" data-act="additem" aria-label="Add an item to ${esc(s.label.toLowerCase())}">${IC.plus}Add item</button>`}</div>
-      <div class="slot ${l&&!skipped?"done":""} ${skipped?"skip":""}">
+      cards += `<div class="slot ${l&&!skipped?"done":""} ${skipped?"skip":""}" data-slot="${s.id}">
         <div class="top"><button class="name" data-act="open">${esc(titleOf(m,ov))}<small>${skipped?"Counts as nothing today":`<b class="g">${kk} kcal</b> · <b class="g">${pp} g protein</b>`}</small></button>
         ${l ? `` : `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`}</div>
         ${l ? `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn ghost" data-act="undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-3"/></svg>I didn’t eat this</button></div>` : `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn go" data-act="ate">${IC.check}I ate this</button></div>`}
-      </div></section>`;
+      </div>`;
+      });
+      h += `<section class="sec"><div class="sech" data-slot="${b.id}"><h3>${esc(b.label)}</h3>${(baseBlank||baseSkip||kids.length)?"":`<button class="addi" data-act="additem" aria-label="Add an item to ${esc(b.label.toLowerCase())}">${IC.plus}Add item</button>`}</div>${cards}<button class="addmore" data-act="addto" data-p="${b.id}">${IC.plus}Add another dish</button></section>`;
     });
     if((r.extra||[]).length){
       h += `<section class="sec"><div class="sech"><h3>Extras</h3></div><div class="slot">` + r.extra.map((x,j)=>`<div class="top" style="padding-bottom:16px"><div class="name"><span class="when">Extra</span>${esc(x.n)}<small>${x.k} kcal · ${x.p} g protein</small></div><button class="x" data-act="rmextra" data-j="${j}" aria-label="Remove ${esc(x.n)}">×</button></div>`).join("") + `</div></section>`;
@@ -560,8 +579,9 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   /* change meal picker */
   function groupOf(m){ return m.bahar ? "Order in" : m.lib ? "Library" : m.cat; }
   function openPicker(mode, slotId){
-    pick = {mode, slot:slotId, sel:null, group: mode==="replace" ? SLOTS.find(s=>s.id===slotId).cat : "Dinner"};
-    $("#shTitle").textContent = mode==="replace" ? "Change "+SLOTS.find(s=>s.id===slotId).label.toLowerCase() : "Add another meal";
+    const S = slotId && slotById(slotId);
+    pick = {mode, slot:slotId, sel:null, group: S ? S.cat : "Dinner"};
+    $("#shTitle").textContent = mode==="replace" ? "Change "+S.label.toLowerCase() : mode==="addto" ? "Add to "+S.label.toLowerCase() : "Add another meal";
     $("#q").value = ""; $("#shOk").hidden = true;
     renderPicker();
     $("#sheet").showModal();
@@ -570,7 +590,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     $("#shChips").innerHTML = GROUPS.map(g=>`<button class="chip" data-g="${g}" aria-pressed="${g===pick.group && !$("#q").value.trim()}">${g}</button>`).join("");
     const q = $("#q").value.trim().toLowerCase();
     const items = lib.filter(m => q ? (m.n+" "+(m.ing||[]).join(" ")+" "+(m.parts||[]).map(a=>ING[a[0]]&&ING[a[0]].n).join(" ")).toLowerCase().includes(q) : groupOf(m)===pick.group);
-    if(pick.mode==="replace"){ const c0 = chosen(cur, SLOTS.find(s=>s.id===pick.slot)); pick.curId = c0 && c0.id; }
+    if(pick.mode==="replace"){ const c0 = chosen(cur, slotById(pick.slot)); pick.curId = c0 && c0.id; }
     $("#shList").innerHTML = items.length ? items.map(m=>{ const v = macOf(m,{}); return `<button class="opt" data-id="${esc(m.id)}" aria-pressed="${(pick.mode==="replace" ? m.id===pick.curId : m.id===pick.sel)}"><span>${esc(m.n)}</span><span class="m">${v.k} kcal<br>${v.p} g protein</span></button>`; }).join("") : `<div class="empty">Nothing here yet. Try another group or a different search.</div>`;
   }
   function closePicker(){ $("#sheet").close(); pick = null; }
@@ -584,14 +604,14 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   let editLive = false;
   // Every edit lands here: keeps the default in step when the switch is on, and updates a logged meal.
   function commit(){
-    const s = SLOTS.find(x=>x.id===editSlot), m = chosen(cur,s), r = rec(cur);
+    const s = slotById(editSlot), m = chosen(cur,s), r = rec(cur);
     if(editLive){ state.custom ||= {}; state.custom[m.id] = partsOf(m,ovOf(cur,editSlot)).map(a=>[a[0],a[1]]); if(r.ov) delete r.ov[editSlot]; }
     const l = r.logged && r.logged[editSlot];
     if(l && !l.skip){ const ov = ovOf(cur,editSlot), v = macOf(m,ov); r.logged[editSlot] = {id:m.id,n:titleOf(m,ov),k:v.k,p:v.p}; }
     persist(); renderEditor();
   }
   function renderEditor(){
-    const s = SLOTS.find(x=>x.id===editSlot), m = chosen(cur,s), ov = ovOf(cur,editSlot);
+    const s = slotById(editSlot), m = chosen(cur,s), ov = ovOf(cur,editSlot);
     const parts = partsOf(m,ov);
     const macTxt = (g,q) => `${Math.round(g.k*q)} kcal · ${Math.round(g.p*q*10)/10} g protein`;
     const row = ([id,n]) => { const g = ING[id]; return `<div class="edrow on" data-row="${id}"><div class="nm">${esc(g.n)}<small data-mac="${id}">${macTxt(g,n)}</small></div><label class="qin"><input type="number" inputmode="decimal" min="0" step="any" value="${fq(n)}" data-edin="${id}" aria-label="${esc(g.n)} amount"><span>${esc(g.u||"")}</span></label><button class="rm" data-rm="${id}" aria-label="Remove ${esc(g.n)}">${IC_X}</button></div>`; };
@@ -610,7 +630,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   function closeEditor(){ $("#edSheet").close(); renderDay(); }
   // ov holds the whole difference from the default: an amount, or 0 for removed.
   function setIng(id, q, keep){
-    const s = SLOTS.find(x=>x.id===editSlot), m = chosen(cur,s), r = rec(cur);
+    const s = slotById(editSlot), m = chosen(cur,s), r = rec(cur);
     r.ov ||= {}; const ov = (r.ov[editSlot] ||= {});
     const def = defMap(m), g = ING[id], lo = g.st||1;
     q = Math.round(q*100)/100;
@@ -622,12 +642,12 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     commit();
   }
   function bumpIng(id, dir){
-    const s = SLOTS.find(x=>x.id===editSlot), m = chosen(cur,s), ov = ovOf(cur,editSlot), g = ING[id];
+    const s = slotById(editSlot), m = chosen(cur,s), ov = ovOf(cur,editSlot), g = ING[id];
     const curQ = (id in ov) ? ov[id] : (defMap(m)[id]||0), st = g.st||1;
     setIng(id, Math.max(st, curQ + dir*st));
   }
   function removeIng(id){
-    const s = SLOTS.find(x=>x.id===editSlot), m = chosen(cur,s), r = rec(cur);
+    const s = slotById(editSlot), m = chosen(cur,s), r = rec(cur);
     r.ov ||= {}; const ov = (r.ov[editSlot] ||= {});
     if(id in defMap(m)) ov[id] = 0; else delete ov[id];
     if(!Object.keys(ov).length) delete r.ov[editSlot];
@@ -640,14 +660,14 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   const ownedCount = () => Object.keys(state.pantry||{}).filter(i=>state.pantry[i] && ING[i]).length;
   let adScope = "pantry", pnQ = "", pnOnly = false, slotFor = null;
   function renderAdd(){
-    const s = SLOTS.find(x=>x.id===editSlot), m = chosen(cur,s), have = partsOf(m,ovOf(cur,editSlot)).map(a=>a[0]);
+    const s = slotById(editSlot), m = chosen(cur,s), have = partsOf(m,ovOf(cur,editSlot)).map(a=>a[0]);
     const qs = ($("#adq").value||"").trim().toLowerCase();
     const list = SEED.ingredients.filter(g=>!have.includes(g.id) && (!qs || g.n.toLowerCase().includes(qs)));
     $("#adList").innerHTML = list.length ? list.map(g=>{ const r = ref(g), a = addAmt(g); return `<button class="mrow addrow" data-add="${g.id}">${ingIcon(g.id)}<span class="nm">${esc(g.n)}<small>${Math.round(g.k*r)} kcal · ${Math.round(g.p*r*10)/10} g protein ${per(g)}</small></span><span class="amt">+ ${esc(qtxt(g,a))}</span></button>`; }).join("") : (!qs ? `<div class="empty">Everything is already in this meal.</div>` : `<div class="empty">No ingredient matches "${esc(qs)}".</div>`);
   }
   function openAdd(){ $("#adq").value = ""; renderAdd(); $("#addSheet").showModal(); }
   function addIng(id){
-    const s = SLOTS.find(x=>x.id===editSlot), m = chosen(cur,s), r = rec(cur);
+    const s = slotById(editSlot), m = chosen(cur,s), r = rec(cur);
     r.ov ||= {}; const ov = (r.ov[editSlot] ||= {});
     delete ov[id]; ov[id] = addAmt(ING[id]);
     if(id in defMap(m) && ov[id]===defMap(m)[id]) delete ov[id];
@@ -657,13 +677,13 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(el){ el.scrollIntoView({block:"nearest",behavior:"smooth"}); el.classList.add("flash"); }
   }
   function restoreDefault(){
-    const s = SLOTS.find(x=>x.id===editSlot), m = chosen(cur,s), r = rec(cur);
+    const s = slotById(editSlot), m = chosen(cur,s), r = rec(cur);
     if(state.custom) delete state.custom[m.id];
     if(r.ov) delete r.ov[editSlot];
     editLive = false; commit(); toast("Original recipe restored");
   }
   function openRecipe(sid){
-    const s = SLOTS.find(x=>x.id===sid), m = chosen(cur,s), ov = ovOf(cur,sid);
+    const s = slotById(sid), m = chosen(cur,s), ov = ovOf(cur,sid);
     $("#rcTitle").textContent = titleOf(m,ov); $("#rcBody").innerHTML = recipeHtml(m,ov); $("#recipeSheet").showModal();
   }
 
@@ -747,23 +767,27 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   let dupFrom = null, dupTo = null;
   const SIBLING = {shake:"shake2", shake2:"shake", snack:"snack2", snack2:"snack"};
   function openDup(sid){
-    dupFrom = sid; dupTo = SIBLING[sid] || sid;
-    const m = chosen(cur, SLOTS.find(x=>x.id===sid));
+    dupFrom = sid; const fs = slotById(sid); dupTo = fs ? parentOf(fs) : sid;
+    const m = chosen(cur, slotById(sid));
     $("#dupHint").textContent = titleOf(m, ovOf(cur,sid));
     renderDup(); $("#dupSheet").showModal();
   }
   function renderDup(){
-    $("#dupList").innerHTML = SLOTS.map(sl=>`<button class="mrow ${sl.id===dupTo?"sel":""}" data-dupto="${sl.id}" aria-pressed="${sl.id===dupTo}"><span class="nm">${esc(sl.label)}${sl.id===dupFrom?'<small style="display:block;font-weight:500;font-size:12px;color:var(--bark-soft)">Copying from here</small>':""}</span></button>`).join("");
-    $("#dupOk").disabled = dupTo===dupFrom;
+    $("#dupList").innerHTML = SLOTS.filter(sl=>!sl.opt).map(sl=>`<button class="mrow ${sl.id===dupTo?"sel":""}" data-dupto="${sl.id}" aria-pressed="${sl.id===dupTo}"><span class="nm">${esc(sl.label)}${sl.id===dupFrom?'<small style="display:block;font-weight:500;font-size:12px;color:var(--bark-soft)">Copying from here</small>':""}</span></button>`).join("");
+    $("#dupOk").disabled = false;
   }
   function doDup(){
-    const from = SLOTS.find(x=>x.id===dupFrom), to = SLOTS.find(x=>x.id===dupTo), r = rec(cur);
-    const m = chosen(cur,from), ov = ovOf(cur,dupFrom);
-    r.picks[dupTo] = m.id;
-    if(Object.keys(ov).length){ r.ov ||= {}; r.ov[dupTo] = Object.assign({}, ov); } else if(r.ov) delete r.ov[dupTo];
-    delete r.logged[dupTo];
-    if(to.opt){ (r.on ||= {})[dupTo] = true; }
+    const from = slotById(dupFrom), to = slotById(dupTo), r = rec(cur);
+    const m = chosen(cur,from), ov = ovOf(cur,dupFrom), id = "a"+Date.now().toString(36);
+    (r.adds ||= []).push({id, p:dupTo}); r.picks[id] = m.id;
+    if(Object.keys(ov).length){ r.ov ||= {}; r.ov[id] = Object.assign({}, ov); }
     persist(); $("#dupSheet").close(); renderDay(); toast("Copied to "+to.label.toLowerCase());
+  }
+  function removeDish(sid){
+    const r = rec(cur), s = slotById(sid);
+    if(s && s.dyn) r.adds = (r.adds||[]).filter(a=>a.id!==sid); else (r.on ||= {})[sid] = false;
+    delete r.logged[sid]; delete r.picks[sid]; if(r.ov) delete r.ov[sid]; if(r.blank) delete r.blank[sid];
+    persist(); renderDay(); toast("Removed");
   }
   function tapSlot(sid){
     const l = (state.days[cur]||{}).logged; if(l && l[sid] && l[sid].skip) return toast("Marked as missed. Undo it to change this meal.");
@@ -794,7 +818,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       return $("#slotSheet").showModal();
     }
     if(t.dataset.slpick){
-      const sid = t.dataset.slpick, mm = chosen(cur,SLOTS.find(x=>x.id===sid)); $("#slotSheet").close(); openEditor(sid);
+      const sid = t.dataset.slpick, mm = chosen(cur,slotById(sid)); $("#slotSheet").close(); openEditor(sid);
       if(partsOf(mm,ovOf(cur,sid)).some(a=>a[0]===slotFor)){ const el = $("#edList").querySelector(`[data-row="${slotFor}"]`); if(el){ el.scrollIntoView({block:"nearest"}); el.classList.add("flash"); } return toast("Already in this meal. Change the amount here."); }
       return addIng(slotFor); }
     if(t.dataset.dupto){ dupTo = t.dataset.dupto; return renderDup(); }
@@ -814,6 +838,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       if(t.dataset.more==="how") return openRecipe(sid);
       if(t.dataset.more==="undo"){ delete rec(cur).logged[sid]; persist(); return renderDay(); }
       if(t.dataset.more==="dup") return openDup(sid);
+      if(t.dataset.more==="remove") return removeDish(sid);
       if(t.dataset.more==="skip"){ const r = rec(cur); delete r.logged[sid]; (r.blank ||= {})[sid] = true; persist(); return renderDay(); }
       return;
     }
@@ -824,8 +849,13 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     }
     if(t.dataset.g && pick){ pick.group = t.dataset.g; $("#q").value = ""; return renderPicker(); }
     if(t.classList.contains("opt") && pick){
+      if(pick.mode==="addto"){
+        const r = rec(cur), id = "a"+Date.now().toString(36);
+        (r.adds ||= []).push({id, p:pick.slot}); r.picks[id] = t.dataset.id;
+        persist(); closePicker(); renderDay(); return toast("Added to "+slotById(id).label.toLowerCase());
+      }
       if(pick.mode==="replace"){
-        const r = rec(cur); if(SLOTS.find(x=>x.id===pick.slot).opt) (r.on ||= {})[pick.slot] = true; r.picks[pick.slot] = t.dataset.id; delete r.logged[pick.slot]; if(r.ov) delete r.ov[pick.slot];
+        const r = rec(cur); if(slotById(pick.slot).opt && !slotById(pick.slot).dyn) (r.on ||= {})[pick.slot] = true; r.picks[pick.slot] = t.dataset.id; delete r.logged[pick.slot]; if(r.ov) delete r.ov[pick.slot];
         persist(); closePicker(); renderDay(); return toast("Changed");
       }
       pick.sel = t.dataset.id; $("#shOk").hidden = false;
@@ -836,15 +866,16 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(!act) return;
     if(act==="addshake2"){ const r = rec(cur); (r.on ||= {}).shake2 = true; persist(); return renderDay(); }
     if(act==="rmextra"){ rec(cur).extra.splice(Number(t.dataset.j),1); persist(); return renderDay(); }
+    if(act==="addto") return openPicker("addto", t.dataset.p);
     if(!slotEl) return;
     const sid = slotEl.dataset.slot;
     if(act==="rmslot"){ const r = rec(cur); (r.on ||= {})[sid] = false; delete r.logged[sid]; delete r.picks[sid]; if(r.ov) delete r.ov[sid]; persist(); return renderDay(); }
     if(act==="additem"){ editSlot = sid; return openAdd(); }
     if(act==="open") return tapSlot(sid);
     if(act==="how") return openRecipe(sid);
-    if(act==="more"){ moreSlot = sid; const lg = !!((state.days[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; return $("#moreSheet").showModal(); }
+    if(act==="more"){ moreSlot = sid; const lg = !!((state.days[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; const so = slotById(sid); $("#moreSheet").querySelector("[data-more=remove]").hidden = !(so && so.opt); return $("#moreSheet").showModal(); }
     if(act==="ate"){
-      const s = SLOTS.find(x=>x.id===sid), m = chosen(cur,s), v = macOf(m, ovOf(cur,sid));
+      const s = slotById(sid), m = chosen(cur,s), v = macOf(m, ovOf(cur,sid));
       rec(cur).logged[sid] = {id:m.id,n:titleOf(m,ovOf(cur,sid)),k:v.k,p:v.p}; persist(); return renderDay();
     }
     if(act==="unblank"){ const r = rec(cur); if(r.blank) delete r.blank[sid]; persist(); return renderDay(); }
