@@ -324,7 +324,6 @@ html.kb #addSheet .sh-foot,html.kb #sheet .sh-foot{display:none}
 <dialog id="moreSheet" class="sheet" aria-labelledby="moreTitle">
   <div class="sh-top"><h2 id="moreTitle">This meal</h2></div>
   <div class="sh-list">
-    <button class="mrow" data-more="undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-3"/></svg>Undo, I haven't eaten this</button>
     <button class="mrow" data-more="how"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3V4zM9 9h6M9 13h6"/></svg>How to make it</button>
     <button class="mrow" data-more="change"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>Change meal</button>
     <button class="mrow" data-more="adjust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Adjust items</button>
@@ -545,7 +544,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       <div class="slot ${l&&!skipped?"done":""} ${skipped?"skip":""}">
         <div class="top"><button class="name" data-act="open">${esc(titleOf(m,ov))}<small>${skipped?"Counts as nothing today":`<b class="g">${kk} kcal</b> · <b class="g">${pp} g protein</b>`}</small></button>
         ${l ? `` : `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`}</div>
-        ${l ? `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn ghost" data-act="how">How to make this</button></div>` : `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn go" data-act="ate">${IC.check}I ate this</button></div>`}
+        ${l ? `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn ghost" data-act="undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-3"/></svg>Undo, I haven't eaten this</button></div>` : `<div class="acts"><button class="btn ghost sq" data-act="more" aria-label="More options for ${esc(s.label.toLowerCase())}">${IC.more}</button><button class="btn go" data-act="ate">${IC.check}I ate this</button></div>`}
       </div></section>`;
     });
     if((r.extra||[]).length){
@@ -841,7 +840,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(act==="additem"){ editSlot = sid; return openAdd(); }
     if(act==="open") return tapSlot(sid);
     if(act==="how") return openRecipe(sid);
-    if(act==="more"){ moreSlot = sid; const lg = !!((state.days[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=undo]").hidden = !lg; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; return $("#moreSheet").showModal(); }
+    if(act==="more"){ moreSlot = sid; const lg = !!((state.days[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; return $("#moreSheet").showModal(); }
     if(act==="ate"){
       const s = SLOTS.find(x=>x.id===sid), m = chosen(cur,s), v = macOf(m, ovOf(cur,sid));
       rec(cur).logged[sid] = {id:m.id,n:titleOf(m,ovOf(cur,sid)),k:v.k,p:v.p}; persist(); return renderDay();
