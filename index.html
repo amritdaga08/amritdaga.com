@@ -171,7 +171,21 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .btn-ghost:hover { border-color: var(--sage); background: var(--linen); }
 
 /* introduction */
-.hero { padding-block:clamp(64px, 10vw, 96px) clamp(48px, 7vw, 96px); }
+.hero { position: relative; isolation: isolate; padding-block:clamp(64px, 10vw, 96px) clamp(48px, 7vw, 96px); }
+/* hero backdrop: contour lines of a site plan, a nod to architecture. Two hills on separate layers drift at different depths. */
+html { overflow-x: clip; }
+.contours { position: absolute; z-index: -1; inset: -80px calc(50% - 50vw) -40px; overflow: hidden; pointer-events: none; color: var(--moss); -webkit-mask-image: radial-gradient(ellipse 34% 40% at 50% 46%, transparent 0 40%, #000 100%), linear-gradient(transparent, #000 18%, #000 72%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 34% 40% at 50% 46%, transparent 0 40%, #000 100%), linear-gradient(transparent, #000 18%, #000 72%, transparent); mask-composite: intersect; }
+.contours svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.contours g { will-change: transform; }
+.contours path { fill: none; stroke: currentColor; stroke-width: 1; opacity: .22; }
+.contours path.ix { stroke-width: 1.6; opacity: .34; }
+.contours text { font: 500 11px/1 var(--font-body); letter-spacing: .08em; fill: currentColor; opacity: .5; }
+@media (prefers-reduced-motion: no-preference) {
+  .contours path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: cdraw 2.4s cubic-bezier(.65, 0, .35, 1) forwards; animation-delay: calc(200ms + var(--i, 0) * 70ms); }
+  .contours text { opacity: 0; animation: cfade .8s ease forwards 1.8s; }
+  @keyframes cdraw { to { stroke-dashoffset: 0; } }
+  @keyframes cfade { to { opacity: .5; } }
+}
 .hero-grid { display: grid; justify-items: center; gap:clamp(64px, 9vw, 96px); }
 .aud { display: flex; flex-wrap: wrap; align-items: center; gap:8px 12px; }
 .aud-label { font-size: var(--step--1); color: var(--bark-soft); }
@@ -601,9 +615,9 @@ section.block { padding-block:clamp(64px, 10vw, 96px); }
 .timeline > li { position: relative; padding-left:32px; padding-bottom:24px; }
 .timeline > li:last-child { padding-bottom:0; }
 .timeline .co { position: relative; }
-.timeline .co::before { content: ""; position: absolute; z-index: 1; left: -28px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; box-sizing: border-box; border-radius: 50%; background: var(--paper); border: 2px solid var(--sage); transition: background .3s, border-color .3s; }
+.timeline .co::before { content: ""; position: absolute; z-index: 1; left: -32px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; box-sizing: border-box; border-radius: 50%; background: var(--paper); border: 2px solid var(--sage); transition: background .3s, border-color .3s; }
 .timeline > li.lit .co::before { background: var(--moss); border-color: var(--moss); }
-.timeline > li.now.lit .co::after { content: ""; position: absolute; left: -28px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 45%, transparent); }
+.timeline > li.now.lit .co::after { content: ""; position: absolute; left: -32px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 45%, transparent); }
 @media (prefers-reduced-motion: no-preference) {
   .timeline.anim > li.lit .co::before { animation: dotpop .55s cubic-bezier(.34, 1.56, .64, 1); }
   .timeline > li.now.lit .co::after { animation: dotring 2.4s ease-out 0.4s infinite; }
@@ -747,6 +761,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
 
 <main>
   <section class="hero" id="intro">
+    <div class="contours" aria-hidden="true"><svg id="contours"></svg></div>
     <div class="wrap hero-grid">
       <div class="panel">
         <h1>I care about <em>systems, craft</em> and the <em>people behind the pixels.</em></h1>
@@ -754,6 +769,59 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
         <p class="role-line">AVP – Product Design at <span>Kotak811</span></p>
         <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India</p>
         <div class="ctas"><a class="btn btn-primary" href="#projects">See my work<svg class="ico ico-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn btn-ghost" href="Amrit-Daga-Resume.pdf" download>Download resumé<svg class="ico ico-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></a></div>
+<script>
+/* hero contours: nested rings around two "hills", drawn once, then layered parallax on scroll and pointer */
+(function () {
+  var svg = document.getElementById('contours'); if (!svg) return;
+  var box = svg.parentNode, W = box.clientWidth || 1440; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + (box.clientHeight || 900));
+  var NS = 'http://www.w3.org/2000/svg', seed = 811;
+  function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  function ring(cx, cy, r, waves, t) {
+    var pts = [], n = 72;
+    for (var i = 0; i < n; i++) {
+      var a = i / n * Math.PI * 2, k = 1;
+      waves.forEach(function (w) { k += w[0] * Math.sin(w[1] * a + w[2] + t * w[3]); });
+      pts.push([cx + Math.cos(a) * r * k * 1.25, cy + Math.sin(a) * r * k]);
+    }
+    var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
+    for (var j = 0; j < n; j++) {
+      var p0 = pts[(j - 1 + n) % n], p1 = pts[j], p2 = pts[(j + 1) % n], p3 = pts[(j + 2) % n];
+      d += 'C' + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
+    }
+    return d + 'Z';
+  }
+  // Bangalore sits about 920 m above sea level, so the index lines are labelled from there.
+  var hills = [
+    { x: W * .1, y: 300, rings: 11, gap: Math.max(22, Math.min(36, W / 44)), base: 900, depth: .5 },
+    { x: W * .92, y: 760, rings: 13, gap: Math.max(20, Math.min(34, W / 46)), base: 880, depth: 1 }
+  ];
+  var layers = [], idx = 0;
+  hills.forEach(function (h) {
+    var g = document.createElementNS(NS, 'g'); svg.appendChild(g);
+    var waves = [[.12 + rnd() * .06, 2, rnd() * 6, .5], [.07 + rnd() * .05, 3, rnd() * 6, 1.1], [.04, 5, rnd() * 6, 2.2]];
+    for (var i = h.rings; i >= 1; i--) {
+      var el = document.createElementNS(NS, 'path'), elev = h.base + (h.rings - i) * 5;
+      el.setAttribute('d', ring(h.x, h.y, (i + .35 * Math.sin(i * 1.7)) * h.gap, waves, i * .18));
+      el.setAttribute('pathLength', '1');
+      if (elev % 20 === 0) el.setAttribute('class', 'ix');
+      el.style.setProperty('--i', idx++);
+      g.appendChild(el);
+      if (elev === 920) { var tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', h.x + i * h.gap * 1.25 * .72); tx.setAttribute('y', h.y - i * h.gap * .72 - 6); tx.textContent = '920 m'; g.appendChild(tx); }
+    }
+    layers.push({ g: g, depth: h.depth });
+  });
+  if (!window.matchMedia || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var hero = svg.closest('.hero'), mx = 0, my = 0, cx = 0, cy = 0, sy = 0, raf = 0, fine = matchMedia('(pointer: fine)').matches;
+  function frame() {
+    raf = 0; cx += (mx - cx) * .08; cy += (my - cy) * .08;
+    layers.forEach(function (l) { l.g.style.transform = 'translate3d(' + (cx * 18 * l.depth).toFixed(2) + 'px,' + (sy * .25 * l.depth + cy * 12 * l.depth).toFixed(2) + 'px,0)'; });
+    if (Math.abs(mx - cx) > .002 || Math.abs(my - cy) > .002) raf = requestAnimationFrame(frame);
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  addEventListener('scroll', function () { var r = hero.getBoundingClientRect(); if (r.bottom < 0) return; sy = Math.min(scrollY, innerHeight); kick(); }, { passive: true });
+  if (fine) addEventListener('pointermove', function (e) { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; kick(); }, { passive: true });
+})();
+</script>
 <script>
 /* hero entrance: wrap the headline's words so they can rise in one after another (runs before first paint) */
 (function () {
