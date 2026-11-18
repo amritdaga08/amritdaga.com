@@ -64,6 +64,9 @@ h1{font:400 28px/1 var(--display);letter-spacing:-.01em;margin:0}
 .tab svg{width:24px;height:24px}
 .tab[aria-selected="true"]{background:var(--pick);color:var(--moss-ink);font-weight:600}
 html.kb .bnav{display:none}
+/* on the portfolio the player's close and "Why I built this" buttons sit at the bottom: lift the tabs above them */
+html.embedded .bnav{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+html.embedded .wrap{padding-bottom:calc(168px + env(safe-area-inset-bottom,0px))}
 html.kb #pantryView{padding-bottom:calc(var(--kb,0px) + 70vh)}
 
 .datebar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
