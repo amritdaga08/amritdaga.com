@@ -184,6 +184,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .sky { position: absolute; z-index: -1; inset: -80px calc(50% - 50vw) auto; height: clamp(640px, 100vh, 1000px); pointer-events: none; opacity: .36; -webkit-mask-image: radial-gradient(ellipse 34% 30% at 50% 40%, rgba(0,0,0,.28), #000 100%), linear-gradient(#000 70%, transparent 98%); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 34% 30% at 50% 40%, rgba(0,0,0,.28), #000 100%), linear-gradient(#000 70%, transparent 98%); mask-composite: intersect; }
 @media (max-width: 700px) { .sky { -webkit-mask-image: radial-gradient(ellipse 60% 34% at 50% 40%, rgba(0,0,0,.3), #000 100%), linear-gradient(#000 70%, transparent 98%); mask-image: radial-gradient(ellipse 60% 34% at 50% 40%, rgba(0,0,0,.3), #000 100%), linear-gradient(#000 70%, transparent 98%); } }
 .sky canvas { display: block; width: 100%; height: 100%; }
+.sky.sky-hi { opacity: .9; } /* the moon and stars stay bright while the rest of the sky stays faint */
 .hero-grid { display: grid; justify-items: center; gap:clamp(64px, 9vw, 96px); }
 .aud { display: flex; flex-wrap: wrap; align-items: center; gap:8px 12px; }
 .aud-label { font-size: var(--step--1); color: var(--bark-soft); }
@@ -759,7 +760,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
 
 <main>
   <section class="hero" id="intro">
-    <div class="sky" aria-hidden="true"><canvas id="sky"></canvas></div>
+    <div class="sky" aria-hidden="true"><canvas id="sky"></canvas></div><div class="sky sky-hi" aria-hidden="true"><canvas id="skyhi"></canvas></div>
     <div class="wrap hero-grid">
       <div class="panel">
         <h1>I care about <em>systems, craft</em> and the <em>people behind the pixels.</em></h1>
@@ -773,7 +774,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
    snow (snow-clad trees and a snowman by day; blowing snow and an aurora by night). Hills sit on the horizon. */
 (function () {
   var cv = document.getElementById('sky'); if (!cv || !cv.getContext) return;
-  var ctx = cv.getContext('2d'), box = cv.parentNode, hero = box.closest('.hero');
+  var ctx = cv.getContext('2d'), box = cv.parentNode, hero = box.closest('.hero'), cvHi = document.getElementById('skyhi'), hi = cvHi && cvHi.getContext('2d'), boxHi = cvHi && cvHi.parentNode;
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var q = location.search, force = function (k) { var m = q.match(new RegExp('[?&]' + k + '=([a-z]+)')); return m && m[1]; };
   var WX = ['clear', 'rain', 'snow'], wx = force('wx');
@@ -818,7 +819,9 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   function resize() {
     box.style.top = -(hero.getBoundingClientRect().top + scrollY) + 'px';
     dpr = Math.min(2, window.devicePixelRatio || 1); W = box.clientWidth; H = box.clientHeight;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); build();
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (hi) { boxHi.style.top = box.style.top; cvHi.width = cv.width; cvHi.height = cv.height; hi.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    build();
   }
   function ridge(hl, x, sh) { var u = (x - sh + 40) / (W + 80), i = Math.max(0, Math.min(79, Math.floor(u * 80))), f = u * 80 - i; return hl.pts[i] * (1 - f) + hl.pts[i + 1] * f; }
 
@@ -831,11 +834,14 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     var a = N ? .55 : .32, g = ctx.createLinearGradient(0, 0, 0, H * .85);
     g.addColorStop(0, 'rgba(' + col + ',' + a + ')'); g.addColorStop(.6, 'rgba(' + col + ',' + a * .4 + ')'); g.addColorStop(1, 'rgba(' + col + ',0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    if (hi) hi.clearRect(0, 0, W, H);
     if (N) {
+      var main = ctx; if (hi) ctx = hi;
       var vis = wet ? 0 : wx === 'snow' ? .55 : 1;
       if (vis) stars.forEach(function (s) { var al = vis * (.4 + .25 * Math.sin(t * s.tw + s.ph)); ctx.fillStyle = 'rgba(255,250,235,' + al.toFixed(3) + ')'; ctx.beginPath(); ctx.arc(s.x * W + ox * .2, s.y * H + oy * .2, s.r, 0, 6.283); ctx.fill(); });
-      if (wx === 'snow') aurora(t, ox, oy);
       if (wx === 'clear') { shooting(dt, oy); moon(W * (W < 600 ? .86 : .8) + ox * .3, H * (W < 600 ? .1 : .16) + oy * .3, Math.max(16, Math.min(26, W / 55))); }
+      ctx = main;
+      if (wx === 'snow') aurora(t, ox, oy);
     } else {
       var sx = W * .8 + ox * .3, syy = H * .12 + oy * .3, sun = ctx.createRadialGradient(sx, syy, 0, sx, syy, Math.max(W, H) * .45);
       var sa = wx === 'clear' ? .3 : .18; sun.addColorStop(0, 'rgba(255,226,168,' + sa + ')'); sun.addColorStop(1, 'rgba(255,226,168,0)'); ctx.fillStyle = sun; ctx.fillRect(0, 0, W, H);
