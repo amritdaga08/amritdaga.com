@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
-<link rel="stylesheet" href="css/case.css?v=20261119063942">
+<link rel="stylesheet" href="css/case.css?v=20261119093119">
 <script>(function () { try { var t = localStorage.getItem('ad-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();</script>
 <style>
 .resume .rtop { padding-block:clamp(96px, 12vw, 96px) clamp(24px, 4vw, 48px); }
@@ -98,9 +98,9 @@
 .timeline > li { position: relative; padding-left:32px; padding-bottom:24px; }
 .timeline > li:last-child { padding-bottom:0; }
 .timeline .co { position: relative; }
-.timeline .co::before { content: ""; position: absolute; z-index: 1; left: -28px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; box-sizing: border-box; border-radius: 50%; background: var(--paper); border: 2px solid var(--sage); transition: background .3s, border-color .3s; }
+.timeline .co::before { content: ""; position: absolute; z-index: 1; left: -32px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; box-sizing: border-box; border-radius: 50%; background: var(--paper); border: 2px solid var(--sage); transition: background .3s, border-color .3s; }
 .timeline > li.lit .co::before { background: var(--moss); border-color: var(--moss); }
-.timeline > li.now.lit .co::after { content: ""; position: absolute; left: -28px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 45%, transparent); }
+.timeline > li.now.lit .co::after { content: ""; position: absolute; left: -32px; top: calc(var(--lh-1) / 2 - 5.5px); width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 45%, transparent); }
 @media (prefers-reduced-motion: no-preference) {
   .timeline.anim > li.lit .co::before { animation: dotpop .55s cubic-bezier(.34, 1.56, .64, 1); }
   .timeline > li.now.lit .co::after { animation: dotring 2.4s ease-out 0.4s infinite; }

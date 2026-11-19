@@ -722,7 +722,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .thread::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; border-radius: 2px; background: var(--rule); }
 .thread::after { content: ""; position: absolute; left: 7px; top: 8px; height: calc(50% + 4px); width: 2px; border-radius: 2px; background: var(--sage); }
 .thread li { position: relative; display: grid; gap:2px; }
-.thread li::before { content: ""; position: absolute; left: -28px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--paper); border: 2px solid var(--rule); box-sizing: border-box; }
+.thread li::before { content: ""; position: absolute; left: -32px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--paper); border: 2px solid var(--rule); box-sizing: border-box; }
 .thread li.lit::before { border-color: var(--sage); background: var(--sage); }
 .thread li.now::before { box-shadow: 0 0 0 5px color-mix(in srgb, var(--sage) 25%, transparent); }
 .thread b { font-weight: 600; }
