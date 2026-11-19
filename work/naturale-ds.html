@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&text=%E0%A4%95%E0%A5%81%E0%A4%9B&display=swap">
-<link rel="stylesheet" href="../css/case.css?v=20261119052810">
+<link rel="stylesheet" href="../css/case.css?v=20261119063942">
 <script>(function () { try { var t = localStorage.getItem('ad-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();</script>
 </head>
 <body>
@@ -35,10 +35,11 @@
       <a class="on" href="../index.html#projects" aria-current="true">Work</a>
       <a href="../index.html#journey">Journey</a>
       <a class="contact" href="../index.html#contact" aria-label="Contact"><span class="lbl">Contact</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="nav-ico"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg></a>
-      <div class="wxctl"><span class="nav-sep" aria-hidden="true"></span><div class="theme" id="theme"><span class="knob" aria-hidden="true"></span><button type="button" class="t-light" aria-checked="true" aria-label="Light mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><button type="button" class="t-dark" aria-checked="false" aria-label="Dark mode"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div></div>
+      <div class="wxctl"><span class="nav-sep" aria-hidden="true"></span><div class="theme" id="theme"><span class="knob" aria-hidden="true"></span><button type="button" class="t-light" aria-checked="true" aria-label="Light mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><button type="button" class="t-dark" aria-checked="false" aria-label="Dark mode"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div><span class="wx-ghost" id="wx-ghost" aria-hidden="true"></span></div>
     </nav>
   </div>
 </header>
+<script>/* arriving from the homepage: show its weather icon for a moment, then fold it away so the bar tightens smoothly */(function () { try { var r = document.referrer && new URL(document.referrer); if (!r || r.origin !== location.origin || !/\/(index\.html)?$/.test(r.pathname)) return; var I = {"clear": "<path d=\"M2.5 18.5h19\"/><path d=\"M6 18.5a6 6 0 0 1 12 0\"/><path d=\"M12 6.5v2.2M5.3 9.8l1.5 1.5M18.7 9.8l-1.5 1.5\"/>", "rain": "<path d=\"M7 14.5h10a3.5 3.5 0 0 0 .4-7A5.3 5.3 0 0 0 6.6 7.2a3.6 3.6 0 0 0 .4 7.3z\"/><path d=\"M8.5 18l-1 2.5M12.5 18l-1 2.5M16.5 18l-1 2.5\"/>", "snow": "<path d=\"M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 6l2.5-1.5M9.5 19.5L12 18l2.5 1.5\"/>"}, k = sessionStorage.getItem('ad-sky-cur'), g = document.getElementById('wx-ghost'); if (!g) return; g.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + (I[k] || I.clear) + '</svg>'; g.classList.add('in'); requestAnimationFrame(function () { requestAnimationFrame(function () { setTimeout(function () { g.classList.remove('in'); }, 120); }); }); } catch (e) {} })();</script>
 
 <main>
   <section class="hero">

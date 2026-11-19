@@ -100,10 +100,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--moss); outline-
 
 /* header */
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
-@view-transition { navigation: auto; }
-.top nav.glass { view-transition-name: site-nav; }
-::view-transition-group(site-nav) { animation-duration: .35s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
-@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }
 .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; pointer-events: none; }
 .top .wrap { display: flex; justify-content: center; padding-block:16px; }
 .top nav { pointer-events: auto; }
@@ -185,7 +181,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .wxctl .theme button svg { color: inherit !important; }
 .wxctl .theme button svg, .wxctl .theme button .sun, .wxctl .theme button .moon { width: 18px; height: 18px; }
 .nav-sep { width: 1px; height: 20px; margin: 0 6px 0 2px; background: var(--rule); }
-.wx-btn { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--bark); cursor: pointer; transition: color .2s; }
+.wx-btn { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--bark); cursor: pointer; overflow: hidden; transition: color .2s, width .45s cubic-bezier(.4, 0, .2, 1), opacity .3s ease .12s; }
+/* back from an inner page the weather icon unfolds into the bar */
+.wx-btn.out { width: 0; opacity: 0; transition: none; }
+.wx-btn svg { flex: none; }
 .wx-btn:hover { color: var(--moss); }
 .wx-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
 .wx-btn .mv { transform-box: fill-box; transform-origin: 50% 50%; }
@@ -778,6 +777,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     </nav>
   </div>
 </header>
+<script>/* arriving from an inner page: start with the weather slot folded, then let it unfold */(function () { try { var r = document.referrer && new URL(document.referrer); if (!r || r.origin !== location.origin || /\/(index\.html)?$/.test(r.pathname)) return; var b = document.getElementById('wx-btn'); if (!b) return; b.classList.add('out'); requestAnimationFrame(function () { requestAnimationFrame(function () { setTimeout(function () { b.classList.remove('out'); }, 120); }); }); } catch (e) {} })();</script>
 
 <main>
   <section class="hero" id="intro">
@@ -1036,6 +1036,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     // e.g. "Clear weather in Mumbai" while it shows the visitor's own weather, plain "Rainy weather" once they change it
     var tip = TIP[wx] + (here.city && wx === here.wx ? ' in ' + here.city : '');
     wbtn.title = tip; wbtn.setAttribute('aria-label', tip + '. Switch to ' + NAMES[nx].toLowerCase());
+    try { sessionStorage.setItem('ad-sky-cur', wx); } catch (e) {}
     if (play) { wbtn.classList.remove('play', 'nudge'); void wbtn.offsetWidth; wbtn.classList.add('play'); }
   }
   if (wbtn) wbtn.addEventListener('click', function () {
