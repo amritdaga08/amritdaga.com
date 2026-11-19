@@ -1176,3 +1176,19 @@ section[id^="s-"] { scroll-margin-top: 90px; }
 .rn.good { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--sage) 45%, transparent); }
 @media (max-width: 720px) { .rad-scale { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .rad-demo { grid-template-columns: 1fr; } }
+
+/* top bar, matching the homepage: a separator, then day/night as a single icon button showing the current mode */
+:root { --pane-a: rgba(255, 253, 248, 0.85); --pane-b: rgba(255, 253, 248, 0.45); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pane-a: rgba(239, 230, 216, 0.13); --pane-b: rgba(239, 230, 216, 0.04); } }
+:root[data-theme="dark"] { --pane-a: rgba(239, 230, 216, 0.13); --pane-b: rgba(239, 230, 216, 0.04); }
+.wxctl { position: relative; display: flex; align-items: center; margin-left: 12px; }
+.nav-sep { width: 1px; height: 20px; margin: 0 6px 0 2px; background: var(--rule); }
+.wxctl .theme { position: relative; inset: auto; z-index: auto; width: auto; height: 38px; padding: 0; gap: 0; background: none; box-shadow: none; border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.wxctl .theme .knob, .wxctl .theme button[aria-checked="false"] { display: none; }
+.wxctl .theme button, .wxctl .theme button[aria-checked="true"] { width: 38px; height: 38px; color: var(--bark); cursor: pointer; }
+.wxctl .theme button:hover, .wxctl .theme button[aria-checked="true"]:hover { color: var(--moss); }
+.wxctl .theme button svg { width: 18px; height: 18px; color: inherit !important; }
+@media (max-width: 479px) { .wxctl { margin-left: 0; } .nav-sep { margin: 0 2px; } .wxctl .theme button { width: 34px; } }
+/* the name sits on a second pane of glass: lifted by a soft shadow, bright top edge instead of an outline */
+.glass .mark { background: linear-gradient(180deg, var(--pane-a), var(--pane-b)); box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 color-mix(in srgb, var(--bark) 6%, transparent), 0 1px 2px color-mix(in srgb, var(--bark) 10%, transparent), 0 6px 16px -6px var(--glass-shadow); -webkit-backdrop-filter: blur(10px) saturate(160%); backdrop-filter: blur(10px) saturate(160%); transition: box-shadow .3s; }
+.glass .mark:hover { box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 color-mix(in srgb, var(--bark) 6%, transparent), 0 2px 4px color-mix(in srgb, var(--bark) 12%, transparent), 0 10px 22px -8px var(--glass-shadow); }

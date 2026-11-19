@@ -10,6 +10,8 @@
     theme.setAttribute('data-mode', d ? 'dark' : 'light');
     tLight.setAttribute('aria-checked', d ? 'false' : 'true');
     tDark.setAttribute('aria-checked', d ? 'true' : 'false');
+    tLight.setAttribute('aria-label', 'Light mode. Switch to dark mode'); tDark.setAttribute('aria-label', 'Dark mode. Switch to light mode');
+    tLight.title = 'Switch to dark mode'; tDark.title = 'Switch to light mode';
   }
   function setTheme(mode, btn) {
     if ((mode === 'dark') === isDark()) return;
@@ -22,8 +24,9 @@
   }
   syncTheme();
   if (darkMq && darkMq.addEventListener) darkMq.addEventListener('change', syncTheme);
-  tLight.addEventListener('click', function () { setTheme('light', tLight); });
-  tDark.addEventListener('click', function () { setTheme('dark', tDark); });
+  tLight.addEventListener('click', function () { setTheme('dark', tDark); tDark.focus({ preventScroll: true }); });
+  tDark.addEventListener('click', function () { setTheme('light', tLight); tLight.focus({ preventScroll: true }); });
+  theme.addEventListener('ad:set-theme', function (e) { setTheme(e.detail, e.detail === 'dark' ? tDark : tLight); });
   theme.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowLeft') { e.preventDefault(); setTheme('light', tLight); tLight.focus(); }
     if (e.key === 'ArrowRight') { e.preventDefault(); setTheme('dark', tDark); tDark.focus(); }
@@ -217,7 +220,7 @@
   var real = document.getElementById('theme');
   Array.prototype.forEach.call(document.querySelectorAll('.theme-demo'), function (d) {
     function sync() { var dark = real ? real.getAttribute('data-mode') === 'dark' : false; d.setAttribute('data-mode', dark ? 'dark' : 'light'); d.querySelector('.d-light').setAttribute('aria-checked', !dark); d.querySelector('.d-dark').setAttribute('aria-checked', dark); }
-    d.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || !real) return; d.classList.add('moving'); setTimeout(function () { d.classList.remove('moving'); }, 600); (real.querySelector(b.classList.contains('d-dark') ? '.t-dark' : '.t-light')).click(); setTimeout(sync, 20); });
+    d.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || !real) return; d.classList.add('moving'); setTimeout(function () { d.classList.remove('moving'); }, 600); real.dispatchEvent(new CustomEvent('ad:set-theme', { detail: b.classList.contains('d-dark') ? 'dark' : 'light' })); setTimeout(sync, 20); });
     if (real) new MutationObserver(sync).observe(real, { attributes: true }); sync();
   });
   var qn = document.querySelector('.qnav'); if (!qn) return;
