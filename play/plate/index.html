@@ -12,6 +12,7 @@
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
+<link rel="icon" href="../../favicon-32.png">
 <script>addEventListener("DOMContentLoaded",function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400..700&display=swap";document.head.appendChild(l)})</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -64,9 +65,6 @@ h1{font:400 28px/1 var(--display);letter-spacing:-.01em;margin:0}
 .tab svg{width:24px;height:24px}
 .tab[aria-selected="true"]{background:var(--pick);color:var(--moss-ink);font-weight:600}
 html.kb .bnav{display:none}
-/* on the portfolio the player's close and "Why I built this" buttons sit at the bottom: lift the tabs above them */
-html.embedded .bnav{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
-html.embedded .wrap{padding-bottom:calc(168px + env(safe-area-inset-bottom,0px))}
 html.kb #pantryView{padding-bottom:calc(var(--kb,0px) + 70vh)}
 
 .datebar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
@@ -152,6 +150,7 @@ h1{display:flex;align-items:center;gap:12px}
 .recipe .mx{font-size:13px;color:var(--bark-soft);font-variant-numeric:tabular-nums}
 .add{margin-top:12px;width:100%;font:600 15px var(--body);background:transparent;color:var(--bark);border:1.5px dashed color-mix(in srgb,var(--bark-soft) 45%,var(--rule));border-radius:999px;min-height:48px;cursor:pointer}
 .add:hover{background:var(--paper)}
+.sec .slot+.slot{margin-top:0}
 .addmore{display:inline-flex;align-items:center;justify-content:center;gap:6px;align-self:flex-start;min-height:36px;padding:0 4px;border:0;background:none;color:var(--moss-ink);font:600 14px var(--body);cursor:pointer}
 .addmore svg{width:16px;height:16px}
 .x{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--linen);color:var(--fire);font-size:18px;cursor:pointer}
@@ -606,12 +605,12 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   const per = g => (g.u==="g"||g.u==="ml") ? "per 100 "+g.u : g.u ? "per "+g.u : "each";
   let editLive = false;
   // Every edit lands here: keeps the default in step when the switch is on, and updates a logged meal.
-  function commit(){
+  function commit(keepList){
     const s = slotById(editSlot), m = chosen(cur,s), r = rec(cur);
     if(editLive){ state.custom ||= {}; state.custom[m.id] = partsOf(m,ovOf(cur,editSlot)).map(a=>[a[0],a[1]]); if(r.ov) delete r.ov[editSlot]; }
     const l = r.logged && r.logged[editSlot];
     if(l && !l.skip){ const ov = ovOf(cur,editSlot), v = macOf(m,ov); r.logged[editSlot] = {id:m.id,n:titleOf(m,ov),k:v.k,p:v.p}; }
-    persist(); renderEditor();
+    persist(); if(!keepList) renderEditor();
   }
   function renderEditor(){
     const s = slotById(editSlot), m = chosen(cur,s), ov = ovOf(cur,editSlot);
@@ -637,12 +636,12 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     r.ov ||= {}; const ov = (r.ov[editSlot] ||= {});
     const def = defMap(m), g = ING[id], lo = g.st||1;
     q = Math.round(q*100)/100;
-    if(isNaN(q) || q<=0){ renderEditor(); return; }
+    if(isNaN(q) || q<=0){ if(!keep) renderEditor(); return; }
     q = Math.min(5000, Math.max(q, 0.01));
     if(!(id in def) && !(id in ov)) { ov[id] = q; }
     else if(q===(def[id]||0)) delete ov[id]; else ov[id] = q;
     if(!Object.keys(ov).length) delete r.ov[editSlot];
-    commit();
+    commit(keep);
   }
   function bumpIng(id, dir){
     const s = slotById(editSlot), m = chosen(cur,s), ov = ovOf(cur,editSlot), g = ING[id];
@@ -855,7 +854,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
       if(pick.mode==="addto"){
         const r = rec(cur), id = "a"+Date.now().toString(36);
         (r.adds ||= []).push({id, p:pick.slot}); r.picks[id] = t.dataset.id;
-        persist(); closePicker(); renderDay(); return toast("Added to "+slotById(id).label.toLowerCase());
+        const nm = byId(t.dataset.id).n; persist(); closePicker(); renderDay(); return toast("Added to "+slotById(id).label.toLowerCase());
       }
       if(pick.mode==="replace"){
         const r = rec(cur); if(slotById(pick.slot).opt && !slotById(pick.slot).dyn) (r.on ||= {})[pick.slot] = true; r.picks[pick.slot] = t.dataset.id; delete r.logged[pick.slot]; if(r.ov) delete r.ov[pick.slot];
@@ -872,6 +871,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(act==="addto") return openPicker("addto", t.dataset.p);
     if(!slotEl) return;
     const sid = slotEl.dataset.slot;
+    if(act==="addto") return openPicker("addto", t.dataset.p);
     if(act==="rmslot"){ const r = rec(cur); (r.on ||= {})[sid] = false; delete r.logged[sid]; delete r.picks[sid]; if(r.ov) delete r.ov[sid]; persist(); return renderDay(); }
     if(act==="additem"){ editSlot = sid; return openAdd(); }
     if(act==="open") return tapSlot(sid);
@@ -885,7 +885,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(act==="undo"){ delete rec(cur).logged[sid]; persist(); return renderDay(); }
   });
   $("#edList").addEventListener("input", e=>{ const i = e.target.dataset && e.target.dataset.edin; if(!i) return; const q = parseFloat(e.target.value)||0, g = ING[i], sm = e.target.closest(".edrow").querySelector("[data-mac]"); if(sm) sm.textContent = `${Math.round(g.k*q)} kcal · ${Math.round(g.p*q*10)/10} g protein`; });
-  $("#edList").addEventListener("change", e=>{ if(e.target.id==="edLive"){ editLive = e.target.checked; return commit(); } const i = e.target.dataset && e.target.dataset.edin; if(i) setIng(i, parseFloat(e.target.value)); });
+  $("#edList").addEventListener("change", e=>{ if(e.target.id==="edLive"){ editLive = e.target.checked; return commit(); } const i = e.target.dataset && e.target.dataset.edin; if(i) setIng(i, parseFloat(e.target.value), true); });
   $("#adq").addEventListener("input", renderAdd);
   $("#addSheet").addEventListener("close", ()=>{ if(!$("#edSheet").open) editSlot = null; });
   $("#pantryView").addEventListener("input", e=>{ if(e.target.id==="pnq"){ pnQ = e.target.value; renderPantry(); } });
