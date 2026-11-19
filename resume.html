@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
-<link rel="stylesheet" href="css/case.css?v=20261119093119">
+<link rel="stylesheet" href="css/case.css?v=20261119102633">
 <script>(function () { try { var t = localStorage.getItem('ad-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();</script>
 <style>
 .resume .rtop { padding-block:clamp(96px, 12vw, 96px) clamp(24px, 4vw, 48px); }
@@ -92,10 +92,10 @@
 .rphoto { width: clamp(84px, 12vw, 140px); height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px var(--rule), 0 20px 40px -24px rgba(0,0,0,.5); }
 .rid h1 { font-size: clamp(2.2rem, 6vw, 3.5rem); }
 .rflow { list-style: none; margin:0; padding:0; position: relative; counter-reset: wf; display: grid; gap:0; }
-.rflow::before { content: ""; position: absolute; left: 11px; top: 14px; bottom: 14px; border-left: 1.5px dashed var(--sage); }
+.rflow::before { content: ""; position: absolute; left: 11.25px; top: 14px; bottom: 14px; border-left: 1.5px dashed var(--sage); }
 .rflow li { counter-increment: wf; position: relative; display: grid; gap:1px; padding:0 0 16px 32px; }
 .rflow li:last-child { padding-bottom:0; }
-.rflow li::before { content: counter(wf); position: absolute; left: 0; top: 2px; width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 1.5px solid var(--sage); color: var(--moss); font-size: .7rem; font-weight: 600; }
+.rflow li::before { content: counter(wf); position: absolute; left: 0; top: 2px; width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 1.5px solid var(--sage); color: var(--moss); font-size: .7rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; box-sizing: border-box; width: 24px; height: 24px; padding-top: 1px; }
 .rflow span { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--bark-soft); }
 .rflow b { color: var(--bark); font-weight: 500; }
 
