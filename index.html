@@ -41,6 +41,7 @@
   --danger: #A8452C;
   --glass: rgba(255, 253, 248, 0.55);
   --glass-edge: rgba(255, 255, 255, 0.75);
+  --pane-a: rgba(255, 253, 248, 0.85); --pane-b: rgba(255, 253, 248, 0.45);
   --glass-shadow: rgba(59, 47, 37, 0.18);
   --glass-ring: rgba(59, 47, 37, 0.09);
 
@@ -70,14 +71,14 @@
   :root:not([data-theme="light"]) {
     --linen: #1D1914; --paper: #25201A; --bark: #EFE6D8; --bark-soft: #BCAB95;
     --moss: #9DC394; --moss-ink: #A9CF9F; --open-bg: #9DC394; --open-fg: #1D1914; --sage: #6B9B63; --lichen: #2C3828; --rule: #3A3229; --danger: #C9603F;
-    --glass: rgba(37, 32, 26, 0.55); --glass-edge: rgba(239, 230, 216, 0.14); --glass-shadow: rgba(0, 0, 0, 0.45); --glass-ring: rgba(239, 230, 216, 0.08);
+    --glass: rgba(37, 32, 26, 0.55); --glass-edge: rgba(239, 230, 216, 0.14); --pane-a: rgba(239, 230, 216, 0.13); --pane-b: rgba(239, 230, 216, 0.04); --glass-shadow: rgba(0, 0, 0, 0.45); --glass-ring: rgba(239, 230, 216, 0.08);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --linen: #1D1914; --paper: #25201A; --bark: #EFE6D8; --bark-soft: #BCAB95;
   --moss: #9DC394; --moss-ink: #A9CF9F; --open-bg: #9DC394; --open-fg: #1D1914; --sage: #6B9B63; --lichen: #2C3828; --rule: #3A3229; --danger: #C9603F;
-  --glass: rgba(37, 32, 26, 0.55); --glass-edge: rgba(239, 230, 216, 0.14); --glass-shadow: rgba(0, 0, 0, 0.45); --glass-ring: rgba(239, 230, 216, 0.08);
+  --glass: rgba(37, 32, 26, 0.55); --glass-edge: rgba(239, 230, 216, 0.14); --pane-a: rgba(239, 230, 216, 0.13); --pane-b: rgba(239, 230, 216, 0.04); --glass-shadow: rgba(0, 0, 0, 0.45); --glass-ring: rgba(239, 230, 216, 0.08);
   color-scheme: dark;
 }
 
@@ -106,7 +107,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @media (min-width: 480px) { .glass a { padding:0 16px; } }
 .glass a:not(.mark):not(.cv):hover { color: var(--moss); }
 .glass a.on, .glass a.on:hover { color: var(--moss); }
-.glass .mark { font-family: var(--font-display); font-weight: 400; font-size: 1rem; width: 38px; padding:0; justify-content: center; background: var(--paper); box-shadow: inset 0 0 0 1px var(--rule); }
+.glass .mark { font-family: var(--font-display); font-weight: 400; font-size: 1rem; width: 38px; padding:0; justify-content: center; }
+/* the name sits on a second pane of glass: lighter, lifted by a soft shadow, with a bright top edge instead of an outline */
+.glass .mark { background: linear-gradient(180deg, var(--pane-a), var(--pane-b)); box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 color-mix(in srgb, var(--bark) 6%, transparent), 0 1px 2px color-mix(in srgb, var(--bark) 10%, transparent), 0 6px 16px -6px var(--glass-shadow); -webkit-backdrop-filter: blur(10px) saturate(160%); backdrop-filter: blur(10px) saturate(160%); transition: box-shadow .3s, transform .3s; }
+.glass .mark:hover { box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 color-mix(in srgb, var(--bark) 6%, transparent), 0 2px 4px color-mix(in srgb, var(--bark) 12%, transparent), 0 10px 22px -8px var(--glass-shadow); }
 .glass .mark .full { display: none; }
 @media (min-width: 720px) { .glass .mark { width: auto; padding:0 16px; font-size: 1.0625rem; } .glass .mark .full { display: inline; } .glass .mark .mono { display: none; } }
 .glass .mark { margin-right:12px; }
