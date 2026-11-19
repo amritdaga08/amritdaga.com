@@ -169,7 +169,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .hero { position: relative; isolation: isolate; padding-block:clamp(64px, 10vw, 96px) clamp(48px, 7vw, 96px); }
 /* day/night toggle and weather chevron in the nav; the switcher and a one-time note drop down beneath */
 .wxctl { position: relative; display: flex; align-items: center; gap: 2px; margin-left: 12px; }
-.wxctl .theme { background: color-mix(in srgb, var(--paper) 70%, transparent); box-shadow: inset 0 0 0 1px var(--rule); border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.wxctl .theme { width: auto; height: 38px; padding: 0; gap: 0; background: none; box-shadow: none; border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.wxctl .theme .knob, .wxctl .theme button[aria-checked="false"] { display: none; }
+.wxctl .theme button, .wxctl .theme button[aria-checked="true"] { width: 38px; height: 38px; color: var(--bark); cursor: pointer; }
+.wxctl .theme button:hover, .wxctl .theme button[aria-checked="true"]:hover { color: var(--moss); }
+.wxctl .theme button svg { color: inherit !important; }
+.wxctl .theme button svg, .wxctl .theme button .sun, .wxctl .theme button .moon { width: 18px; height: 18px; }
 .wx-chev { display: grid; place-items: center; width: 26px; height: 38px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--bark-soft); cursor: pointer; transition: color .2s, transform .3s; }
 .wx-chev svg { width: 16px; height: 16px; transition: transform .3s cubic-bezier(.34, 1.56, .64, 1); }
 .wx-chev:hover, .wx-chev[aria-expanded="true"] { color: var(--moss); }
@@ -180,8 +185,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .wx-note::before { content: ""; position: absolute; top: -6px; right: 9px; width: 12px; height: 12px; background: var(--paper); box-shadow: -1px -1px 0 0 var(--rule); transform: rotate(45deg); }
 .wx-note.on { opacity: 1; transform: none; }
 .wx-note button { margin: 0; padding: 0; border: 0; background: none; color: var(--moss); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-@media (max-width: 479px) { .wxctl { margin-left: 6px; } .wxctl .theme { width: 64px; } .wxctl .theme button { width: 26px; } .wxctl .theme .knob { width: 26px; } .wxctl .theme[data-mode="dark"] .knob { transform: translateX(30px); } .wx-chev { width: 22px; } }
-@media (max-width: 349px) { .wxctl .theme { width: 58px; } .wxctl .theme button { width: 24px; } .wxctl .theme .knob { width: 24px; } .wxctl .theme[data-mode="dark"] .knob { transform: translateX(26px); } }
+@media (max-width: 479px) { .wxctl { margin-left: 2px; } .wxctl .theme button { width: 36px; } .wx-chev { width: 20px; } }
 .skysw { position: absolute; z-index: 7; right: 0; top: calc(100% + 10px); display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: 0 0 0 1px var(--glass-ring), inset 0 1px 0 var(--glass-edge), 0 12px 32px -16px var(--glass-shadow); -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%); opacity: 0; transform: translateY(-6px) scale(.96); transform-origin: right top; transition: opacity .2s, transform .35s cubic-bezier(.34, 1.56, .64, 1); }
 .skysw.on { opacity: 1; transform: none; }
 .skysw button { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--bark-soft); cursor: pointer; }
@@ -761,7 +765,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       <a class="spy" href="#projects">Work</a>
       <a class="spy" href="#journey">Journey</a>
       <a class="spy" href="#contact" aria-label="Contact"><span class="lbl">Contact</span><svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg></a>
-      <div class="wxctl" id="wxctl"><div class="theme" id="theme" role="radiogroup" aria-label="Colour theme"><span class="knob" aria-hidden="true"></span><button type="button" role="radio" class="t-light" aria-checked="true" aria-label="Light mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><button type="button" role="radio" class="t-dark" aria-checked="false" aria-label="Dark mode"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div><button type="button" class="wx-chev" id="wx-chev" aria-haspopup="true" aria-expanded="false" aria-label="Change the weather"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button><p class="wx-note" id="wx-note" role="status" hidden></p></div>
+      <div class="wxctl" id="wxctl"><div class="theme" id="theme"><span class="knob" aria-hidden="true"></span><button type="button" class="t-light" aria-checked="true" aria-label="Light mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><button type="button" class="t-dark" aria-checked="false" aria-label="Dark mode"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div><button type="button" class="wx-chev" id="wx-chev" aria-haspopup="true" aria-expanded="false" aria-label="Change the weather"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button><p class="wx-note" id="wx-note" role="status" hidden></p></div>
     </nav>
   </div>
 </header>
@@ -1392,10 +1396,11 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     theme.setAttribute('data-mode', d ? 'dark' : 'light');
     tLight.setAttribute('aria-checked', d ? 'false' : 'true');
     tDark.setAttribute('aria-checked', d ? 'true' : 'false');
-    tLight.title = d ? 'Light mode' : 'Tap again to change the weather'; tDark.title = d ? 'Tap again to change the weather' : 'Dark mode';
+    tLight.setAttribute('aria-label', 'Light mode. Switch to dark mode'); tDark.setAttribute('aria-label', 'Dark mode. Switch to light mode');
+    tLight.title = 'Switch to dark mode'; tDark.title = 'Switch to light mode';
   }
   function setTheme(mode, btn) {
-    if ((mode === 'dark') === isDark()) { document.dispatchEvent(new Event('sky:switch')); return; }
+    if ((mode === 'dark') === isDark()) return;
     root.setAttribute('data-theme', mode);
     try { localStorage.setItem('ad-theme', mode); } catch (e) {}
     theme.classList.add('moving');
@@ -1405,14 +1410,8 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   }
   syncTheme();
   if (darkMq && darkMq.addEventListener) darkMq.addEventListener('change', syncTheme);
-  var held = false, holdT = 0;
-  [tLight, tDark].forEach(function (b) {
-    b.addEventListener('pointerdown', function (e) { if (e.pointerType === 'mouse') return; held = false; clearTimeout(holdT); holdT = setTimeout(function () { held = true; if (navigator.vibrate) try { navigator.vibrate(10); } catch (x) {} document.dispatchEvent(new Event('sky:switch')); }, 480); });
-    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) { b.addEventListener(ev, function () { clearTimeout(holdT); }); });
-    b.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-  });
-  tLight.addEventListener('click', function () { if (held) { held = false; return; } setTheme('light', tLight); });
-  tDark.addEventListener('click', function () { if (held) { held = false; return; } setTheme('dark', tDark); });
+  tLight.addEventListener('click', function () { setTheme('dark', tDark); tDark.focus({ preventScroll: true }); });
+  tDark.addEventListener('click', function () { setTheme('light', tLight); tLight.focus({ preventScroll: true }); });
   theme.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowLeft') { e.preventDefault(); setTheme('light', tLight); tLight.focus(); }
     if (e.key === 'ArrowRight') { e.preventDefault(); setTheme('dark', tDark); tDark.focus(); }
