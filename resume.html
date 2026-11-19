@@ -117,7 +117,12 @@
 .path { margin-top:0; }
 .path > li { display: grid; gap:12px 48px; padding-bottom:clamp(48px, 4.5vw, 64px); }
 .path > li:last-child { padding-bottom:0; }
-@media (min-width: 860px) { .path > li { grid-template-columns: 13rem minmax(0, 1fr); } }
+@media (min-width: 860px) {
+  .path > li { grid-template-columns: 15rem minmax(0, 1fr); }
+  .path .co { white-space: nowrap; }
+  /* the role lines up with the company name, not the dates above it */
+  .path .what { padding-top: calc(var(--path-meta, 20px) + (var(--lh-1) - var(--lh-0)) / 2); }
+}
 .path .what { display: grid; gap:8px; min-width: 0; }
 .path .role { margin-top:0; font-size: var(--step-0); line-height: var(--lh-0); }
 .path .desc { color: var(--bark-soft); max-width: 60ch; }
