@@ -13,6 +13,7 @@
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
+<link rel="icon" href="../../favicon-32.png">
 <script>addEventListener("DOMContentLoaded",function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400..700&display=swap";document.head.appendChild(l)})</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -485,7 +486,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
         const d = await wait(c.use("db"), 8000); if(!d) return null;
         const lg = await wait(d.doc("plate/log").get(), 8000);
         if(lg.exists){
-          const R = lg.data()||{}, rd = R.days||{};
+          const R = JSON.parse(JSON.stringify(lg.data()||{})), rd = R.days||{};
           const days = Object.assign({}, rd);
           Object.keys(state.days||{}).forEach(k=>{
             const L = state.days[k], X = rd[k];
