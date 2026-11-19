@@ -1024,11 +1024,13 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     rain: '<path d="M7 14.5h10a3.5 3.5 0 0 0 .4-7A5.3 5.3 0 0 0 6.6 7.2a3.6 3.6 0 0 0 .4 7.3z"/><g class="mv drops"><path d="M8.5 18l-1 2.5M12.5 18l-1 2.5M16.5 18l-1 2.5"/></g>',
     snow: '<g class="mv flake"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 6l2.5-1.5M9.5 19.5L12 18l2.5 1.5"/></g>'
   };
-  var wbtn = document.getElementById('wx-btn');
+  var wbtn = document.getElementById('wx-btn'), here = { city: null, wx: null }, TIP = { clear: 'Clear weather', rain: 'Rainy weather', snow: 'Snowy weather' };
   function paintBtn(play) {
     if (!wbtn) return; var nx = WX[(WX.indexOf(wx) + 1) % WX.length];
     wbtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[wx] + '</svg>';
-    wbtn.setAttribute('aria-label', 'Weather: ' + NAMES[wx] + '. Switch to ' + NAMES[nx].toLowerCase()); wbtn.title = 'Weather: ' + NAMES[wx] + ' · tap for ' + NAMES[nx].toLowerCase();
+    // e.g. "Clear weather in Mumbai" while it shows the visitor's own weather, plain "Rainy weather" once they change it
+    var tip = TIP[wx] + (here.city && wx === here.wx ? ' in ' + here.city : '');
+    wbtn.title = tip; wbtn.setAttribute('aria-label', tip + '. Switch to ' + NAMES[nx].toLowerCase());
     if (play) { wbtn.classList.remove('play', 'nudge'); void wbtn.offsetWidth; wbtn.classList.add('play'); }
   }
   if (wbtn) wbtn.addEventListener('click', function () {
@@ -1041,13 +1043,13 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
   // a gentle nudge once the page has settled, so the button gets noticed
   function nudge() { if (!wbtn || reduce || picked) return; wbtn.classList.remove('play'); void wbtn.offsetWidth; wbtn.classList.add('nudge'); }
   function kindOf(c) { if ((c >= 71 && c <= 77) || c === 85 || c === 86) return 'snow'; if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82) || c >= 95) return 'rain'; return 'clear'; }
-  function settle(next) { if (!picked && next !== wx) { wx = next; build(); still(); paintBtn(false); } setTimeout(nudge, 1400); }
+  function settle(next, city) { if (city) { here.city = String(city).slice(0, 40); here.wx = next; } if (!picked && next !== wx) { wx = next; build(); still(); } paintBtn(false); setTimeout(nudge, 1400); }
   if (locating && window.fetch) {
     var gaveUp = false, timer = setTimeout(function () { gaveUp = true; settle(randomWx()); }, 4000);
     fetch('https://get.geojs.io/v1/ip/geo.json').then(function (r) { return r.json(); }).then(function (g) {
       var lat = parseFloat(g.latitude), lon = parseFloat(g.longitude); if (isNaN(lat) || isNaN(lon)) throw 0;
-      return fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(2) + '&longitude=' + lon.toFixed(2) + '&current=weather_code').then(function (r) { return r.json(); });
-    }).then(function (w) { if (gaveUp) return; clearTimeout(timer); settle(kindOf(w.current.weather_code)); })
+      return fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(2) + '&longitude=' + lon.toFixed(2) + '&current=weather_code').then(function (r) { return r.json(); }).then(function (w) { return { code: w.current.weather_code, city: g.city }; });
+    }).then(function (o) { if (gaveUp) return; clearTimeout(timer); settle(kindOf(o.code), o.city); })
       .catch(function () { if (gaveUp) return; clearTimeout(timer); gaveUp = true; settle(randomWx()); });
   } else setTimeout(nudge, 2500);
 })();
