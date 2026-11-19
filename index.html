@@ -157,7 +157,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .btn { display: inline-flex; align-items: center; gap:8px; white-space: nowrap; font-family: var(--font-body); font-weight: 500; font-size: var(--step--1); line-height: 1; padding:16px 24px; border-radius: 999px; text-decoration: none; border: 1px solid transparent; transition: background .2s, color .2s, border-color .2s, transform .3s cubic-bezier(.34, 1.56, .64, 1); cursor: pointer; }
 .btn:active { transform: scale(.97); }
 .ico { width: 16px; height: 16px; flex: none; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
-@media (prefers-reduced-motion: no-preference) { .btn:hover .ico-dl { transform: translateY(2px); } .btn:hover .ico-view { transform: translate(2px, -2px); } .btn:hover .ico-go { transform: translateX(3px); } .ico-go.nudge { animation: nudge 1.3s cubic-bezier(.45, 0, .25, 1); } @keyframes nudge { 0%, 50%, 100% { transform: none; } 22%, 72% { transform: translateX(3px); } } }
+@media (prefers-reduced-motion: no-preference) { .btn:hover .ico-dl { transform: translateY(2px); } .btn:hover .ico-view { transform: translate(2px, -2px); } .btn:hover .ico-down { transform: translateY(2px); } .btn:hover .ico-chev { transform: translateX(2px); } .btn:hover .ico-go { transform: translateX(3px); } .ico-go.nudge { animation: nudge 1.3s cubic-bezier(.45, 0, .25, 1); } @keyframes nudge { 0%, 50%, 100% { transform: none; } 22%, 72% { transform: translateX(3px); } } }
 .chip .ci { width: 13px; height: 13px; flex: none; margin-left:-2px; }
 @media (prefers-reduced-motion: no-preference) { .card:is(.hov, .auto) .chip .ci { animation: wiggle .7s cubic-bezier(.34, 1.56, .64, 1); } @keyframes wiggle { 0% { transform: none; } 30% { transform: rotate(-14deg) scale(1.2); } 60% { transform: rotate(10deg) scale(1.1); } 100% { transform: none; } } }
 .btn-primary { background: var(--bark); color: var(--paper); }
@@ -779,7 +779,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
         <p class="lead">9+ years designing products used by millions.</p>
         <p class="role-line">AVP – Product Design at <span>Kotak811</span></p>
         <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Bangalore, India</p>
-        <div class="ctas"><a class="btn btn-primary" href="#projects">See my work<svg class="ico ico-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn btn-ghost" href="resume.html">View resumé<svg class="ico ico-view" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></div>
+        <div class="ctas"><a class="btn btn-ghost" href="resume.html">View resumé<svg class="ico ico-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a><a class="btn btn-primary" href="#projects">See my work<svg class="ico ico-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
 <script>
 /* living sky behind the hero. Light theme is day, dark theme is night. Each visit gets one of three weathers:
    clear (sun by day; stars, moon and shooting stars by night), rain (a rainbow by day; rain and lightning by night),
@@ -1316,7 +1316,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
       <h2><span class="nb">Let's build something</span> <span class="nb">people trust.</span></h2>
       <div class="row">
         <span class="mail"><a class="email" id="email" data-u="80agadtirma" data-d="moc.liamg">amritdaga08 [at] gmail [dot] com</a><button class="icon-btn" id="copy-email" type="button" aria-label="Copy email" title="Copy email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
-        <a class="btn btn-primary" href="resume.html">View resumé<svg class="ico ico-view" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        <a class="btn btn-primary" href="resume.html">View resumé<svg class="ico ico-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
       </div>
       <p class="copied" id="copied" aria-live="polite"></p>
     </div>
