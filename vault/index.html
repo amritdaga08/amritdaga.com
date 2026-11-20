@@ -10,10 +10,10 @@
 <meta name="theme-color" content="#f4f3ef">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ID Vault">
+<meta name="apple-mobile-web-app-title" content="Vault">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADLklEQVR42u3d23XTQBRA0fFdriYUEbpIi6aLNJF++OMH2QmOkO5jn09gLeLRth4jaXJ5eb0taaswBIJDcAgOwSE4BIfgEByCQ3BIcAgOwSE4BIfgEByCQ3AIDgkOwSE4BIfgEByCQ3AIjtZ9vL8ZhD9dLMFwz8SPn7/guDHxuLFKhuJ44vAxkMgsHLucUsxRMgLHfzrNbK+kM47DLj26KumJ45Qr0n5EWuFIMkvRRkkHHGlnrqorKYyj0GxmUSX1cJSe4a6lpBKONjc+qhApgKPxzbDkSvLiGHWDNKeSdDiG3zRPpSQRDs9SZCNyPg4m0io5DQcT+ZV4TFBwCA7BITgEh+AQHIJDcAgOCQ7BoR26GoJ1556n+8ZXLB7/1WQiVyy+8s9mEgkylhfq4fjmlh7oI8jgA459tu4oHy5lty9cLSU4a89xb3t/vL/9fTGy+YfT3Jgh1XgcD3YbT7xcM2TnEc4zlpev4BAcBx0FJhxZwjHFkQUOwSE4tEyfJ1kLxPMcEhyCQ8451unzVF3PSIKMZbZ0FI7jt1ZLH0EGH05IBYfgEByCQ3AIDsEhOJYpozV0Wi/8sioykh5W+Mg8PuGX3ZGR+oSUj5xj4mpF6XHYeSQcjTAiZNQ4rPCRagTC6PjslU5IZ/pI+KnDSPm89S5l5/hI+0nDqPmMVSfBevtI/unCCPpcg6bPz3pztd8bs9HyS3b8dvrX/7HE7jC67oSP9NFSxlrr8vJ6c8hwqtHhnKP6yWmtnz+Mr5+81dVKRR8Vf+bwLfTTNpznqDLidY+D4fyOjLYzpJlHv/q1lafP1RpHzi9og/uF4Q4nGf0PK3m2R5tnDMITEmRMOSE9d9s0ey7JCsZkWPucDDj81gQ4Em2zxs/Hh7dCyDB9LjgO/HK3fyEvvIxKxvTDyr7bcshL3mGZAzLg2Ge7jlo4JCygQwYc393GAxejCkuzkQHH89t77AKHYdFPMuAQHLvuPIavqGzPcVeAtbbh2HZABhzbGsiAY9sHGavommCy5xAcgkNwCA7BIcEhOASH4BAcgkNwCA7BITgEhwSH4BAcgkNwCA7BITgEh+CQ4NDn/QbWggW4pThxNQAAAABJRU5ErkJggg==">
-<title>ID Vault</title>
+<title>Vault</title>
 <style>
 :root{--bg:#f4f3ef;--card:#fff;--ink:#15171f;--muted:#6a6e7a;--line:#e3e1da;--accent:#2a3fa8;--accent-ink:#fff;--soft:#eceaf6;--danger:#b42318;--warn:#a15c07;--ok:#1f7a4d;--r:16px;--shadow:0 1px 2px rgba(20,20,40,.05),0 8px 24px rgba(20,20,40,.06)}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1015;--card:#191b23;--ink:#eceef4;--muted:#9a9eab;--line:#2a2d38;--accent:#8c9cff;--accent-ink:#0f1015;--soft:#22253a;--shadow:none}}
@@ -65,9 +65,9 @@ textarea{min-height:72px;resize:vertical}
 .docimg{width:100%;border-radius:12px;display:block;border:1px solid var(--line);background:#fff}
 .field{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
 .field:last-child{border-bottom:0}
-.field .k{font-size:12px;color:var(--muted);width:92px;flex:none}
+.field .k{font-size:12px;color:var(--muted);width:64px;flex:none}
 .field .v{flex:1;min-width:0;word-break:break-word;font-weight:600}
-.mono{white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em}
+.mono{white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0;font-size:14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);font-weight:500;margin:12px 0 0}
 .check input{width:20px;height:20px;accent-color:var(--accent)}
@@ -83,6 +83,41 @@ ul.plain{padding-left:18px;margin:0}ul.plain li{margin:6px 0}
 .spin{width:34px;height:34px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:s 0.8s linear infinite;margin:0 auto 12px}@keyframes s{to{transform:rotate(360deg)}}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));background:#15171f;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;z-index:90;display:flex;gap:12px;align-items:center;max-width:calc(100% - 32px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .toast button{background:#8c9cff;color:#0b0c12;border:0;border-radius:8px;padding:8px 12px;font-weight:700;font:inherit;font-weight:700}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .mark{width:36px;height:36px;border-radius:11px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.brand .mark svg{width:20px;height:20px}
+.brand b{font-size:21px;letter-spacing:-.02em}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 8px;border-radius:99px;background:var(--soft);color:var(--accent)}
+.tag svg{width:12px;height:12px}
+.help{appearance:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--muted);font:700 14px/1 inherit;cursor:pointer;display:inline-grid;place-items:center;vertical-align:middle;margin-left:8px;padding:0}
+.hrow{display:flex;align-items:center}
+.list{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.item{display:flex;align-items:center;gap:14px;width:100%;padding:13px 16px;border:0;border-bottom:1px solid var(--line);background:none;font:inherit;color:var(--ink);text-align:left;cursor:pointer;min-height:60px}
+.item:last-child{border-bottom:0}
+.item .ic{width:34px;height:34px;border-radius:10px;background:var(--soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.item .t{flex:1;font-weight:600}
+.item .r{color:var(--muted);font-size:13px}
+.item.danger{color:var(--danger)}.item.danger .ic{background:#fde4e1;color:var(--danger)}
+.item[disabled]{opacity:.5;pointer-events:none}
+.sw{width:48px;height:30px;border-radius:99px;background:var(--line);position:relative;transition:background .2s;flex:none}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
+.sw.on{background:var(--ok)}.sw.on::after{left:21px}
+.sheet-bg{position:fixed;inset:0;background:rgba(10,11,18,.45);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:560px;border-radius:22px 22px 0 0;padding:12px 20px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;animation:up .22s ease}
+.sheet h3{font-size:19px;margin:6px 0 14px;letter-spacing:-.01em}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.steps{list-style:none;padding:0;margin:0 0 6px}
+.steps li{display:flex;gap:12px;align-items:flex-start;padding:10px 0}
+.steps .n{width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:700;font-size:13px;display:grid;place-items:center;flex:none}
+.inline-ic{display:inline-flex;vertical-align:-4px}
+.inline-ic svg{width:16px;height:16px}
+.points{list-style:none;padding:0;margin:0}
+.points li{display:flex;gap:12px;padding:9px 0;font-size:14px}
+.points li span:first-child{color:var(--accent);flex:none}
+details.more{margin-top:18px}
+details.more summary{list-style:none;cursor:pointer;color:var(--accent);font-weight:600;padding:6px 0}
+details.more summary::-webkit-details-marker{display:none}
 .shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 </style>
 </head>
@@ -122,6 +157,11 @@ const I={
   cam:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',
   img:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
   face:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2M9 9v1M15 9v1M12 9v4h-1M9 16c1.6 1.3 4.4 1.3 6 0"/></svg>',
+  help:'?',
+  key:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M17 6l3 3M15 8l2 2"/></svg>',
+  backup:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
+  trash:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>',
+  chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>',
   share:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v14"/></svg>'
 };
 
@@ -151,7 +191,7 @@ const Bio={
   },
   async create(){
     const salt=rnd(32);
-    const cred=await navigator.credentials.create({publicKey:{rp:{name:'ID Vault'},user:{id:rnd(16),name:'ID Vault',displayName:'ID Vault'},challenge:rnd(32),
+    const cred=await navigator.credentials.create({publicKey:{rp:{name:'Vault'},user:{id:rnd(16),name:'Vault',displayName:'Vault'},challenge:rnd(32),
       pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
       authenticatorSelection:{authenticatorAttachment:'platform',residentKey:'required',userVerification:'required'},timeout:60000,
       extensions:{prf:{eval:{first:salt}}}}});
@@ -218,12 +258,12 @@ const Store=(()=>{
 /* ---------- session state + auto-lock ---------- */
 let key=null,rawKey=null,docs=[],picking=false,idleT=null,hiddenAt=0;
 const IDLE_MS=3*60*1000,AWAY_MS=60*1000;
-function bump(){if(!key)return;clearTimeout(idleT);idleT=setTimeout(()=>lock('Locked after 3 minutes of inactivity.'),IDLE_MS);}
+function bump(){if(!key)return;clearTimeout(idleT);idleT=setTimeout(()=>lock(),IDLE_MS);}
 ['pointerdown','keydown','scroll','touchstart'].forEach(e=>addEventListener(e,bump,{passive:true}));
 document.addEventListener('visibilitychange',()=>{
   document.body.classList.toggle('veil',document.hidden&&!!key);
   if(document.hidden){hiddenAt=Date.now();return;}
-  if(key&&!picking&&Date.now()-hiddenAt>AWAY_MS)lock('Locked while you were away.');
+  if(key&&!picking&&Date.now()-hiddenAt>AWAY_MS)lock();
 });
 function lock(msg){
   if(rawKey)rawKey.fill(0);key=null;rawKey=null;docs=[];draft=null;srcs={};current=null;clearTimeout(idleT);
@@ -486,47 +526,74 @@ async function shareOrSave(files){
 }
 
 /* ---------- views ---------- */
+function sheet(html,onOpen){
+  $$('.sheet-bg').forEach(n=>n.remove());
+  const bg=document.createElement('div');bg.className='sheet-bg';
+  bg.innerHTML=`<div class="sheet" role="dialog"><div class="grab"></div>${html}</div>`;
+  const close=()=>bg.remove();
+  bg.addEventListener('click',e=>{if(e.target===bg||e.target.closest('[data-close]'))close();});
+  document.body.appendChild(bg);if(onOpen)onOpen($('.sheet',bg),close);return close;
+}
+function helpSheet(){
+  sheet(`<h3>How Vault keeps you private</h3><ul class="points">
+    <li><span>${I.lock}</span><span>Documents are encrypted with your password and never leave this phone.</span></li>
+    <li><span>${I.shield.replace('width="28" height="28"','width="18" height="18"')}</span><span>Vault can't connect to the internet, so nothing is uploaded, shared with AI or used for training.</span></li>
+    <li><span>${I.face}</span><span>Face ID unlocks it. Your face data stays with Apple.</span></li>
+    <li><span>${I.key}</span><span>There's no password reset. Keep a backup from Settings.</span></li>
+  </ul><button class="btn block" data-close>Got it</button>`);
+}
 function renderSetup(){
   app.innerHTML=`<div class="center">
     <div class="logo">${I.shield}</div>
-    <h1>Create your ID vault</h1>
-    <p class="muted">Your documents stay on this device, encrypted with a passphrase only you know. This page is blocked from connecting to the internet, so nothing can be uploaded anywhere.</p>
-    <form id="f" autocomplete="off">
-      <label for="p1">Passphrase (8+ characters)</label><input id="p1" type="password" autocomplete="new-password" minlength="8" required>
-      <label for="p2">Confirm passphrase</label><input id="p2" type="password" autocomplete="new-password" required>
-      <div class="warn">There is no recovery. If you forget the passphrase, nobody can open the vault, including you. Use something memorable and export a backup from Settings.</div>
+    <div class="hrow"><h1 style="margin:0">Create your Vault ID</h1><button class="help" id="hp" aria-label="How it works">?</button></div>
+    <form id="f" autocomplete="off" style="margin-top:12px">
+      <label for="p1">Password</label><input id="p1" type="password" autocomplete="new-password" placeholder="At least 8 characters" required>
+      <label for="p2">Confirm password</label><input id="p2" type="password" autocomplete="new-password" required>
       <div class="err" id="e"></div>
-      <button class="btn primary block">Create vault</button>
+      <button class="btn primary block">Create Vault ID</button>
     </form>
-    <button class="link" id="restore">Restore from a backup instead</button>
+    <button class="link" id="restore" style="margin-top:6px">Restore from backup</button>
   </div>`;
+  $('#hp').onclick=helpSheet;
   $('#f').onsubmit=async e=>{
     e.preventDefault();const p1=$('#p1').value,p2=$('#p2').value;
     if(p1.length<8)return $('#e').textContent='Use at least 8 characters.';
-    if(p1!==p2)return $('#e').textContent="Passphrases don't match.";
-    busy('Securing your vault…');await nextFrame();
+    if(p1!==p2)return $('#e').textContent="Passwords don't match.";
+    busy('Creating your Vault…');await nextFrame();
     try{
       const salt=crypto.getRandomValues(new Uint8Array(16));rawKey=await deriveRaw(p1,salt);key=await keyFromRaw(rawKey);
       await Store.put('kv',{salt:b64(salt),iter:ITER,check:await seal(key,'id-vault-ok')},'config');
-      docs=[];bump();done();renderList();offerFaceID();
-    }catch(err){done();$('#e').textContent='Could not create the vault: '+err.message;}
+      docs=[];bump();done();renderList();welcome();
+    }catch(err){done();$('#e').textContent='Something went wrong: '+err.message;}
   };
   $('#restore').onclick=restoreBackup;
+}
+async function welcome(){
+  const bio=await Bio.available();
+  sheet(`<h3>You're all set</h3><ol class="steps">
+    ${bio?`<li><span class="n">1</span><span><b>Turn on Face ID</b><br><span class="muted small">Skip typing your password every time.</span></span></li>`:''}
+    <li><span class="n">${bio?2:1}</span><span><b>Add your documents</b><br><span class="muted small">Tap <b>+ Add document</b>, then take or pick a photo.</span></span></li>
+    <li><span class="n">${bio?3:2}</span><span><b>Back up your Vault</b><br><span class="muted small">Tap <span class="inline-ic">${I.gear}</span> → <b>Backup</b> → <b>Export</b>. You'll need it if you change phones.</span></span></li>
+  </ol>
+  ${bio?`<button class="btn primary block" id="wf">${I.face} Turn on Face ID</button>`:''}
+  <button class="btn block" data-close style="margin-top:10px">Got it</button>`,(el,close)=>{
+    if($('#wf',el))$('#wf',el).onclick=async()=>{close();await enableFaceID();};
+  });
 }
 async function renderLock(msg,auto){
   const cfg=await Store.get('kv','config');const bio=!!(cfg&&cfg.bio)&&Bio.webOK();
   app.innerHTML=`<div class="center">
     <div class="logo">${I.lock}</div>
-    <h1>ID Vault</h1>
-    <p class="muted">${esc(msg||(bio?'Unlock with Face ID, or use your passphrase.':'Enter your passphrase to unlock.'))}</p>
-    ${bio?`<button class="btn primary block" id="fid">${I.face} Unlock with Face ID</button><button class="link" id="usepw">Use passphrase instead</button>`:''}
-    <form id="f" autocomplete="off"${bio?' hidden':''}><input id="p" type="password" autocomplete="current-password" placeholder="Passphrase" required>
-    <div class="err" id="e"></div><button class="btn ${bio?'':'primary '}block">Unlock with passphrase</button></form>
+    <h1>Vault</h1>
+    ${msg?`<p class="muted">${esc(msg)}</p>`:''}
+    ${bio?`<button class="btn primary block" id="fid">${I.face} Unlock with Face ID</button><button class="link" id="usepw">Use password</button>`:''}
+    <form id="f" autocomplete="off"${bio?' hidden':''} style="margin-top:8px"><input id="p" type="password" autocomplete="current-password" placeholder="Password" required>
+    <div class="err" id="e"></div><button class="btn ${bio?'':'primary '}block" style="margin-top:6px">Unlock</button></form>
   </div>`;
   const showPw=()=>{$('#f').hidden=false;$('#usepw')&&$('#usepw').remove();$('#p').focus();};
   if(bio){
     const go=async quiet=>{
-      try{busy('Unlocking…');const raw=await Bio.unlock(cfg);const ok=await openVault(raw);done();if(ok)return renderList();showPw();$('#e').textContent='Face ID key no longer matches. Use your passphrase.';}
+      try{busy('Unlocking…');const raw=await Bio.unlock(cfg);const ok=await openVault(raw);done();if(ok)return renderList();showPw();$('#e').textContent='Access denied. Use your password.';}
       catch(e){done();if(!quiet&&e.name!=='NotAllowedError'&&e.name!=='AbortError')toast(e.message);}
     };
     $('#fid').onclick=()=>go(false);$('#usepw').onclick=showPw;
@@ -535,7 +602,7 @@ async function renderLock(msg,auto){
   $('#f').onsubmit=async e=>{
     e.preventDefault();busy('Unlocking…');await nextFrame();
     const ok=await unlock($('#p').value);done();
-    if(ok)renderList();else{$('#e').textContent='Wrong passphrase.';$('#f').classList.remove('shake');void $('#f').offsetWidth;$('#f').classList.add('shake');$('#p').select();}
+    if(ok)renderList();else{$('#e').textContent='Access denied';$('#f').classList.remove('shake');void $('#f').offsetWidth;$('#f').classList.add('shake');$('#p').select();}
   };
   if(!bio)setTimeout(()=>$('#p')&&$('#p').focus(),50);
 }
@@ -553,29 +620,25 @@ async function openVault(raw){
 async function enableFaceID(){
   try{
     const p=await Bio.create();
-    try{await Bio.finish(p);toast('Face ID is on');}
+    try{await Bio.finish(p);toast('Face ID is on');return true;}
     catch(e){
       if(e.name!=='NotAllowedError')throw e;
-      toast('One more scan to finish',{label:'Confirm',fn:()=>Bio.finish(p).then(()=>{toast('Face ID is on');if($('#bioSec'))renderSettings();}).catch(err=>toast(err.message))});
+      toast('One more scan to finish',{label:'Confirm',fn:()=>Bio.finish(p).then(()=>{toast('Face ID is on');if($('#bioSw'))renderSettings();}).catch(err=>toast(err.message))});
     }
   }catch(e){if(e.name!=='NotAllowedError'&&e.name!=='AbortError')toast(e.message);}
+  return false;
 }
-async function offerFaceID(){
-  if(!(await Bio.available()))return;
-  const cfg=await Store.get('kv','config');if(cfg.bio)return;
-  toast('Unlock with Face ID next time?',{label:'Turn on',fn:async()=>{await enableFaceID();}});
-}
-function storageBanner(){return Store.persistent()?'':'<div class="banner">This browser isn\'t saving data on this page. Export a backup before you close it, or open the vault in Chrome or Safari directly.</div>';}
+function storageBanner(){return Store.persistent()?'':'<div class="banner">This browser isn\'t saving data here. Open Vault from your home screen or in Safari.</div>';}
 function renderList(){
   current=null;draft=null;srcs={};
-  app.innerHTML=`${storageBanner()}<div class="top"><div class="grow"><h1>ID Vault</h1><div class="muted small">${docs.length} document${docs.length===1?'':'s'} · encrypted on this device</div></div>
+  app.innerHTML=`${storageBanner()}<div class="top"><div class="grow brand"><span class="mark">${I.shield}</span><b>Vault</b><span class="tag">${I.lock} Encrypted</span></div>
     <button class="icon-btn" id="set" aria-label="Settings">${I.gear}</button><button class="icon-btn" id="lk" aria-label="Lock">${I.lock}</button></div>
     ${docs.length?docs.map(d=>`<button class="doc" data-id="${d.id}"><img class="thumb" alt="" src="${d.front||d.back||''}"><div class="meta"><b>${esc(docTitle(d.meta))}</b><span>${esc(typeName(d.meta))}${d.meta.number?' · '+esc(maskNum(d.meta.number)):''}</span></div>${expiryBadge(d.meta)}</button>`).join('')
-      :`<div class="empty">${I.shield}<p style="margin-top:10px"><b>No documents yet</b></p><p class="small">Add your Aadhaar, PAN, passport or licence. Take a photo or pick one from your gallery, and it gets straightened and sized for you.</p></div>`}
+      :`<div class="empty"><p><b>No documents yet</b></p><p class="small">Add your first ID to get started.</p></div>`}
     <button class="btn primary fab" id="add">${I.plus} Add document</button>`;
   $$('.doc').forEach(b=>b.onclick=()=>renderDetail(docs.find(d=>d.id===b.dataset.id)));
   $('#add').onclick=()=>renderEdit(null);
-  $('#lk').onclick=()=>lock('Locked.');
+  $('#lk').onclick=()=>lock();
   $('#set').onclick=renderSettings;
   scrollTo(0,0);
 }
@@ -590,19 +653,20 @@ function renderEdit(doc){
   const m=draft.meta;
   const slot=(side,title)=>`<div class="side-label"><span>${title}</span>${side==='back'?'<span class="muted">optional</span>':''}</div>
     ${draft[side]?`<div class="slot has"><img src="${draft[side]}" alt="${title}"><div class="acts"><button type="button" class="btn" data-rot="${side}">Rotate 180°</button><button type="button" class="btn" data-recrop="${side}">${srcs[side]?'Adjust edges':'Replace'}</button><button type="button" class="btn danger" data-rm="${side}">Remove</button></div></div>`
-    :`<div class="slot"><div class="muted small" style="margin-bottom:10px">Add the ${side} side</div><div class="acts"><button type="button" class="btn" data-cam="${side}">${I.cam} Take photo</button><button type="button" class="btn" data-gal="${side}">${I.img} From gallery</button></div></div>`}`;
+    :`<div class="slot"><div class="acts" style="margin-top:0"><button type="button" class="btn" data-cam="${side}">${I.cam} Take photo</button><button type="button" class="btn" data-gal="${side}">${I.img} From gallery</button></div></div>`}`;
   app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${draft.id?'Edit document':'Add document'}</h1></div></div>
     <form id="f" autocomplete="off">
-      <div class="row"><div><label for="type">Document</label><select id="type">${ORDER.map(k=>`<option value="${k}"${k===m.type?' selected':''}>${TYPES[k][0]}</option>`).join('')}</select></div>
-      <div><label for="fmt">Size</label><select id="fmt">${Object.entries(FORMATS).map(([k,v])=>`<option value="${k}"${k===m.fmt?' selected':''}>${v.label}</option>`).join('')}</select></div></div>
+      <div class="row"><div><label for="type" style="margin-top:0">Document</label><select id="type">${ORDER.map(k=>`<option value="${k}"${k===m.type?' selected':''}>${TYPES[k][0]}</option>`).join('')}</select></div>
+      <div><label for="fmt" style="margin-top:0">Size</label><select id="fmt">${Object.entries(FORMATS).map(([k,v])=>`<option value="${k}"${k===m.fmt?' selected':''}>${v.label}</option>`).join('')}</select></div></div>
       ${slot('front','Front')}${slot('back','Back')}
-      <label class="check"><input type="checkbox" id="enh"${m.enhance!==false?' checked':''}> Auto-enhance (clean background, sharper text)</label>
-      <h2>Details</h2>
       <label for="holder">Name on document</label><input id="holder" value="${esc(m.holder)}" placeholder="e.g. Amrit">
-      <label for="number">Document number</label><input id="number" class="mono" value="${esc(m.number)}" placeholder="Stored unmasked so you can copy it" autocapitalize="characters" spellcheck="false">
-      <div class="row"><div><label for="expiry">Expiry date</label><input id="expiry" type="date" value="${esc(m.expiry)}"></div><div><label for="label">Display name</label><input id="label" value="${esc(m.label)}" placeholder="Auto"></div></div>
-      <label for="notes">Notes</label><textarea id="notes" placeholder="e.g. Address on this one is the Bengaluru address">${esc(m.notes)}</textarea>
-      <button class="btn primary block" id="save">Save to vault</button>
+      <label for="number">Document number</label><input id="number" class="mono" value="${esc(m.number)}" placeholder="For one-tap copy" autocapitalize="characters" spellcheck="false">
+      <details class="more"${m.expiry||m.label||m.notes||m.enhance===false?' open':''}><summary>More options</summary>
+        <div class="row"><div><label for="expiry">Expiry date</label><input id="expiry" type="date" value="${esc(m.expiry)}"></div><div><label for="label">Display name</label><input id="label" value="${esc(m.label)}" placeholder="Auto"></div></div>
+        <label for="notes">Notes</label><textarea id="notes">${esc(m.notes)}</textarea>
+        <label class="check"><input type="checkbox" id="enh"${m.enhance!==false?' checked':''}> Auto-enhance photos</label>
+      </details>
+      <button class="btn primary block" id="save">Save</button>
     </form>`;
   const sync=()=>{Object.assign(m,{type:$('#type').value,fmt:$('#fmt').value,holder:$('#holder').value.trim(),number:$('#number').value.trim(),expiry:$('#expiry').value,label:$('#label').value.trim(),notes:$('#notes').value.trim(),enhance:$('#enh').checked});};
   const reprocessAll=async()=>{for(const s of['front','back'])if(srcs[s])await reprocess(s);};
@@ -627,7 +691,7 @@ function renderEdit(doc){
       await Store.put('docs',Object.assign({id:draft.id},sealed));
       const saved={id:draft.id,meta:m,front:draft.front,back:draft.back};
       docs=docs.filter(d=>d.id!==saved.id);docs.push(saved);sortDocs();
-      done();srcs={};renderDetail(saved);toast('Saved and encrypted');
+      done();srcs={};renderDetail(saved);toast('Saved');
     }catch(err){done();toast('Could not save: '+err.message);}
   };
 }
@@ -660,35 +724,34 @@ function renderDetail(d){
   app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${esc(docTitle(m))}</h1><div class="muted small">${esc(typeName(m))} · ${esc(FORMATS[m.fmt]?.label||'')}</div></div>${expiryBadge(m)}</div>
     ${d.front?`<div class="side-label">Front</div><img class="docimg" src="${d.front}" alt="Front">`:''}
     ${d.back?`<div class="side-label">Back</div><img class="docimg" src="${d.back}" alt="Back">`:''}
-    <h2>Details</h2><div class="card" style="padding:4px 16px">
+    ${m.holder||m.number||m.expiry||m.notes?`<h2>Details</h2><div class="card" style="padding:4px 16px">
       ${m.holder?`<div class="field"><span class="k">Name</span><span class="v">${esc(m.holder)}</span></div>`:''}
       ${m.number?`<div class="field"><span class="k">Number</span><span class="v mono" id="num">${esc(maskNum(m.number))}</span><button class="icon-btn" id="eye" aria-label="Show number">${I.eye}</button><button class="icon-btn" id="cp" aria-label="Copy number">${I.copy}</button></div>`:''}
       ${m.expiry?`<div class="field"><span class="k">Expires</span><span class="v">${esc(new Date(m.expiry+'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}))}</span></div>`:''}
       ${m.notes?`<div class="field"><span class="k">Notes</span><span class="v" style="font-weight:500">${esc(m.notes)}</span></div>`:''}
-      ${!m.holder&&!m.number&&!m.expiry&&!m.notes?'<div class="field"><span class="muted small">No details added. Tap Edit to add the number so you can copy it.</span></div>':''}
-    </div>
+    </div>`:''}
     <h2>Share</h2><div class="card">
-      <label for="wm" style="margin-top:0">Watermark (recommended)</label>
-      <input id="wm" placeholder="e.g. For HDFC Bank KYC only">
-      <label class="check"><input type="checkbox" id="wmd" checked> Add today's date to the watermark</label>
-      <div class="grid2" style="margin-top:14px">
+      <div class="grid2">
         ${d.front?`<button class="btn" data-sh="front">${I.share} Front</button>`:''}
         ${d.back?`<button class="btn" data-sh="back">${I.share} Back</button>`:''}
         ${d.front&&d.back?`<button class="btn primary" data-sh="pdf">${I.share} Both · PDF</button><button class="btn" data-sh="image">${I.share} Both · Image</button>`:`<button class="btn primary" data-sh="pdf">${I.share} PDF</button>`}
       </div>
-      <p class="muted small" style="margin:12px 0 0">Shares straight to WhatsApp, email or any app, without going through your gallery.</p>
+      <details class="more" style="margin-top:10px"><summary>+ Add watermark</summary>
+        <input id="wm" placeholder="e.g. For HDFC Bank KYC only" style="margin-top:8px">
+        <label class="check"><input type="checkbox" id="wmd" checked> Include today's date</label>
+      </details>
     </div>
     <div class="row" style="margin-top:22px"><button class="btn" id="ed">Edit</button><button class="btn danger" id="del">Delete</button></div>`;
   $('#bk').onclick=renderList;
   $('#ed').onclick=()=>renderEdit(d);
-  $('#del').onclick=async()=>{if(!confirm(`Delete "${docTitle(m)}" from the vault?`))return;await Store.del('docs',d.id);docs=docs.filter(x=>x.id!==d.id);renderList();toast('Deleted');};
+  $('#del').onclick=async()=>{if(!confirm(`Delete "${docTitle(m)}"?`))return;await Store.del('docs',d.id);docs=docs.filter(x=>x.id!==d.id);renderList();toast('Deleted');};
   if($('#eye'))$('#eye').onclick=()=>{shown=!shown;$('#num').textContent=shown?m.number:maskNum(m.number);};
   if($('#cp'))$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(m.number);toast('Number copied');}catch(e){shown=true;$('#num').textContent=m.number;toast('Copy blocked here. Number shown instead');}};
   $$('[data-sh]').forEach(b=>b.onclick=()=>shareDoc(d,b.dataset.sh));
   scrollTo(0,0);
 }
 async function shareDoc(d,kind){
-  const t=$('#wm').value.trim();
+  const t=($('#wm')&&$('#wm').value||'').trim();
   const wm=t?(t+($('#wmd').checked?' · '+new Date().toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'')):'';
   const base=slug(docTitle(d.meta));busy('Preparing…');await nextFrame();
   try{
@@ -708,61 +771,61 @@ async function shareDoc(d,kind){
 }
 
 /* settings */
-function renderSettings(){
-  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>Settings</h1></div></div>
+async function renderSettings(){
+  const cfg=await Store.get('kv','config'),bioAvail=await Bio.available(),bioOn=!!cfg.bio;
+  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow hrow"><h1>Settings</h1><button class="help" id="hp" aria-label="How Vault protects you">?</button></div></div>
     ${storageBanner()}
-    <h2>How your data is protected</h2><div class="card small"><ul class="plain">
-      <li><b>Encrypted:</b> every document and detail is sealed with AES-256-GCM. The key comes from your passphrase (PBKDF2-SHA256, ${ITER.toLocaleString()} rounds) and is never saved.</li>
-      <li><b>On this device only:</b> stored in this browser's private storage. There's no account, server or cloud copy.</li>
-      <li><b>No internet access:</b> this page's security policy blocks every network request, so nothing can be sent anywhere, including to any AI service. Nothing here can be used for training.</li>
-      <li><b>Face ID:</b> uses a passkey stored in your iPhone's Keychain. Face ID releases a secret that unlocks the vault key; your face data never leaves Apple's Secure Enclave.</li>
-      <li><b>Auto-lock:</b> after 3 minutes idle or 1 minute in the background. The screen blurs when you switch apps.</li>
-    </ul></div>
-    <h2>Face ID</h2><div class="card" id="bioSec"><p class="small muted" style="margin:0">Checking…</p></div>
-    <h2>Backup</h2><div class="card">
-      <p class="small muted">The backup file stays encrypted with your passphrase. Keep it somewhere safe in case you lose this phone or clear browser data.</p>
-      <div class="row"><button class="btn" id="exp">Export backup</button><button class="btn" id="imp">Restore</button></div>
+    <div class="list">
+      <button class="item" id="bioSw"${bioAvail?'':' disabled'}><span class="ic">${I.face}</span><span class="t">Face ID</span>${bioAvail?`<span class="sw${bioOn?' on':''}"></span>`:'<span class="r">Unavailable</span>'}</button>
+      <button class="item" id="bkp"><span class="ic">${I.backup}</span><span class="t">Backup</span><span class="r">${I.chev}</span></button>
+      <button class="item" id="pw"><span class="ic">${I.key}</span><span class="t">Change password</span><span class="r">${I.chev}</span></button>
     </div>
-    <h2>Passphrase</h2><div class="card"><form id="cp" autocomplete="off">
-      <input id="n1" type="password" placeholder="New passphrase (8+ characters)" autocomplete="new-password">
-      <input id="n2" type="password" placeholder="Confirm new passphrase" style="margin-top:10px" autocomplete="new-password">
-      <div class="err" id="e"></div><button class="btn" style="width:100%">Change passphrase</button></form></div>
-    <h2>Danger zone</h2><button class="btn danger" id="wipe" style="width:100%">Erase vault from this device</button>`;
+    <div class="list" style="margin-top:16px">
+      <button class="item danger" id="wipe"><span class="ic">${I.trash}</span><span class="t">Erase Vault</span></button>
+    </div>`;
   $('#bk').onclick=renderList;
-  (async()=>{
-    const el=$('#bioSec');if(!el)return;const cfg=await Store.get('kv','config');
-    if(!Bio.webOK()){el.innerHTML='<p class="small muted" style="margin:0">Face ID works once the vault is opened from its web address (https) in Safari or from your home screen, not as a downloaded file.</p>';return;}
-    if(!(await Bio.available())){el.innerHTML='<p class="small muted" style="margin:0">Face ID or Touch ID isn\'t available on this device.</p>';return;}
-    el.innerHTML=cfg.bio?'<p class="small muted">On. Your passphrase still works as a backup.</p><button class="btn danger" id="bioOff" style="width:100%">Turn off Face ID</button>'
-      :'<p class="small muted">Unlock with a glance. Your passphrase stays as the fallback.</p><button class="btn primary" id="bioOn" style="width:100%">Turn on Face ID</button>';
-    if($('#bioOn'))$('#bioOn').onclick=async()=>{await enableFaceID();renderSettings();};
-    if($('#bioOff'))$('#bioOff').onclick=async()=>{const c=await Store.get('kv','config');delete c.bio;await Store.put('kv',c,'config');toast('Face ID turned off');renderSettings();};
-  })();
-  $('#exp').onclick=exportBackup;
-  $('#imp').onclick=restoreBackup;
-  $('#cp').onsubmit=async e=>{
-    e.preventDefault();const a=$('#n1').value,b=$('#n2').value;
-    if(a.length<8)return $('#e').textContent='Use at least 8 characters.';
-    if(a!==b)return $('#e').textContent="Passphrases don't match.";
-    busy('Re-encrypting everything…');await nextFrame();
-    try{
-      const salt=crypto.getRandomValues(new Uint8Array(16)),raw=await deriveRaw(a,salt),k=await keyFromRaw(raw);
-      for(const d of docs)await Store.put('docs',Object.assign({id:d.id},await seal(k,{meta:d.meta,front:d.front,back:d.back})));
-      await Store.put('kv',{salt:b64(salt),iter:ITER,check:await seal(k,'id-vault-ok')},'config');
-      key=k;rawKey=raw;done();renderSettings();toast('Passphrase changed. Turn Face ID on again, and export a fresh backup.');
-    }catch(err){done();$('#e').textContent='Failed: '+err.message;}
+  $('#hp').onclick=helpSheet;
+  $('#bioSw').onclick=async()=>{
+    if(bioOn){const c=await Store.get('kv','config');delete c.bio;await Store.put('kv',c,'config');toast('Face ID off');}
+    else await enableFaceID();
+    renderSettings();
   };
+  $('#bkp').onclick=()=>sheet(`<h3>Backup</h3>
+    <div class="list"><button class="item" id="exp"><span class="ic">${I.backup}</span><span class="t">Export backup</span></button>
+    <button class="item" id="imp"><span class="ic" style="transform:rotate(180deg)">${I.backup}</span><span class="t">Restore from backup</span></button></div>
+    <p class="muted small" style="margin:12px 2px 0">Backups stay encrypted with your password.</p>`,(el,close)=>{
+      $('#exp',el).onclick=()=>{close();exportBackup();};
+      $('#imp',el).onclick=()=>{close();restoreBackup();};
+    });
+  $('#pw').onclick=()=>sheet(`<h3>Change password</h3><form id="cp" autocomplete="off">
+      <input id="n1" type="password" placeholder="New password" autocomplete="new-password">
+      <input id="n2" type="password" placeholder="Confirm new password" style="margin-top:10px" autocomplete="new-password">
+      <div class="err" id="e"></div><button class="btn primary block" style="margin-top:6px">Update password</button></form>`,(el,close)=>{
+    $('#cp',el).onsubmit=async e=>{
+      e.preventDefault();const a=$('#n1',el).value,b=$('#n2',el).value;
+      if(a.length<8)return $('#e',el).textContent='Use at least 8 characters.';
+      if(a!==b)return $('#e',el).textContent="Passwords don't match.";
+      busy('Updating…');await nextFrame();
+      try{
+        const salt=crypto.getRandomValues(new Uint8Array(16)),raw=await deriveRaw(a,salt),k=await keyFromRaw(raw);
+        for(const d of docs)await Store.put('docs',Object.assign({id:d.id},await seal(k,{meta:d.meta,front:d.front,back:d.back})));
+        await Store.put('kv',{salt:b64(salt),iter:ITER,check:await seal(k,'id-vault-ok')},'config');
+        key=k;rawKey=raw;done();close();renderSettings();
+        toast(bioOn?'Password updated. Turn Face ID back on.':'Password updated');
+      }catch(err){done();$('#e',el).textContent='Failed: '+err.message;}
+    };
+    setTimeout(()=>$('#n1',el).focus(),250);
+  });
   $('#wipe').onclick=async()=>{
-    if(!confirm('Erase every document from this device? This cannot be undone.'))return;
-    if(prompt('Type ERASE to confirm')!=='ERASE')return;
-    await Store.clear('docs');await Store.clear('kv');key=null;docs=[];renderSetup();toast('Vault erased');
+    if(!confirm('Erase all documents from this phone? This can\'t be undone.'))return;
+    await Store.clear('docs');await Store.clear('kv');key=null;rawKey=null;docs=[];renderSetup();toast('Vault erased');
   };
 }
 async function exportBackup(){
   const cfg=await Store.get('kv','config'),recs=await Store.all('docs');
   const data=JSON.stringify({app:'id-vault',v:1,config:cfg,docs:recs});
-  const name=`id-vault-backup-${new Date().toISOString().slice(0,10)}.idvault`;
-  download([new File([data],name,{type:'application/octet-stream'})]);toast('Encrypted backup saved');
+  const name=`vault-backup-${new Date().toISOString().slice(0,10)}.idvault`;
+  download([new File([data],name,{type:'application/octet-stream'})]);toast('Backup saved');
 }
 function restoreBackup(){
   const i=document.createElement('input');i.type='file';i.accept='.idvault,application/json,application/octet-stream';
@@ -771,10 +834,10 @@ function restoreBackup(){
     picking=false;const f=i.files[0];if(!f)return;
     try{
       const j=JSON.parse(await f.text());
-      if(j.app!=='id-vault'||!j.config||!Array.isArray(j.docs))throw new Error('Not an ID Vault backup');
+      if(j.app!=='id-vault'||!j.config||!Array.isArray(j.docs))throw new Error('Not a Vault backup');
       if(!confirm(`Restore ${j.docs.length} document(s)? This replaces what's in the vault on this device.`))return;
       await Store.clear('docs');for(const r of j.docs)await Store.put('docs',r);await Store.put('kv',j.config,'config');
-      lock('Backup restored. Unlock with the passphrase used for that backup.');
+      lock('Backup restored. Unlock with that backup\'s password.');
     }catch(e){toast('Restore failed: '+e.message);}
   };
   i.addEventListener('cancel',()=>{picking=false;});
@@ -783,7 +846,7 @@ function restoreBackup(){
 
 /* ---------- start ---------- */
 (async function init(){
-  if(!window.crypto||!crypto.subtle){app.innerHTML='<div class="center"><h1>Can\'t open securely here</h1><p class="muted">This browser blocks the encryption the vault needs. Open the file in Chrome or Safari.</p></div>';return;}
+  if(!window.crypto||!crypto.subtle){app.innerHTML='<div class="center"><h1>Can\'t open securely here</h1><p class="muted">Open Vault in Safari or Chrome.</p></div>';return;}
   try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist();}catch(e){}
   (await Store.get('kv','config'))?renderLock(null,true):renderSetup();
 })();
