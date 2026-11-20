@@ -711,7 +711,7 @@ em.hl { font-style: normal; color: var(--moss); background: linear-gradient(tran
     </nav>
   </div>
 </header>
-<script>/* arriving from an inner page: start with the weather slot folded, then let it unfold */(function () { try { var r = document.referrer && new URL(document.referrer); if (!r || r.origin !== location.origin || /\/(index\.html)?$/.test(r.pathname)) return; var b = document.getElementById('wx-btn'); if (!b) return; b.classList.add('out'); requestAnimationFrame(function () { requestAnimationFrame(function () { setTimeout(function () { b.classList.remove('out'); }, 120); }); }); } catch (e) {} })();</script>
+<script>/* arriving from an inner page: start with the weather slot folded, then let it unfold */(function () { try { var nv = performance.getEntriesByType && performance.getEntriesByType('navigation')[0]; if (nv && nv.type === 'reload') return; var r = document.referrer && new URL(document.referrer); if (!r || r.origin !== location.origin || /\/(index\.html)?$/.test(r.pathname)) return; var b = document.getElementById('wx-btn'); if (!b) return; b.classList.add('out'); requestAnimationFrame(function () { requestAnimationFrame(function () { setTimeout(function () { b.classList.remove('out'); }, 120); }); }); } catch (e) {} })();</script>
 
 <main>
   <section class="hero" id="intro">
