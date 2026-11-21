@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!-- Security policy: this page can only load its own files from this site, and nothing from anywhere else. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'self'; form-action 'none'; base-uri 'none'; frame-src 'none'; worker-src 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'self'; form-action 'none'; base-uri 'none'; frame-src 'none'; worker-src 'self'; object-src 'none'; font-src 'self'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#f4f3ef">
@@ -12,9 +12,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Vault">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADLklEQVR42u3d23XTQBRA0fFdriYUEbpIi6aLNJF++OMH2QmOkO5jn09gLeLRth4jaXJ5eb0taaswBIJDcAgOwSE4BIfgEByCQ3BIcAgOwSE4BIfgEByCQ3AIDgkOwSE4BIfgEByCQ3AIjtZ9vL8ZhD9dLMFwz8SPn7/guDHxuLFKhuJ44vAxkMgsHLucUsxRMgLHfzrNbK+kM47DLj26KumJ45Qr0n5EWuFIMkvRRkkHHGlnrqorKYyj0GxmUSX1cJSe4a6lpBKONjc+qhApgKPxzbDkSvLiGHWDNKeSdDiG3zRPpSQRDs9SZCNyPg4m0io5DQcT+ZV4TFBwCA7BITgEh+AQHIJDcAgOCQ7BoR26GoJ1556n+8ZXLB7/1WQiVyy+8s9mEgkylhfq4fjmlh7oI8jgA459tu4oHy5lty9cLSU4a89xb3t/vL/9fTGy+YfT3Jgh1XgcD3YbT7xcM2TnEc4zlpev4BAcBx0FJhxZwjHFkQUOwSE4tEyfJ1kLxPMcEhyCQ8451unzVF3PSIKMZbZ0FI7jt1ZLH0EGH05IBYfgEByCQ3AIDsEhOJYpozV0Wi/8sioykh5W+Mg8PuGX3ZGR+oSUj5xj4mpF6XHYeSQcjTAiZNQ4rPCRagTC6PjslU5IZ/pI+KnDSPm89S5l5/hI+0nDqPmMVSfBevtI/unCCPpcg6bPz3pztd8bs9HyS3b8dvrX/7HE7jC67oSP9NFSxlrr8vJ6c8hwqtHhnKP6yWmtnz+Mr5+81dVKRR8Vf+bwLfTTNpznqDLidY+D4fyOjLYzpJlHv/q1lafP1RpHzi9og/uF4Q4nGf0PK3m2R5tnDMITEmRMOSE9d9s0ey7JCsZkWPucDDj81gQ4Em2zxs/Hh7dCyDB9LjgO/HK3fyEvvIxKxvTDyr7bcshL3mGZAzLg2Ge7jlo4JCygQwYc393GAxejCkuzkQHH89t77AKHYdFPMuAQHLvuPIavqGzPcVeAtbbh2HZABhzbGsiAY9sHGavommCy5xAcgkNwCA7BIcEhOASH4BAcgkNwCA7BITgEhwSH4BAcgkNwCA7BITgEh+CQ4NDn/QbWggW4pThxNQAAAABJRU5ErkJggg==">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
 <title>Vault</title>
 <style>
+@font-face{font-family:'Young Serif';src:url('young-serif.woff2') format('woff2');font-display:swap}
 :root{--bg:#f4f3ef;--card:#fff;--ink:#15171f;--muted:#6a6e7a;--line:#e3e1da;--accent:#2a3fa8;--accent-ink:#fff;--soft:#eceaf6;--danger:#b42318;--warn:#a15c07;--ok:#1f7a4d;--r:16px;--shadow:0 1px 2px rgba(20,20,40,.05),0 8px 24px rgba(20,20,40,.06)}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1015;--card:#191b23;--ink:#eceef4;--muted:#9a9eab;--line:#2a2d38;--accent:#8c9cff;--accent-ink:#0f1015;--soft:#22253a;--shadow:none}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -84,10 +85,11 @@ ul.plain{padding-left:18px;margin:0}ul.plain li{margin:6px 0}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));background:#15171f;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;z-index:90;display:flex;gap:12px;align-items:center;max-width:calc(100% - 32px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .toast button{background:#8c9cff;color:#0b0c12;border:0;border-radius:8px;padding:8px 12px;font-weight:700;font:inherit;font-weight:700}
 .logo svg{width:28px;height:28px}
+.logo>svg[viewBox='0 0 1000 1000']{width:30px;height:30px}
 .brand{display:flex;align-items:center;gap:10px}
-.brand .mark{width:36px;height:36px;border-radius:11px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
-.brand .mark svg{width:20px;height:20px}
-.brand b{font-size:21px;letter-spacing:-.02em}
+.brand .mark{width:36px;height:36px;border-radius:10px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.brand .mark svg{width:19px;height:19px}
+.brand b{font:400 22px/1 'Young Serif',Georgia,serif;letter-spacing:0}
 .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 8px;border-radius:99px;background:var(--soft);color:var(--accent)}
 .tag svg{width:12px;height:12px}
 .help{appearance:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--muted);font:700 14px/1 inherit;cursor:pointer;display:inline-grid;place-items:center;vertical-align:middle;margin-left:8px;padding:0}
@@ -208,6 +210,7 @@ const I={
   rotate:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/></svg>',
   crop:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2v14a2 2 0 002 2h14M18 22V8a2 2 0 00-2-2H2"/></svg>',
   edit:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
+  mark:'<svg viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true"><g transform="translate(108 875) scale(1 -1)"><path d="M764 750Q779 750 779 735V705Q779 690 764 690Q736 690 719.5 662.5Q703 635 689 597L474 12Q470 0 457 0H336Q324 0 319 12L94 597Q79 636 63.5 663.0Q48 690 20 690Q5 690 5 705V735Q5 750 20 750H327Q342 750 342 735V705Q342 690 327 690Q296 690 272.5 670.5Q249 651 249 621Q249 610 258 587L428 141L589 597Q593 609 593 622Q593 651 569.5 670.5Q546 690 515 690Q500 690 500 705V735Q500 750 515 750Z"/></g></svg>',
   share:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v14"/></svg>'
 };
 
@@ -679,7 +682,7 @@ function pinPad(o){
   let v='',working=false;
   app.innerHTML=`<div class="pin">
     <div class="logo">${o.icon||I.lock}</div>
-    <div class="hrow"><h1 style="margin:0">${esc(o.title)}</h1>${o.help?'<button class="help" id="hp" aria-label="How it works">?</button>':''}</div>
+    <div class="hrow"><h1 style="margin:0${o.title==='Vault'?";font:400 30px/1.2 'Young Serif',Georgia,serif":''}">${esc(o.title)}</h1>${o.help?'<button class="help" id="hp" aria-label="How it works">?</button>':''}</div>
     <p class="muted" style="margin:8px 0 0">${esc(o.sub||'')}</p>
     <div class="dots" id="dots">${'<span class="dot"></span>'.repeat(4)}</div>
     <div class="err" id="e"></div>
@@ -726,7 +729,7 @@ async function rekey(pin){
   key=k;rawKey=raw;bump();return !!old.bio;
 }
 function renderSetup(){
-  choosePin({icon:I.shield,title:'Create your Vault ID',help:true,
+  choosePin({icon:I.mark,title:'Create your Vault ID',help:true,
     below:`<button class="link" id="restore" style="margin-top:10px"><span style="display:inline-block;transform:rotate(180deg)">${I.backup}</span>Restore from backup</button>`,
     after:()=>{$('#restore').onclick=restoreBackup;},
     onSet:async pin=>{
@@ -767,7 +770,7 @@ async function renderLock(msg,auto){
       try{busy('Unlocking…');const raw=await Bio.unlock(cfg);const ok=await openVault(raw);done();if(ok)return renderList();$('#e').textContent='Access denied. Use your PIN.';}
       catch(e){done();if(!quiet&&e.name!=='NotAllowedError'&&e.name!=='AbortError')toast(e.message);}
     };
-    pinPad({icon:I.lock,title:'Vault',sub:msg||'Enter your PIN',
+    pinPad({icon:I.mark,title:'Vault',sub:msg||'Enter your PIN',
       left:bio?{label:'Unlock with Face ID',html:I.face,fn:()=>face(false)}:null,
       onDone:async pin=>{
         if(Date.now()<waitUntil)return`Try again in ${Math.ceil((waitUntil-Date.now())/1000)}s`;
@@ -779,7 +782,7 @@ async function renderLock(msg,auto){
     return;
   }
   app.innerHTML=`<div class="center">
-    <div class="logo">${I.lock}</div>
+    <div class="logo">${I.mark}</div>
     <h1>Vault</h1>
     ${msg?`<p class="muted">${esc(msg)}</p>`:''}
     ${bio?`<button class="btn primary block" id="fid">${I.face} Unlock with Face ID</button><button class="link" id="usepw">Use password</button>`:''}
@@ -840,7 +843,7 @@ function docRow(d){
 function renderList(keepQuery){
   const prevQ=keepQuery&&$('#q')?$('#q').value:'';
   current=null;draft=null;srcs=[];
-  app.innerHTML=`${storageBanner()}<div class="top"><div class="grow brand"><span class="mark">${I.shield}</span><b>Vault</b><span class="tag">${I.lock} Encrypted</span></div>
+  app.innerHTML=`${storageBanner()}<div class="top"><div class="grow brand"><span class="mark">${I.mark}</span><b>Vault</b><span class="tag">${I.lock} Encrypted</span></div>
     <button class="icon-btn" id="set" aria-label="Settings">${I.gear}</button><button class="icon-btn" id="lk" aria-label="Lock">${I.lock}</button></div>
     ${docs.length?`<div class="search">${I.search}<input id="q" type="search" placeholder="Search documents" autocomplete="off" autocorrect="off" spellcheck="false"></div>`:''}
     <div id="docs"></div>
