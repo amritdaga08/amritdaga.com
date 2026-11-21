@@ -823,7 +823,7 @@ function storageBanner(){return Store.persistent()?'':'<div class="banner">This 
 function docRow(d){
   const pg=pagesOf(d),m=d.meta;
   const sub=[m.number?maskNum(m.number):'',pg.length>1?pg.length+' pages':''].filter(Boolean).join(' · ');
-  return`<button class="doc" data-id="${d.id}"><img class="thumb" alt="" src="${pg[0]||''}"><div class="meta"><b>${esc(docTitle(m))}</b>${sub?`<span>${esc(sub)}</span>`:''}</div>${expiryBadge(m)}</button>`;
+  return`<button class="doc" data-id="${d.id}"><img class="thumb" alt="" src="${pg[0]||''}"><div class="meta"><b>${esc(docTitle(m))}</b>${sub?`<span>${esc(sub)}</span>`:''}</div></button>`;
 }
 function renderList(keepQuery){
   const prevQ=keepQuery&&$('#q')?$('#q').value:'';
@@ -899,16 +899,10 @@ function renderEdit(doc){
     <div class="chips" style="margin-top:22px">${SLOTS.map(t=>`<button type="button" class="chip${m.type===t?' on':''}" data-tag="${t}">${esc(TYPES[t][0])}</button>`).join('')}<button type="button" class="chip${custom?' on':''}" data-tag="other">Other…</button></div>
     <form id="f" autocomplete="off"${isNew&&!custom?' hidden':''}${isNew?' data-new="1"':''}>
       <div id="nameBox"${custom?'':' hidden'}><label for="label">Name</label><input id="label" value="${esc(m.label)}" placeholder="e.g. Rent agreement" autocapitalize="words"></div>
-      <details class="more"${m.number||m.holder||m.expiry||m.notes||m.enhance===false?' open':''}><summary>+ Number &amp; details</summary>
-        <label for="number">Document number</label><input id="number" class="mono" value="${esc(m.number)}" placeholder="Read automatically when possible" autocapitalize="characters" spellcheck="false">
-        <label for="holder">Name on document</label><input id="holder" value="${esc(m.holder)}">
-        <label for="expiry">Expiry date</label><input id="expiry" type="date" value="${esc(m.expiry)}">
-        <label for="notes">Notes</label><textarea id="notes">${esc(m.notes)}</textarea>
-        <label class="check"><input type="checkbox" id="enh"${m.enhance!==false?' checked':''}> Auto-enhance photos</label>
-      </details>
+      ${isNew?'':`<label for="number">Document number</label><input id="number" class="mono" value="${esc(m.number)}" placeholder="Read from your document" autocapitalize="characters" spellcheck="false">`}
       <button class="btn primary block" id="save">Save</button>
     </form>`;
-  const sync=()=>{Object.assign(m,{label:m.type==='other'?$('#label').value.trim():'',number:$('#number').value.trim(),holder:$('#holder').value.trim(),expiry:$('#expiry').value,notes:$('#notes').value.trim(),enhance:$('#enh').checked});};
+  const sync=()=>{m.label=m.type==='other'?$('#label').value.trim():'';if($('#number'))m.number=$('#number').value.trim();};
   const redo=i=>{draft.pages[i]=processPage(srcs[i],m.enhance!==false).toDataURL('image/jpeg',0.92);};
   const finish=async()=>{
     busy('Saving…');
@@ -924,7 +918,6 @@ function renderEdit(doc){
     if(isNew)await finish();
   });
   $('#more').onclick=()=>{sync();startAdd(draft);};
-  $('#enh').onchange=async()=>{sync();busy('Updating…');await nextFrame();srcs.forEach((p,i)=>p&&redo(i));done();renderEdit();};
   $$('[data-rm]').forEach(b=>b.onclick=()=>{sync();const i=+b.dataset.rm;draft.pages.splice(i,1);srcs.splice(i,1);if(!draft.pages.length&&isNew)return renderList();renderEdit();});
   $$('[data-rot]').forEach(b=>b.onclick=async()=>{sync();const i=+b.dataset.rot;if(srcs[i]){srcs[i].rot^=1;redo(i);}else draft.pages[i]=await rotateDataURL180(draft.pages[i]);renderEdit();});
   $$('[data-crop]').forEach(b=>b.onclick=async()=>{sync();const i=+b.dataset.crop;const q=await cropEditor(srcs[i].c,srcs[i].quad);if(!q)return;srcs[i].quad=q;srcs[i].auto=true;busy('Straightening…');await nextFrame();redo(i);done();renderEdit();});
@@ -941,14 +934,11 @@ function renderEdit(doc){
 function renderDetail(d){
   if(!d)return renderList();
   current=d;const m=d.meta,pg=pagesOf(d),n=pg.length;let shown=false;const isReading=reading.has(d.id);
-  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${esc(docTitle(m))}</h1>${n>1?`<div class="muted small">${n} pages</div>`:''}</div>${expiryBadge(m)}</div>
+  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${esc(docTitle(m))}</h1>${n>1?`<div class="muted small">${n} pages</div>`:''}</div></div>
     ${pg.map((u,i)=>`${n>1?`<div class="side-label"><span>${pageLabel(i,n)}</span><button class="mini" data-one="${i}" aria-label="Share ${pageLabel(i,n)}">${I.share}</button></div>`:''}<img class="docimg" src="${u}" alt="" style="margin-bottom:${n>1?4:0}px">`).join('')}
-    ${m.holder||m.number||m.expiry||m.notes||isReading?`<h2>Details</h2><div class="card" style="padding:4px 20px">
-      ${isReading&&!m.number?`<div class="field"><span class="k">Number</span><span class="v muted" style="font-weight:500">Reading from your document…</span></div>`:''}
-      ${m.holder?`<div class="field"><span class="k">Name</span><span class="v">${esc(m.holder)}</span></div>`:''}
-      ${m.number?`<div class="field"><span class="k">Number</span><span class="v mono" id="num">${esc(maskNum(m.number))}</span><button class="icon-btn" id="eye" aria-label="Show number">${I.eye}</button><button class="icon-btn" id="cp" aria-label="Copy number">${I.copy}</button></div>`:''}
-      ${m.expiry?`<div class="field"><span class="k">Expires</span><span class="v">${esc(new Date(m.expiry+'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}))}</span></div>`:''}
-      ${m.notes?`<div class="field"><span class="k">Notes</span><span class="v" style="font-weight:500">${esc(m.notes)}</span></div>`:''}
+    ${m.number||isReading?`<h2>Number</h2><div class="card" style="padding:4px 20px">
+      ${isReading&&!m.number?`<div class="field"><span class="v muted" style="font-weight:500">Reading from your document…</span></div>`:''}
+      ${m.number?`<div class="field"><span class="v mono" id="num">${esc(maskNum(m.number))}</span><button class="icon-btn" id="eye" aria-label="Show number">${I.eye}</button><button class="icon-btn" id="cp" aria-label="Copy number">${I.copy}</button></div>`:''}
     </div>`:''}
     <h2>Share</h2><div class="card">
       <div class="grid2">
