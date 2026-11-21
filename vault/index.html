@@ -119,6 +119,17 @@ ul.plain{padding-left:18px;margin:0}ul.plain li{margin:6px 0}
 details.more{margin-top:18px}
 details.more summary{list-style:none;cursor:pointer;color:var(--accent);font-weight:600;padding:6px 0}
 details.more summary::-webkit-details-marker{display:none}
+.pin{min-height:84vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.pin .logo{margin-bottom:20px}
+.dots{display:flex;gap:20px;margin:28px 0 4px}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink);opacity:.55;transition:background .1s}
+.dot.f{background:var(--ink);opacity:1}
+.pad{display:grid;grid-template-columns:repeat(3,76px);gap:16px 28px;margin-top:22px}
+.key{appearance:none;width:76px;height:76px;border-radius:50%;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font:400 30px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);cursor:pointer;display:grid;place-items:center;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.key:active{background:var(--soft)}
+.key.ghost{background:none;border:0;box-shadow:none;font-size:15px;font-weight:600;color:var(--accent)}
+.key.ghost svg{width:30px;height:30px}
+.pin .err{min-height:20px;margin-top:6px}
 .shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 </style>
 </head>
@@ -537,54 +548,88 @@ function sheet(html,onOpen){
 }
 function helpSheet(){
   sheet(`<h3>How Vault keeps you private</h3><ul class="points">
-    <li><span>${I.lock}</span><span>Documents are encrypted with your password and never leave this phone.</span></li>
+    <li><span>${I.lock}</span><span>Documents are encrypted with your PIN and never leave this phone.</span></li>
     <li><span>${I.shield.replace('width="28" height="28"','width="18" height="18"')}</span><span>Vault can't connect to the internet, so nothing is uploaded, shared with AI or used for training.</span></li>
     <li><span>${I.face}</span><span>Face ID unlocks it. Your face data stays with Apple.</span></li>
-    <li><span>${I.key}</span><span>There's no password reset. Keep a backup from Settings.</span></li>
+    <li><span>${I.key}</span><span>There's no PIN reset. Keep a backup from Settings.</span></li>
   </ul><button class="btn block" data-close>Got it</button>`);
 }
-function renderSetup(){
-  app.innerHTML=`<div class="center">
-    <div class="logo">${I.shield}</div>
-    <div class="hrow"><h1 style="margin:0">Create your Vault ID</h1><button class="help" id="hp" aria-label="How it works">?</button></div>
-    <form id="f" autocomplete="off" style="margin-top:12px">
-      <label for="p1">Password</label><input id="p1" type="password" autocomplete="new-password" placeholder="At least 4 characters" required>
-      <label for="p2">Confirm password</label><input id="p2" type="password" autocomplete="new-password" required>
-      <div class="err" id="e"></div>
-      <button class="btn primary block">Create Vault ID</button>
-    </form>
-    <button class="link" id="restore" style="margin-top:6px">Restore from backup</button>
+function pinPad(o){
+  let v='',working=false;
+  app.innerHTML=`<div class="pin">
+    <div class="logo">${o.icon||I.lock}</div>
+    <div class="hrow"><h1 style="margin:0">${esc(o.title)}</h1>${o.help?'<button class="help" id="hp" aria-label="How it works">?</button>':''}</div>
+    <p class="muted" style="margin:8px 0 0">${esc(o.sub||'')}</p>
+    <div class="dots" id="dots">${'<span class="dot"></span>'.repeat(4)}</div>
+    <div class="err" id="e"></div>
+    <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" data-k="${n}">${n}</button>`).join('')}
+      ${o.left?`<button class="key ghost" id="lft" aria-label="${esc(o.left.label)}">${o.left.html}</button>`:'<span></span>'}
+      <button class="key" data-k="0">0</button>
+      <button class="key ghost" data-k="del" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><path d="M21 5H9l-6 7 6 7h12a1 1 0 001-1V6a1 1 0 00-1-1z"/><path d="M17 9.5l-5 5M12 9.5l5 5"/></svg></button></div>
+    ${o.below||''}
   </div>`;
-  $('#hp').onclick=helpSheet;
-  $('#f').onsubmit=async e=>{
-    e.preventDefault();const p1=$('#p1').value,p2=$('#p2').value;
-    if(p1.length<4)return $('#e').textContent='Use at least 4 characters.';
-    if(p1!==p2)return $('#e').textContent="Passwords don't match.";
-    busy('Creating your Vault…');await nextFrame();
-    try{
-      const salt=crypto.getRandomValues(new Uint8Array(16));rawKey=await deriveRaw(p1,salt);key=await keyFromRaw(rawKey);
-      await Store.put('kv',{salt:b64(salt),iter:ITER,check:await seal(key,'id-vault-ok')},'config');
-      docs=[];bump();done();(await Bio.available())?faceStep():(renderList(),welcome());
-    }catch(err){done();$('#e').textContent='Something went wrong: '+err.message;}
+  const dots=$$('.dot'),paint=()=>dots.forEach((d,i)=>d.classList.toggle('f',i<v.length));
+  const press=async k=>{
+    if(working)return;
+    if(k==='del'){v=v.slice(0,-1);paint();return;}
+    if(v.length>=4)return;
+    v+=k;paint();$('#e').textContent='';
+    if(v.length<4)return;
+    working=true;await new Promise(r=>setTimeout(r,120));
+    const r=await o.onDone(v);working=false;
+    if(r===true||!$('#dots'))return;
+    $('#e').textContent=r||'';const d=$('#dots');d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');v='';paint();
   };
-  $('#restore').onclick=restoreBackup;
+  $$('[data-k]').forEach(b=>b.onclick=()=>press(b.dataset.k));
+  document.onkeydown=e=>{if(!$('.pin'))return;if(/^[0-9]$/.test(e.key))press(e.key);else if(e.key==='Backspace')press('del');};
+  if(o.help)$('#hp').onclick=helpSheet;
+  if(o.left)$('#lft').onclick=o.left.fn;
 }
-function faceStep(){
+function choosePin(o){
+  pinPad({icon:o.icon,title:o.title,sub:o.sub||'Choose a 4-digit PIN',help:o.help,below:o.below,
+    left:o.onCancel?{label:'Cancel',html:'Cancel',fn:o.onCancel}:null,
+    onDone:async a=>{
+      pinPad({icon:o.icon,title:'Confirm your PIN',sub:'Enter it once more',
+        left:{label:'Back',html:'Back',fn:()=>choosePin(o)},
+        onDone:async b=>{if(a!==b)return"PINs don't match";await o.onSet(a);return true;}});
+      return true;
+    }});
+  if(o.after)o.after();
+}
+/* new key from a PIN; re-encrypts everything. Returns whether Face ID was on (it must be re-linked). */
+async function rekey(pin){
+  const old=await Store.get('kv','config')||{};
+  const salt=crypto.getRandomValues(new Uint8Array(16)),raw=await deriveRaw(pin,salt),k=await keyFromRaw(raw);
+  for(const d of docs)await Store.put('docs',Object.assign({id:d.id},await seal(k,{meta:d.meta,front:d.front,back:d.back})));
+  await Store.put('kv',{salt:b64(salt),iter:ITER,pin:true,check:await seal(k,'id-vault-ok')},'config');
+  key=k;rawKey=raw;bump();return !!old.bio;
+}
+function renderSetup(){
+  choosePin({icon:I.shield,title:'Create your Vault ID',help:true,
+    below:'<button class="link" id="restore" style="margin-top:18px">Restore from backup</button>',
+    after:()=>{$('#restore').onclick=restoreBackup;},
+    onSet:async pin=>{
+      busy('Creating your Vault…');await nextFrame();
+      try{docs=[];await rekey(pin);done();(await Bio.available())?faceStep():(renderList(),welcome());}
+      catch(err){done();toast('Something went wrong: '+err.message);renderSetup();}
+    }});
+}
+function faceStep(next){
   app.innerHTML=`<div class="center">
     <div class="logo">${I.face}</div>
     <h1>Unlock with Face ID?</h1>
-    <p class="muted">Open your Vault with a glance. Your password stays as a backup.</p>
+    <p class="muted">Open your Vault with a glance. Your PIN stays as a backup.</p>
     <button class="btn primary block" id="fy">${I.face} Turn on Face ID</button>
     <button class="link" id="fn" style="margin-top:6px">Not now</button>
   </div>`;
-  const next=()=>{renderList();welcome();};
+  next=next||(()=>{renderList();welcome();});
   $('#fy').onclick=async()=>{await enableFaceID();next();};
   $('#fn').onclick=next;
 }
 async function welcome(){
   const bio=false;
   sheet(`<h3>You're all set</h3><ol class="steps">
-    ${bio?`<li><span class="n">1</span><span><b>Turn on Face ID</b><br><span class="muted small">Skip typing your password every time.</span></span></li>`:''}
+    ${bio?`<li><span class="n">1</span><span><b>Turn on Face ID</b><br><span class="muted small">Skip typing your PIN every time.</span></span></li>`:''}
     <li><span class="n">${bio?2:1}</span><span><b>Add your documents</b><br><span class="muted small">Tap <b>+ Add document</b>, then take or pick a photo.</span></span></li>
     <li><span class="n">${bio?3:2}</span><span><b>Back up your Vault</b><br><span class="muted small">Tap <span class="inline-ic">${I.gear}</span> → <b>Backup</b> → <b>Export</b>. You'll need it if you change phones.</span></span></li>
   </ol>
@@ -595,6 +640,23 @@ async function welcome(){
 }
 async function renderLock(msg,auto){
   const cfg=await Store.get('kv','config');const bio=!!(cfg&&cfg.bio)&&Bio.webOK();
+  if(cfg&&cfg.pin){
+    let fails=0,waitUntil=0;
+    const face=async quiet=>{
+      try{busy('Unlocking…');const raw=await Bio.unlock(cfg);const ok=await openVault(raw);done();if(ok)return renderList();$('#e').textContent='Access denied. Use your PIN.';}
+      catch(e){done();if(!quiet&&e.name!=='NotAllowedError'&&e.name!=='AbortError')toast(e.message);}
+    };
+    pinPad({icon:I.lock,title:'Vault',sub:msg||'Enter your PIN',
+      left:bio?{label:'Unlock with Face ID',html:I.face,fn:()=>face(false)}:null,
+      onDone:async pin=>{
+        if(Date.now()<waitUntil)return`Try again in ${Math.ceil((waitUntil-Date.now())/1000)}s`;
+        if(await unlock(pin)){renderList();return true;}
+        if(++fails>=5){fails=0;waitUntil=Date.now()+30000;return'Access denied. Try again in 30s';}
+        return'Access denied';
+      }});
+    if(bio&&auto)face(true);
+    return;
+  }
   app.innerHTML=`<div class="center">
     <div class="logo">${I.lock}</div>
     <h1>Vault</h1>
@@ -606,7 +668,7 @@ async function renderLock(msg,auto){
   const showPw=()=>{$('#f').hidden=false;$('#usepw')&&$('#usepw').remove();$('#p').focus();};
   if(bio){
     const go=async quiet=>{
-      try{busy('Unlocking…');const raw=await Bio.unlock(cfg);const ok=await openVault(raw);done();if(ok)return renderList();showPw();$('#e').textContent='Access denied. Use your password.';}
+      try{busy('Unlocking…');const raw=await Bio.unlock(cfg);const ok=await openVault(raw);done();if(ok)return migrateToPin();showPw();$('#e').textContent='Access denied. Use your password.';}
       catch(e){done();if(!quiet&&e.name!=='NotAllowedError'&&e.name!=='AbortError')toast(e.message);}
     };
     $('#fid').onclick=()=>go(false);$('#usepw').onclick=showPw;
@@ -615,9 +677,14 @@ async function renderLock(msg,auto){
   $('#f').onsubmit=async e=>{
     e.preventDefault();busy('Unlocking…');await nextFrame();
     const ok=await unlock($('#p').value);done();
-    if(ok)renderList();else{$('#e').textContent='Access denied';$('#f').classList.remove('shake');void $('#f').offsetWidth;$('#f').classList.add('shake');$('#p').select();}
+    if(ok)migrateToPin();else{$('#e').textContent='Access denied';$('#f').classList.remove('shake');void $('#f').offsetWidth;$('#f').classList.add('shake');$('#p').select();}
   };
   if(!bio)setTimeout(()=>$('#p')&&$('#p').focus(),50);
+}
+function migrateToPin(){
+  choosePin({icon:I.key,title:'Switch to a PIN',sub:'Choose a 4-digit PIN to unlock Vault',onCancel:renderList,
+    onSet:async pin=>{busy('Updating…');await nextFrame();const hadBio=await rekey(pin);done();
+      toast('PIN set');hadBio?faceStep(renderList):renderList();}});
 }
 async function unlock(pass){
   const cfg=await Store.get('kv','config');if(!cfg)return false;
@@ -791,7 +858,7 @@ async function renderSettings(){
     <div class="list">
       <button class="item" id="bioSw"${bioAvail?'':' disabled'}><span class="ic">${I.face}</span><span class="t">Face ID</span>${bioAvail?`<span class="sw${bioOn?' on':''}"></span>`:'<span class="r">Unavailable</span>'}</button>
       <button class="item" id="bkp"><span class="ic">${I.backup}</span><span class="t">Backup</span><span class="r">${I.chev}</span></button>
-      <button class="item" id="pw"><span class="ic">${I.key}</span><span class="t">Change password</span><span class="r">${I.chev}</span></button>
+      <button class="item" id="pw"><span class="ic">${I.key}</span><span class="t">Change PIN</span><span class="r">${I.chev}</span></button>
     </div>
     <div class="list" style="margin-top:16px">
       <button class="item danger" id="wipe"><span class="ic">${I.trash}</span><span class="t">Erase Vault</span></button>
@@ -806,29 +873,14 @@ async function renderSettings(){
   $('#bkp').onclick=()=>sheet(`<h3>Backup</h3>
     <div class="list"><button class="item" id="exp"><span class="ic">${I.backup}</span><span class="t">Export backup</span></button>
     <button class="item" id="imp"><span class="ic" style="transform:rotate(180deg)">${I.backup}</span><span class="t">Restore from backup</span></button></div>
-    <p class="muted small" style="margin:12px 2px 0">Backups stay encrypted with your password.</p>`,(el,close)=>{
+    <p class="muted small" style="margin:12px 2px 0">Backups stay encrypted with your PIN.</p>`,(el,close)=>{
       $('#exp',el).onclick=()=>{close();exportBackup();};
       $('#imp',el).onclick=()=>{close();restoreBackup();};
     });
-  $('#pw').onclick=()=>sheet(`<h3>Change password</h3><form id="cp" autocomplete="off">
-      <input id="n1" type="password" placeholder="New password" autocomplete="new-password">
-      <input id="n2" type="password" placeholder="Confirm new password" style="margin-top:10px" autocomplete="new-password">
-      <div class="err" id="e"></div><button class="btn primary block" style="margin-top:6px">Update password</button></form>`,(el,close)=>{
-    $('#cp',el).onsubmit=async e=>{
-      e.preventDefault();const a=$('#n1',el).value,b=$('#n2',el).value;
-      if(a.length<4)return $('#e',el).textContent='Use at least 4 characters.';
-      if(a!==b)return $('#e',el).textContent="Passwords don't match.";
-      busy('Updating…');await nextFrame();
-      try{
-        const salt=crypto.getRandomValues(new Uint8Array(16)),raw=await deriveRaw(a,salt),k=await keyFromRaw(raw);
-        for(const d of docs)await Store.put('docs',Object.assign({id:d.id},await seal(k,{meta:d.meta,front:d.front,back:d.back})));
-        await Store.put('kv',{salt:b64(salt),iter:ITER,check:await seal(k,'id-vault-ok')},'config');
-        key=k;rawKey=raw;done();close();renderSettings();
-        toast(bioOn?'Password updated. Turn Face ID back on.':'Password updated');
-      }catch(err){done();$('#e',el).textContent='Failed: '+err.message;}
-    };
-    setTimeout(()=>$('#n1',el).focus(),250);
-  });
+  $('#pw').onclick=()=>choosePin({icon:I.key,title:'New PIN',onCancel:renderSettings,
+    onSet:async pin=>{busy('Updating…');await nextFrame();
+      try{const hadBio=await rekey(pin);done();toast('PIN updated');hadBio?faceStep(renderSettings):renderSettings();}
+      catch(err){done();toast('Failed: '+err.message);renderSettings();}}});
   $('#wipe').onclick=async()=>{
     if(!confirm('Erase all documents from this phone? This can\'t be undone.'))return;
     await Store.clear('docs');await Store.clear('kv');key=null;rawKey=null;docs=[];renderSetup();toast('Vault erased');
@@ -850,7 +902,7 @@ function restoreBackup(){
       if(j.app!=='id-vault'||!j.config||!Array.isArray(j.docs))throw new Error('Not a Vault backup');
       if(!confirm(`Restore ${j.docs.length} document(s)? This replaces what's in the vault on this device.`))return;
       await Store.clear('docs');for(const r of j.docs)await Store.put('docs',r);await Store.put('kv',j.config,'config');
-      lock('Backup restored. Unlock with that backup\'s password.');
+      lock('Backup restored. Use that backup\'s PIN.');
     }catch(e){toast('Restore failed: '+e.message);}
   };
   i.addEventListener('cancel',()=>{picking=false;});
