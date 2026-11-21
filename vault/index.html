@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- Security policy: this page cannot load or send anything over the network. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; worker-src 'none'; object-src 'none'">
+<!-- Security policy: this page can only load its own files from this site, and nothing from anywhere else. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'self'; form-action 'none'; base-uri 'none'; frame-src 'none'; worker-src 'self'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#f4f3ef">
@@ -144,6 +144,11 @@ details.more summary::-webkit-details-marker{display:none}
 .chip{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:500 13px/1 inherit;padding:9px 12px;border-radius:99px;cursor:pointer}
 .chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .side-label .mini{margin:-8px -6px -8px 0}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.slot-card{appearance:none;display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:16px;border:1.5px dashed var(--line);border-radius:var(--r);background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer;min-height:104px}
+.slot-card:active{background:var(--soft)}
+.slot-card .plus{width:32px;height:32px;border-radius:10px;background:var(--soft);color:var(--accent);display:grid;place-items:center}
+.slot-card .plus svg{width:16px;height:16px}
 .shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 </style>
 </head>
@@ -166,10 +171,10 @@ const FORMATS={
   a4:{w:1240,h:1754,label:'Full page · A4'}
 };
 const TYPES={
-  aadhaar:['Aadhaar','card'],pan:['PAN card','card'],dl:['Driving licence','card'],
-  voter:['Voter ID','card'],passport:['Passport','passport'],rc:['Vehicle RC','card'],
-  other:['Other card','card'],page:['Other document','a4']
+  aadhaar:['Aadhaar','card'],pan:['PAN','card'],passport:['Passport','passport'],dl:['Driving Licence','card'],
+  voter:['Voter ID','card'],rc:['Vehicle RC','card'],other:['Other','card'],page:['Other','a4']
 };
+const SLOTS=['aadhaar','pan','passport','dl','voter','rc'];
 const ORDER=Object.keys(TYPES);
 
 const I={
@@ -310,7 +315,7 @@ function toast(msg,action){
   document.body.appendChild(t);setTimeout(()=>t.remove(),action?12000:2600);
 }
 const typeName=m=>(TYPES[m.type]||TYPES.other)[0];
-const docTitle=m=>m.label||`${typeName(m)}${m.holder?' · '+m.holder:''}`;
+const docTitle=m=>m.label||typeName(m);
 const pagesOf=d=>d.pages||[d.front,d.back].filter(Boolean);
 const pageLabel=(i,n)=>n===1?'':i===0?'Front':i===1?'Back':'Page '+(i+1);
 const slug=s=>(s||'document').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'document';
@@ -322,7 +327,71 @@ function expiryBadge(m){
   return'';
 }
 function maskNum(n){const s=String(n||'');const keep=s.replace(/\s/g,'').slice(-4);return s.replace(/[A-Za-z0-9]/g,'•').replace(/(•\s*){0,4}$/,'')+keep;}
-function sortDocs(){docs.sort((a,b)=>docTitle(a.meta).localeCompare(docTitle(b.meta)));}
+function sortDocs(){const o=t=>{const i=SLOTS.indexOf(t);return i<0?99:i;};docs.sort((a,b)=>(o(a.meta.type)-o(b.meta.type))||docTitle(a.meta).localeCompare(docTitle(b.meta)));}
+
+/* ---------- reading the number (on this phone, no upload) ---------- */
+const OCR={w:null,p:null,
+  load(){
+    if(this.p)return this.p;
+    this.p=(async()=>{
+      if(!window.Tesseract)await new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='ocr/tesseract.min.js';sc.onload=res;sc.onerror=()=>rej(new Error('reader unavailable'));document.head.appendChild(sc);});
+      const base=new URL('ocr',location.href).href;
+      const w=await Tesseract.createWorker('eng',1,{workerPath:base+'/worker.min.js',corePath:base,langPath:base,workerBlobURL:false,gzip:true});
+      await w.setParameters({tessedit_pageseg_mode:'11'});
+      return this.w=w;
+    })();
+    this.p.catch(()=>{this.p=null;});
+    return this.p;
+  },
+  async read(url){
+    const w=await this.load(),img=await loadImg(url),sc=Math.min(2.2,2200/img.naturalWidth);
+    const c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*sc);c.height=Math.round(img.naturalHeight*sc);
+    const x=c.getContext('2d');x.filter='grayscale(1)';x.drawImage(img,0,0,c.width,c.height);
+    return (await w.recognize(c)).data.text||'';
+  }
+};
+/* Template letters: A = letter, 9 = digit. Fixes common misreads (O/0, I/1, S/5, B/8, Z/2, G/6). */
+function coerce(tok,tpl){
+  const toD={O:'0',D:'0',Q:'0',I:'1',L:'1','|':'1',Z:'2',S:'5',G:'6',B:'8',T:'7'},toA={'0':'O','1':'I','2':'Z','5':'S','6':'G','8':'B'};
+  if(tok.length!==tpl.length)return null;let o='';
+  for(let i=0;i<tpl.length;i++){let ch=tok[i];
+    if(tpl[i]==='9'){ch=toD[ch]||ch;if(!/\d/.test(ch))return null;}else{ch=toA[ch]||ch;if(!/[A-Z]/.test(ch))return null;}
+    o+=ch;}
+  return o;
+}
+function findNumber(type,text){
+  const up=text.toUpperCase(),toks=up.split(/[^A-Z0-9|]+/).filter(Boolean);
+  const byTpl=tpl=>{for(const t of toks){const r=coerce(t,tpl);if(r)return r;}return null;};
+  if(type==='aadhaar'){
+    const dg=up.replace(/[OQD]/g,'0').replace(/[IL|]/g,'1').replace(/B/g,'8').replace(/S/g,'5').replace(/Z/g,'2').replace(/G/g,'6');
+    const m=dg.match(/(?<![\d])([2-9]\d{3})\s?(\d{4})\s?(\d{4})(?![\s]?\d)/);
+    return m?`${m[1]} ${m[2]} ${m[3]}`:null;
+  }
+  if(type==='pan')return byTpl('AAAAA9999A');
+  if(type==='passport')return byTpl('A9999999');
+  if(type==='voter')return byTpl('AAA9999999');
+  if(type==='dl'){
+    const m=up.match(/\b([A-Z]{2})[\s-]?(\d{2})[\s-]?((?:19|20)\d{2})[\s-]?(\d{7})\b/)||up.match(/\b([A-Z]{2})(\d{2})()[\s-]?(\d{11})\b/);
+    return m?`${m[1]}${m[2]} ${m[3]}${m[4]}`.replace('  ',' '):null;
+  }
+  if(type==='rc'){const m=up.match(/\b([A-Z]{2})[\s-]?(\d{1,2})[\s-]?([A-Z]{1,3})[\s-]?(\d{4})\b/);return m?`${m[1]} ${m[2]} ${m[3]} ${m[4]}`:null;}
+  return null;
+}
+const reading=new Set();
+async function autoNumber(d){
+  const m=d.meta;
+  if(m.number||m.ocrTried||!SLOTS.includes(m.type)||reading.has(d.id))return;
+  reading.add(d.id);if(current&&current.id===d.id)renderDetail(d);
+  let num=null;
+  try{for(const u of pagesOf(d)){num=findNumber(m.type,await OCR.read(u));if(num)break;}}catch(e){}
+  reading.delete(d.id);
+  if(!key)return;
+  const live=docs.find(x=>x.id===d.id);if(!live)return;
+  live.meta.ocrTried=true;if(num&&!live.meta.number)live.meta.number=num;
+  try{await Store.put('docs',Object.assign({id:live.id},await seal(key,{meta:live.meta,pages:live.pages})));}catch(e){}
+  if(current&&current.id===live.id)renderDetail(live);else if($('#docs'))renderList(true);
+  toast(num?'Number read from your document':'Couldn\'t read the number. Add it with Edit.');
+}
 
 /* ---------- image processing ---------- */
 function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Could not read that image. Try a JPG or PNG.'));i.src=src;});}
@@ -589,7 +658,7 @@ function sheet(html,onOpen){
 function helpSheet(){
   sheet(`<h3>How Vault keeps you private</h3><ul class="points">
     <li><span>${I.lock}</span><span>Documents are encrypted with your PIN and never leave this phone.</span></li>
-    <li><span>${I.shield.replace('width="28" height="28"','width="18" height="18"')}</span><span>Vault can't connect to the internet, so nothing is uploaded, shared with AI or used for training.</span></li>
+    <li><span>${I.shield.replace('width="28" height="28"','width="18" height="18"')}</span><span>Vault only loads its own app files. Your documents and numbers are never uploaded, shared with AI or used for training. Numbers are read on your phone.</span></li>
     <li><span>${I.face}</span><span>Face ID unlocks it. Your face data stays with Apple.</span></li>
     <li><span>${I.key}</span><span>There's no PIN reset. Keep a backup from Settings.</span></li>
   </ul><button class="btn block" data-close>Got it</button>`);
@@ -734,7 +803,9 @@ async function openVault(raw){
   const cfg=await Store.get('kv','config');const k=await keyFromRaw(raw);
   try{if(await unseal(k,cfg.check)!=='id-vault-ok')return false;}catch(e){return false;}
   key=k;rawKey=raw;docs=[];
-  for(const r of await Store.all('docs')){try{const o=await unseal(k,r);docs.push({id:r.id,meta:o.meta,pages:pagesOf(o)});}catch(e){}}
+  for(const r of await Store.all('docs')){try{const o=await unseal(k,r);const m=o.meta;
+    if(m.type==='other'){const hit=SLOTS.find(t=>TYPES[t][0].toLowerCase()===(m.label||'').toLowerCase());if(hit){m.type=hit;m.label='';}}
+    docs.push({id:r.id,meta:m,pages:pagesOf(o)});}catch(e){}}
   sortDocs();bump();return true;
 }
 async function enableFaceID(){
@@ -754,22 +825,29 @@ function docRow(d){
   const sub=[m.number?maskNum(m.number):'',pg.length>1?pg.length+' pages':''].filter(Boolean).join(' · ');
   return`<button class="doc" data-id="${d.id}"><img class="thumb" alt="" src="${pg[0]||''}"><div class="meta"><b>${esc(docTitle(m))}</b>${sub?`<span>${esc(sub)}</span>`:''}</div>${expiryBadge(m)}</button>`;
 }
-function renderList(){
+function renderList(keepQuery){
+  const prevQ=keepQuery&&$('#q')?$('#q').value:'';
   current=null;draft=null;srcs=[];
   app.innerHTML=`${storageBanner()}<div class="top"><div class="grow brand"><span class="mark">${I.shield}</span><b>Vault</b><span class="tag">${I.lock} Encrypted</span></div>
     <button class="icon-btn" id="set" aria-label="Settings">${I.gear}</button><button class="icon-btn" id="lk" aria-label="Lock">${I.lock}</button></div>
-    ${docs.length?`<div class="search">${I.search}<input id="q" type="search" placeholder="Search documents" autocomplete="off" autocorrect="off" spellcheck="false"></div><div id="docs"></div>`
-      :`<div class="empty"><p><b>No documents yet</b></p><p class="small">Add your first ID to get started.</p></div>`}
-    <button class="btn primary fab" id="add">${I.plus} Add document</button>`;
+    ${docs.length?`<div class="search">${I.search}<input id="q" type="search" placeholder="Search documents" autocomplete="off" autocorrect="off" spellcheck="false"></div>`:''}
+    <div id="docs"></div>
+    <button class="btn primary fab" id="add">${I.plus} Add other document</button>`;
   const box=$('#docs');
   const show=()=>{
     const q=($('#q')?$('#q').value:'').trim().toLowerCase();
     const hit=d=>{if(!q)return true;const m=d.meta,hay=[docTitle(m),m.holder,m.number,(m.number||'').replace(/\s/g,''),m.notes,typeName(m)].join(' ').toLowerCase();return q.split(/\s+/).every(w=>hay.includes(w));};
     const list=docs.filter(hit);
-    box.innerHTML=list.length?list.map(docRow).join(''):`<div class="empty small">No documents match “${esc(q)}”</div>`;
+    if(q){box.innerHTML=list.length?list.map(docRow).join(''):`<div class="empty small">No documents match “${esc(q)}”</div>`;}
+    else{
+      const have=new Set(docs.map(d=>d.meta.type));
+      box.innerHTML=list.map(docRow).join('')+
+        (SLOTS.some(t=>!have.has(t))?`<h2>Add to your vault</h2><div class="slots">${SLOTS.filter(t=>!have.has(t)).map(t=>`<button class="slot-card" data-slot="${t}"><span class="plus">${I.plus}</span><b>${esc(TYPES[t][0])}</b></button>`).join('')}</div>`:'');
+    }
     $$('.doc',box).forEach(b=>b.onclick=()=>renderDetail(docs.find(d=>d.id===b.dataset.id)));
+    $$('[data-slot]',box).forEach(b=>b.onclick=()=>startAdd(null,b.dataset.slot));
   };
-  if(box){show();$('#q').oninput=show;}
+  show();if($('#q')){$('#q').value=prevQ;show();$('#q').oninput=show;}
   $('#add').onclick=()=>startAdd(null);
   $('#lk').onclick=()=>lock();
   $('#set').onclick=renderSettings;
@@ -786,9 +864,17 @@ function pickImages(){
     picking=true;i.click();
   });
 }
-async function startAdd(target){
+async function saveDraft(){
+  const m=draft.meta;
+  draft.id=draft.id||(crypto.randomUUID?crypto.randomUUID():b64(rnd(12)).replace(/[^a-z0-9]/gi,''));
+  m.updated=Date.now();m.created=m.created||m.updated;
+  await Store.put('docs',Object.assign({id:draft.id},await seal(key,{meta:m,pages:draft.pages})));
+  const saved={id:draft.id,meta:m,pages:draft.pages};
+  docs=docs.filter(d=>d.id!==saved.id);docs.push(saved);sortDocs();srcs=[];return saved;
+}
+async function startAdd(target,type){
   const files=await pickImages();if(!files.length||!key)return;
-  if(!target){draft={id:null,meta:{type:'other',label:'',holder:'',number:'',expiry:'',notes:'',enhance:true},pages:[]};srcs=[];}
+  if(!target){draft={id:null,meta:{type:type||'',label:'',holder:'',number:'',expiry:'',notes:'',enhance:true},pages:[]};srcs=[];}
   busy(files.length>1?`Straightening ${files.length} photos…`:'Straightening your photo…');await nextFrame();
   try{
     for(const f of files){
@@ -797,32 +883,46 @@ async function startAdd(target){
       await nextFrame();
     }
   }catch(e){toast(e.message);}
-  done();if(draft.pages.length)renderEdit();
+  done();if(!draft.pages.length)return;
+  if(type&&!target){const saved=await saveDraft();renderDetail(saved);toast(`Saved to ${TYPES[type][0]}`);autoNumber(saved);return;}
+  renderEdit();
 }
-const CHIPS=['Aadhaar','PAN','Passport','Driving licence','Voter ID','Vehicle RC'];
 function renderEdit(doc){
   if(doc){draft={id:doc.id,meta:JSON.parse(JSON.stringify(doc.meta)),pages:pagesOf(doc).slice()};srcs=[];}
   const m=draft.meta,n=draft.pages.length,isNew=!draft.id;
-  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${isNew?'Name your document':'Edit document'}</h1></div></div>
+  if(m.type==='page')m.type='other';
+  const custom=m.type==='other';
+  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${isNew?'What is this?':'Edit document'}</h1></div></div>
     <div class="pages">${draft.pages.map((u,i)=>`<div class="pg"><img src="${u}" alt=""><div class="pg-bar"><span>${pageLabel(i,n)||'Photo'}</span>
       <span><button type="button" class="mini" data-rot="${i}" aria-label="Rotate">${I.rotate}</button>${srcs[i]?`<button type="button" class="mini" data-crop="${i}" aria-label="Adjust edges">${I.crop}</button>`:''}<button type="button" class="mini" data-rm="${i}" aria-label="Remove">${I.trash}</button></span></div></div>`).join('')}
       <button type="button" class="pg add" id="more">${I.plus}<span>${n===1?'Add back':'Add page'}</span></button></div>
-    <form id="f" autocomplete="off">
-      <label for="label">Name</label><input id="label" value="${esc(m.label)}" placeholder="e.g. Aadhaar" autocapitalize="words">
-      ${isNew?`<div class="chips">${CHIPS.map(c=>`<button type="button" class="chip" data-chip="${esc(c)}">${esc(c)}</button>`).join('')}</div>`:''}
+    <div class="chips" style="margin-top:22px">${SLOTS.map(t=>`<button type="button" class="chip${m.type===t?' on':''}" data-tag="${t}">${esc(TYPES[t][0])}</button>`).join('')}<button type="button" class="chip${custom?' on':''}" data-tag="other">Other…</button></div>
+    <form id="f" autocomplete="off"${isNew&&!custom?' hidden':''}${isNew?' data-new="1"':''}>
+      <div id="nameBox"${custom?'':' hidden'}><label for="label">Name</label><input id="label" value="${esc(m.label)}" placeholder="e.g. Rent agreement" autocapitalize="words"></div>
       <details class="more"${m.number||m.holder||m.expiry||m.notes||m.enhance===false?' open':''}><summary>+ Number &amp; details</summary>
-        <label for="number">Document number</label><input id="number" class="mono" value="${esc(m.number)}" placeholder="For one-tap copy" autocapitalize="characters" spellcheck="false">
+        <label for="number">Document number</label><input id="number" class="mono" value="${esc(m.number)}" placeholder="Read automatically when possible" autocapitalize="characters" spellcheck="false">
         <label for="holder">Name on document</label><input id="holder" value="${esc(m.holder)}">
-        <div class="row"><div><label for="expiry">Expiry date</label><input id="expiry" type="date" value="${esc(m.expiry)}"></div></div>
+        <label for="expiry">Expiry date</label><input id="expiry" type="date" value="${esc(m.expiry)}">
         <label for="notes">Notes</label><textarea id="notes">${esc(m.notes)}</textarea>
         <label class="check"><input type="checkbox" id="enh"${m.enhance!==false?' checked':''}> Auto-enhance photos</label>
       </details>
       <button class="btn primary block" id="save">Save</button>
     </form>`;
-  const sync=()=>{Object.assign(m,{label:$('#label').value.trim(),number:$('#number').value.trim(),holder:$('#holder').value.trim(),expiry:$('#expiry').value,notes:$('#notes').value.trim(),enhance:$('#enh').checked});};
+  const sync=()=>{Object.assign(m,{label:m.type==='other'?$('#label').value.trim():'',number:$('#number').value.trim(),holder:$('#holder').value.trim(),expiry:$('#expiry').value,notes:$('#notes').value.trim(),enhance:$('#enh').checked});};
   const redo=i=>{draft.pages[i]=processPage(srcs[i],m.enhance!==false).toDataURL('image/jpeg',0.92);};
+  const finish=async()=>{
+    busy('Saving…');
+    try{const saved=await saveDraft();done();renderDetail(saved);toast('Saved');autoNumber(saved);}
+    catch(err){done();toast('Could not save: '+err.message);}
+  };
   $('#bk').onclick=()=>{if(isNew&&!confirm('Discard this document?'))return;draft.id?renderDetail(docs.find(d=>d.id===draft.id)):renderList();};
-  $$('[data-chip]').forEach(b=>b.onclick=()=>{$('#label').value=b.dataset.chip;$$('.chip').forEach(c=>c.classList.toggle('on',c===b));});
+  $$('[data-tag]').forEach(b=>b.onclick=async()=>{
+    sync();m.type=b.dataset.tag;
+    $$('[data-tag]').forEach(c=>c.classList.toggle('on',c===b));
+    if(m.type==='other'){$('#f').hidden=false;$('#nameBox').hidden=false;$('#label').focus();return;}
+    m.label='';$('#nameBox').hidden=true;
+    if(isNew)await finish();
+  });
   $('#more').onclick=()=>{sync();startAdd(draft);};
   $('#enh').onchange=async()=>{sync();busy('Updating…');await nextFrame();srcs.forEach((p,i)=>p&&redo(i));done();renderEdit();};
   $$('[data-rm]').forEach(b=>b.onclick=()=>{sync();const i=+b.dataset.rm;draft.pages.splice(i,1);srcs.splice(i,1);if(!draft.pages.length&&isNew)return renderList();renderEdit();});
@@ -830,28 +930,21 @@ function renderEdit(doc){
   $$('[data-crop]').forEach(b=>b.onclick=async()=>{sync();const i=+b.dataset.crop;const q=await cropEditor(srcs[i].c,srcs[i].quad);if(!q)return;srcs[i].quad=q;srcs[i].auto=true;busy('Straightening…');await nextFrame();redo(i);done();renderEdit();});
   $('#f').onsubmit=async e=>{
     e.preventDefault();sync();
-    if(!m.label){$('#label').focus();return toast('Give it a name');}
+    if(m.type==='other'&&!m.label){$('#label').focus();return toast('Give it a name');}
     if(!draft.pages.length)return toast('Add at least one photo');
-    busy('Saving…');
-    try{
-      draft.id=draft.id||(crypto.randomUUID?crypto.randomUUID():b64(rnd(12)).replace(/[^a-z0-9]/gi,''));
-      m.updated=Date.now();m.created=m.created||m.updated;
-      await Store.put('docs',Object.assign({id:draft.id},await seal(key,{meta:m,pages:draft.pages})));
-      const saved={id:draft.id,meta:m,pages:draft.pages};
-      docs=docs.filter(d=>d.id!==saved.id);docs.push(saved);sortDocs();
-      done();srcs=[];isNew?renderList():renderDetail(saved);toast('Saved');
-    }catch(err){done();toast('Could not save: '+err.message);}
+    if(!isNew)m.ocrTried=!!m.number&&m.ocrTried;
+    await finish();
   };
-  if(isNew&&!m.label)setTimeout(()=>$('#label')&&$('#label').focus(),150);
 }
 
 /* detail */
 function renderDetail(d){
   if(!d)return renderList();
-  current=d;const m=d.meta,pg=pagesOf(d),n=pg.length;let shown=false;
+  current=d;const m=d.meta,pg=pagesOf(d),n=pg.length;let shown=false;const isReading=reading.has(d.id);
   app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${esc(docTitle(m))}</h1>${n>1?`<div class="muted small">${n} pages</div>`:''}</div>${expiryBadge(m)}</div>
     ${pg.map((u,i)=>`${n>1?`<div class="side-label"><span>${pageLabel(i,n)}</span><button class="mini" data-one="${i}" aria-label="Share ${pageLabel(i,n)}">${I.share}</button></div>`:''}<img class="docimg" src="${u}" alt="" style="margin-bottom:${n>1?4:0}px">`).join('')}
-    ${m.holder||m.number||m.expiry||m.notes?`<h2>Details</h2><div class="card" style="padding:4px 20px">
+    ${m.holder||m.number||m.expiry||m.notes||isReading?`<h2>Details</h2><div class="card" style="padding:4px 20px">
+      ${isReading&&!m.number?`<div class="field"><span class="k">Number</span><span class="v muted" style="font-weight:500">Reading from your document…</span></div>`:''}
       ${m.holder?`<div class="field"><span class="k">Name</span><span class="v">${esc(m.holder)}</span></div>`:''}
       ${m.number?`<div class="field"><span class="k">Number</span><span class="v mono" id="num">${esc(maskNum(m.number))}</span><button class="icon-btn" id="eye" aria-label="Show number">${I.eye}</button><button class="icon-btn" id="cp" aria-label="Copy number">${I.copy}</button></div>`:''}
       ${m.expiry?`<div class="field"><span class="k">Expires</span><span class="v">${esc(new Date(m.expiry+'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}))}</span></div>`:''}
@@ -875,7 +968,8 @@ function renderDetail(d){
   if($('#cp'))$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(m.number);toast('Number copied');}catch(e){shown=true;$('#num').textContent=m.number;toast('Copy blocked here. Number shown instead');}};
   $$('[data-sh]').forEach(b=>b.onclick=()=>shareDoc(d,b.dataset.sh));
   $$('[data-one]').forEach(b=>b.onclick=()=>shareDoc(d,'one',+b.dataset.one));
-  scrollTo(0,0);
+  if(!isReading)scrollTo(0,0);
+  autoNumber(d);
 }
 async function shareDoc(d,kind,idx){
   const t=($('#wm')&&$('#wm').value||'').trim();
