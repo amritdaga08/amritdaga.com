@@ -130,6 +130,20 @@ details.more summary::-webkit-details-marker{display:none}
 .key.ghost{background:none;border:0;box-shadow:none;font-size:15px;font-weight:600;color:var(--accent)}
 .key.ghost svg{width:30px;height:30px}
 .pin .err{min-height:20px;margin-top:6px}
+.search{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 14px;margin-bottom:18px;color:var(--muted)}
+.search input{border:0;padding:13px 0;background:none;box-shadow:none!important}
+.pages{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pg{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.pg img{width:100%;aspect-ratio:1.4;object-fit:contain;background:var(--soft);display:block}
+.pg-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 4px 10px;font-size:12px;font-weight:700}
+.mini{appearance:none;border:0;background:none;color:var(--muted);width:32px;height:32px;border-radius:8px;display:inline-grid;place-items:center;cursor:pointer}
+.mini:active{background:var(--soft)}
+.mini svg{width:16px;height:16px}
+.pg.add{border-style:dashed;align-items:center;justify-content:center;gap:6px;color:var(--accent);font:600 14px/1 inherit;cursor:pointer;min-height:140px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:500 13px/1 inherit;padding:9px 12px;border-radius:99px;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.side-label .mini{margin:-8px -6px -8px 0}
 .shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 </style>
 </head>
@@ -174,6 +188,9 @@ const I={
   backup:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
   trash:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>',
   chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>',
+  search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  rotate:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/></svg>',
+  crop:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2v14a2 2 0 002 2h14M18 22V8a2 2 0 00-2-2H2"/></svg>',
   share:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v14"/></svg>'
 };
 
@@ -278,7 +295,7 @@ document.addEventListener('visibilitychange',()=>{
   if(key&&!picking&&Date.now()-hiddenAt>AWAY_MS)lock();
 });
 function lock(msg){
-  if(rawKey)rawKey.fill(0);key=null;rawKey=null;docs=[];draft=null;srcs={};current=null;clearTimeout(idleT);
+  if(rawKey)rawKey.fill(0);key=null;rawKey=null;docs=[];draft=null;srcs=[];current=null;clearTimeout(idleT);
   $$('.modal,.toast').forEach(n=>n.remove());done();
   document.body.classList.remove('veil');renderLock(msg);
 }
@@ -294,6 +311,8 @@ function toast(msg,action){
 }
 const typeName=m=>(TYPES[m.type]||TYPES.other)[0];
 const docTitle=m=>m.label||`${typeName(m)}${m.holder?' · '+m.holder:''}`;
+const pagesOf=d=>d.pages||[d.front,d.back].filter(Boolean);
+const pageLabel=(i,n)=>n===1?'':i===0?'Front':i===1?'Back':'Page '+(i+1);
 const slug=s=>(s||'document').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'document';
 function expiryBadge(m){
   if(!m.expiry)return'';
@@ -303,7 +322,7 @@ function expiryBadge(m){
   return'';
 }
 function maskNum(n){const s=String(n||'');const keep=s.replace(/\s/g,'').slice(-4);return s.replace(/[A-Za-z0-9]/g,'•').replace(/(•\s*){0,4}$/,'')+keep;}
-function sortDocs(){docs.sort((a,b)=>(ORDER.indexOf(a.meta.type)-ORDER.indexOf(b.meta.type))||docTitle(a.meta).localeCompare(docTitle(b.meta)));}
+function sortDocs(){docs.sort((a,b)=>docTitle(a.meta).localeCompare(docTitle(b.meta)));}
 
 /* ---------- image processing ---------- */
 function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Could not read that image. Try a JPG or PNG.'));i.src=src;});}
@@ -364,10 +383,10 @@ function detectQuad(c){
     return bestC&&bestC.cnt>=n*0.08&&bestC.cnt<=n*0.95?bestC:null;
   }
   const bestC=largest(noise)||largest(otsu);
-  if(!bestC)return{quad:fullQuad(W,H),auto:false};
+  if(!bestC)return{quad:fullQuad(W,H,0),auto:false};
   const q=bestC.pts.map(p=>[(p[0]+0.5)/s,(p[1]+0.5)/s]);
   const area=Math.abs((q[0][0]*q[1][1]-q[1][0]*q[0][1])+(q[1][0]*q[2][1]-q[2][0]*q[1][1])+(q[2][0]*q[3][1]-q[3][0]*q[2][1])+(q[3][0]*q[0][1]-q[0][0]*q[3][1]))/2;
-  if(area<W*H*0.06)return{quad:fullQuad(W,H),auto:false};
+  if(area<W*H*0.06)return{quad:fullQuad(W,H,0),auto:false};
   return{quad:q,auto:true};
 }
 function homography(src,dst){
@@ -430,6 +449,21 @@ function processSide(srcC,quad,fmt,rot,doEnhance){
   const out=warp(srcC,q,F.w,F.h);
   return doEnhance?enhance(out):out;
 }
+/* Picks the real-world size from the shape of the detected document. */
+function guessFormat(q){
+  const w=(dist(q[0],q[1])+dist(q[3],q[2]))/2,h=(dist(q[0],q[3])+dist(q[1],q[2]))/2,r=Math.max(w,h)/Math.min(w,h);
+  if(r>1.5&&r<1.75)return'card';
+  if(r>=1.33&&r<=1.5)return w>=h?'passport':'a4';
+  return null;
+}
+function processPage(pg,doEnhance){
+  const q=orderQuad(pg.quad),fmt=pg.auto?guessFormat(q):null;
+  if(fmt)return processSide(pg.c,q,fmt,pg.rot,doEnhance);
+  let w=(dist(q[0],q[1])+dist(q[3],q[2]))/2,h=(dist(q[0],q[3])+dist(q[1],q[2]))/2;
+  const sc=Math.min(1,1600/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
+  const out=warp(pg.c,pg.rot?[q[2],q[3],q[0],q[1]]:q,w,h);
+  return doEnhance?enhance(out):out;
+}
 function rotateDataURL180(url){return loadImg(url).then(img=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const x=c.getContext('2d');x.translate(c.width,c.height);x.rotate(Math.PI);x.drawImage(img,0,0);return c.toDataURL('image/jpeg',0.92);});}
 
 /* ---------- corner editor ---------- */
@@ -488,21 +522,27 @@ function watermark(c,text){
   x.restore();
 }
 async function sideCanvas(url,wm){const img=await loadImg(url);const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);if(wm)watermark(c,wm);return c;}
-function a4Pages(cs,fmt){
-  if(fmt==='a4')return cs;
+function stackPage(cs){
   const P={w:1240,h:1754},page=document.createElement('canvas');page.width=P.w;page.height=P.h;
   const x=page.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,P.w,P.h);
-  const tw=Math.round(P.w*(fmt==='passport'?0.72:0.6)),hs=cs.map(c=>Math.round(c.height*tw/c.width)),gap=90;
+  const tw=Math.round(P.w*0.66),hs=cs.map(c=>Math.round(c.height*tw/c.width)),gap=90;
   let y=Math.round((P.h-(hs.reduce((a,b)=>a+b,0)+gap*(cs.length-1)))/2.4);const xx=Math.round((P.w-tw)/2);
   cs.forEach((c,i)=>{x.drawImage(c,xx,y,tw,hs[i]);x.strokeStyle='#d6d6d6';x.lineWidth=2;x.strokeRect(xx-1,y-1,tw+2,hs[i]+2);y+=hs[i]+gap;});
-  return[page];
+  return page;
 }
-function combinedImage(cs,fmt){
-  const pad=48,c=document.createElement('canvas'),x=c.getContext('2d');
-  if(fmt==='a4'){c.width=cs.reduce((a,s)=>a+s.width,0)+pad*(cs.length+1);c.height=Math.max(...cs.map(s=>s.height))+pad*2;}
-  else{c.width=Math.max(...cs.map(s=>s.width))+pad*2;c.height=cs.reduce((a,s)=>a+s.height,0)+pad*(cs.length+1);}
-  x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);let o=pad;
-  cs.forEach(s=>{if(fmt==='a4'){x.drawImage(s,o,pad);o+=s.width+pad;}else{x.drawImage(s,Math.round((c.width-s.width)/2),o);x.strokeStyle='#dddddd';x.lineWidth=2;x.strokeRect(Math.round((c.width-s.width)/2)-1,o-1,s.width+2,s.height+2);o+=s.height+pad;}});
+/* Cards and landscape pages go two to an A4 sheet; portrait pages get their own sheet. */
+function a4Pages(cs){
+  const out=[];let pend=[];const flush=()=>{if(pend.length){out.push(stackPage(pend));pend=[];}};
+  for(const c of cs){if(c.height>c.width){flush();out.push(c);}else{pend.push(c);if(pend.length===2)flush();}}
+  flush();return out;
+}
+function combinedImage(cs){
+  const pad=48,W=Math.min(1400,Math.max(...cs.map(s=>s.width)));
+  const hs=cs.map(s=>Math.round(s.height*W/s.width));
+  const c=document.createElement('canvas'),x=c.getContext('2d');
+  c.width=W+pad*2;c.height=hs.reduce((a,b)=>a+b,0)+pad*(cs.length+1);
+  x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);let y=pad;
+  cs.forEach((s,i)=>{x.drawImage(s,pad,y,W,hs[i]);x.strokeStyle='#dddddd';x.lineWidth=2;x.strokeRect(pad-1,y-1,W+2,hs[i]+2);y+=hs[i]+pad;});
   return c;
 }
 const toBlob=(c,q=0.92)=>new Promise(r=>c.toBlob(r,'image/jpeg',q));
@@ -600,7 +640,7 @@ function choosePin(o){
 async function rekey(pin){
   const old=await Store.get('kv','config')||{};
   const salt=crypto.getRandomValues(new Uint8Array(16)),raw=await deriveRaw(pin,salt),k=await keyFromRaw(raw);
-  for(const d of docs)await Store.put('docs',Object.assign({id:d.id},await seal(k,{meta:d.meta,front:d.front,back:d.back})));
+  for(const d of docs)await Store.put('docs',Object.assign({id:d.id},await seal(k,{meta:d.meta,pages:d.pages})));
   await Store.put('kv',{salt:b64(salt),iter:ITER,pin:true,check:await seal(k,'id-vault-ok')},'config');
   key=k;rawKey=raw;bump();return !!old.bio;
 }
@@ -694,7 +734,7 @@ async function openVault(raw){
   const cfg=await Store.get('kv','config');const k=await keyFromRaw(raw);
   try{if(await unseal(k,cfg.check)!=='id-vault-ok')return false;}catch(e){return false;}
   key=k;rawKey=raw;docs=[];
-  for(const r of await Store.all('docs')){try{docs.push(Object.assign({id:r.id},await unseal(k,r)));}catch(e){}}
+  for(const r of await Store.all('docs')){try{const o=await unseal(k,r);docs.push({id:r.id,meta:o.meta,pages:pagesOf(o)});}catch(e){}}
   sortDocs();bump();return true;
 }
 async function enableFaceID(){
@@ -709,101 +749,108 @@ async function enableFaceID(){
   return false;
 }
 function storageBanner(){return Store.persistent()?'':'<div class="banner">This browser isn\'t saving data here. Open Vault from your home screen or in Safari.</div>';}
+function docRow(d){
+  const pg=pagesOf(d),m=d.meta;
+  const sub=[m.number?maskNum(m.number):'',pg.length>1?pg.length+' pages':''].filter(Boolean).join(' · ');
+  return`<button class="doc" data-id="${d.id}"><img class="thumb" alt="" src="${pg[0]||''}"><div class="meta"><b>${esc(docTitle(m))}</b>${sub?`<span>${esc(sub)}</span>`:''}</div>${expiryBadge(m)}</button>`;
+}
 function renderList(){
-  current=null;draft=null;srcs={};
+  current=null;draft=null;srcs=[];
   app.innerHTML=`${storageBanner()}<div class="top"><div class="grow brand"><span class="mark">${I.shield}</span><b>Vault</b><span class="tag">${I.lock} Encrypted</span></div>
     <button class="icon-btn" id="set" aria-label="Settings">${I.gear}</button><button class="icon-btn" id="lk" aria-label="Lock">${I.lock}</button></div>
-    ${docs.length?docs.map(d=>`<button class="doc" data-id="${d.id}"><img class="thumb" alt="" src="${d.front||d.back||''}"><div class="meta"><b>${esc(docTitle(d.meta))}</b><span>${esc(typeName(d.meta))}${d.meta.number?' · '+esc(maskNum(d.meta.number)):''}</span></div>${expiryBadge(d.meta)}</button>`).join('')
+    ${docs.length?`<div class="search">${I.search}<input id="q" type="search" placeholder="Search documents" autocomplete="off" autocorrect="off" spellcheck="false"></div><div id="docs"></div>`
       :`<div class="empty"><p><b>No documents yet</b></p><p class="small">Add your first ID to get started.</p></div>`}
     <button class="btn primary fab" id="add">${I.plus} Add document</button>`;
-  $$('.doc').forEach(b=>b.onclick=()=>renderDetail(docs.find(d=>d.id===b.dataset.id)));
-  $('#add').onclick=()=>renderEdit(null);
+  const box=$('#docs');
+  const show=()=>{
+    const q=($('#q')?$('#q').value:'').trim().toLowerCase();
+    const hit=d=>{if(!q)return true;const m=d.meta,hay=[docTitle(m),m.holder,m.number,(m.number||'').replace(/\s/g,''),m.notes,typeName(m)].join(' ').toLowerCase();return q.split(/\s+/).every(w=>hay.includes(w));};
+    const list=docs.filter(hit);
+    box.innerHTML=list.length?list.map(docRow).join(''):`<div class="empty small">No documents match “${esc(q)}”</div>`;
+    $$('.doc',box).forEach(b=>b.onclick=()=>renderDetail(docs.find(d=>d.id===b.dataset.id)));
+  };
+  if(box){show();$('#q').oninput=show;}
+  $('#add').onclick=()=>startAdd(null);
   $('#lk').onclick=()=>lock();
   $('#set').onclick=renderSettings;
   scrollTo(0,0);
 }
 
-/* edit */
-let draft=null,srcs={},current=null;
+/* add + edit: photos picked together become one document */
+let draft=null,srcs=[],current=null;
+function pickImages(){
+  return new Promise(res=>{
+    const i=document.createElement('input');i.type='file';i.accept='image/*';i.multiple=true;
+    i.onchange=()=>{picking=false;res([...i.files]);};
+    i.addEventListener('cancel',()=>{picking=false;res([]);});
+    picking=true;i.click();
+  });
+}
+async function startAdd(target){
+  const files=await pickImages();if(!files.length||!key)return;
+  if(!target){draft={id:null,meta:{type:'other',label:'',holder:'',number:'',expiry:'',notes:'',enhance:true},pages:[]};srcs=[];}
+  busy(files.length>1?`Straightening ${files.length} photos…`:'Straightening your photo…');await nextFrame();
+  try{
+    for(const f of files){
+      const c=await fileToCanvas(f),d=detectQuad(c),pg={c,quad:d.quad,auto:d.auto,rot:0};
+      srcs[draft.pages.length]=pg;draft.pages.push(processPage(pg,draft.meta.enhance!==false).toDataURL('image/jpeg',0.92));
+      await nextFrame();
+    }
+  }catch(e){toast(e.message);}
+  done();if(draft.pages.length)renderEdit();
+}
+const CHIPS=['Aadhaar','PAN','Passport','Driving licence','Voter ID','Vehicle RC'];
 function renderEdit(doc){
-  if(doc!==undefined){
-    draft=doc?JSON.parse(JSON.stringify(doc)):{id:null,meta:{type:'aadhaar',fmt:'card',label:'',holder:'',number:'',expiry:'',notes:'',enhance:true},front:null,back:null};
-    srcs={};
-  }
-  const m=draft.meta;
-  const slot=(side,title)=>`<div class="side-label"><span>${title}</span>${side==='back'?'<span class="muted">optional</span>':''}</div>
-    ${draft[side]?`<div class="slot has"><img src="${draft[side]}" alt="${title}"><div class="acts"><button type="button" class="btn" data-rot="${side}">Rotate 180°</button><button type="button" class="btn" data-recrop="${side}">${srcs[side]?'Adjust edges':'Replace'}</button><button type="button" class="btn danger" data-rm="${side}">Remove</button></div></div>`
-    :`<div class="slot"><div class="acts" style="margin-top:0"><button type="button" class="btn" data-cam="${side}">${I.cam} Take photo</button><button type="button" class="btn" data-gal="${side}">${I.img} From gallery</button></div></div>`}`;
-  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${draft.id?'Edit document':'Add document'}</h1></div></div>
+  if(doc){draft={id:doc.id,meta:JSON.parse(JSON.stringify(doc.meta)),pages:pagesOf(doc).slice()};srcs=[];}
+  const m=draft.meta,n=draft.pages.length,isNew=!draft.id;
+  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${isNew?'Name your document':'Edit document'}</h1></div></div>
+    <div class="pages">${draft.pages.map((u,i)=>`<div class="pg"><img src="${u}" alt=""><div class="pg-bar"><span>${pageLabel(i,n)||'Photo'}</span>
+      <span><button type="button" class="mini" data-rot="${i}" aria-label="Rotate">${I.rotate}</button>${srcs[i]?`<button type="button" class="mini" data-crop="${i}" aria-label="Adjust edges">${I.crop}</button>`:''}<button type="button" class="mini" data-rm="${i}" aria-label="Remove">${I.trash}</button></span></div></div>`).join('')}
+      <button type="button" class="pg add" id="more">${I.plus}<span>${n===1?'Add back':'Add page'}</span></button></div>
     <form id="f" autocomplete="off">
-      <div class="row"><div><label for="type" style="margin-top:0">Document</label><select id="type">${ORDER.map(k=>`<option value="${k}"${k===m.type?' selected':''}>${TYPES[k][0]}</option>`).join('')}</select></div>
-      <div><label for="fmt" style="margin-top:0">Size</label><select id="fmt">${Object.entries(FORMATS).map(([k,v])=>`<option value="${k}"${k===m.fmt?' selected':''}>${v.label}</option>`).join('')}</select></div></div>
-      ${slot('front','Front')}${slot('back','Back')}
-      <label for="holder">Name on document</label><input id="holder" value="${esc(m.holder)}" placeholder="e.g. Amrit">
-      <label for="number">Document number</label><input id="number" class="mono" value="${esc(m.number)}" placeholder="For one-tap copy" autocapitalize="characters" spellcheck="false">
-      <details class="more"${m.expiry||m.label||m.notes||m.enhance===false?' open':''}><summary>More options</summary>
-        <div class="row"><div><label for="expiry">Expiry date</label><input id="expiry" type="date" value="${esc(m.expiry)}"></div><div><label for="label">Display name</label><input id="label" value="${esc(m.label)}" placeholder="Auto"></div></div>
+      <label for="label">Name</label><input id="label" value="${esc(m.label)}" placeholder="e.g. Aadhaar" autocapitalize="words">
+      ${isNew?`<div class="chips">${CHIPS.map(c=>`<button type="button" class="chip" data-chip="${esc(c)}">${esc(c)}</button>`).join('')}</div>`:''}
+      <details class="more"${m.number||m.holder||m.expiry||m.notes||m.enhance===false?' open':''}><summary>+ Number &amp; details</summary>
+        <label for="number">Document number</label><input id="number" class="mono" value="${esc(m.number)}" placeholder="For one-tap copy" autocapitalize="characters" spellcheck="false">
+        <label for="holder">Name on document</label><input id="holder" value="${esc(m.holder)}">
+        <div class="row"><div><label for="expiry">Expiry date</label><input id="expiry" type="date" value="${esc(m.expiry)}"></div></div>
         <label for="notes">Notes</label><textarea id="notes">${esc(m.notes)}</textarea>
         <label class="check"><input type="checkbox" id="enh"${m.enhance!==false?' checked':''}> Auto-enhance photos</label>
       </details>
       <button class="btn primary block" id="save">Save</button>
     </form>`;
-  const sync=()=>{Object.assign(m,{type:$('#type').value,fmt:$('#fmt').value,holder:$('#holder').value.trim(),number:$('#number').value.trim(),expiry:$('#expiry').value,label:$('#label').value.trim(),notes:$('#notes').value.trim(),enhance:$('#enh').checked});};
-  const reprocessAll=async()=>{for(const s of['front','back'])if(srcs[s])await reprocess(s);};
-  $('#bk').onclick=()=>draft.id?renderDetail(docs.find(d=>d.id===draft.id)):renderList();
-  $('#type').onchange=async()=>{sync();const f=TYPES[m.type][1];if(f!==m.fmt){m.fmt=f;await reprocessAll();}renderEdit();};
-  $('#fmt').onchange=async()=>{sync();await reprocessAll();if((draft.front&&!srcs.front)||(draft.back&&!srcs.back))toast('Replace existing photos to resize them');renderEdit();};
-  $('#enh').onchange=async()=>{sync();await reprocessAll();renderEdit();};
-  $$('[data-cam],[data-gal]').forEach(b=>b.onclick=()=>{sync();addSide(b.dataset.cam||b.dataset.gal,!!b.dataset.cam);});
-  $$('[data-rm]').forEach(b=>b.onclick=()=>{sync();draft[b.dataset.rm]=null;delete srcs[b.dataset.rm];renderEdit();});
-  $$('[data-rot]').forEach(b=>b.onclick=async()=>{sync();const s=b.dataset.rot;if(srcs[s]){srcs[s].rot^=1;await reprocess(s);}else draft[s]=await rotateDataURL180(draft[s]);renderEdit();});
-  $$('[data-recrop]').forEach(b=>b.onclick=async()=>{sync();const s=b.dataset.recrop;
-    if(!srcs[s])return addSide(s,false);
-    const q=await cropEditor(srcs[s].c,srcs[s].quad);if(!q)return;srcs[s].quad=q;await reprocess(s);renderEdit();});
+  const sync=()=>{Object.assign(m,{label:$('#label').value.trim(),number:$('#number').value.trim(),holder:$('#holder').value.trim(),expiry:$('#expiry').value,notes:$('#notes').value.trim(),enhance:$('#enh').checked});};
+  const redo=i=>{draft.pages[i]=processPage(srcs[i],m.enhance!==false).toDataURL('image/jpeg',0.92);};
+  $('#bk').onclick=()=>{if(isNew&&!confirm('Discard this document?'))return;draft.id?renderDetail(docs.find(d=>d.id===draft.id)):renderList();};
+  $$('[data-chip]').forEach(b=>b.onclick=()=>{$('#label').value=b.dataset.chip;$$('.chip').forEach(c=>c.classList.toggle('on',c===b));});
+  $('#more').onclick=()=>{sync();startAdd(draft);};
+  $('#enh').onchange=async()=>{sync();busy('Updating…');await nextFrame();srcs.forEach((p,i)=>p&&redo(i));done();renderEdit();};
+  $$('[data-rm]').forEach(b=>b.onclick=()=>{sync();const i=+b.dataset.rm;draft.pages.splice(i,1);srcs.splice(i,1);if(!draft.pages.length&&isNew)return renderList();renderEdit();});
+  $$('[data-rot]').forEach(b=>b.onclick=async()=>{sync();const i=+b.dataset.rot;if(srcs[i]){srcs[i].rot^=1;redo(i);}else draft.pages[i]=await rotateDataURL180(draft.pages[i]);renderEdit();});
+  $$('[data-crop]').forEach(b=>b.onclick=async()=>{sync();const i=+b.dataset.crop;const q=await cropEditor(srcs[i].c,srcs[i].quad);if(!q)return;srcs[i].quad=q;srcs[i].auto=true;busy('Straightening…');await nextFrame();redo(i);done();renderEdit();});
   $('#f').onsubmit=async e=>{
     e.preventDefault();sync();
-    if(!draft.front&&!draft.back)return toast('Add at least one photo');
-    busy('Encrypting…');
+    if(!m.label){$('#label').focus();return toast('Give it a name');}
+    if(!draft.pages.length)return toast('Add at least one photo');
+    busy('Saving…');
     try{
-      draft.id=draft.id||(crypto.randomUUID?crypto.randomUUID():b64(crypto.getRandomValues(new Uint8Array(12))).replace(/[^a-z0-9]/gi,''));
+      draft.id=draft.id||(crypto.randomUUID?crypto.randomUUID():b64(rnd(12)).replace(/[^a-z0-9]/gi,''));
       m.updated=Date.now();m.created=m.created||m.updated;
-      const sealed=await seal(key,{meta:m,front:draft.front,back:draft.back});
-      await Store.put('docs',Object.assign({id:draft.id},sealed));
-      const saved={id:draft.id,meta:m,front:draft.front,back:draft.back};
+      await Store.put('docs',Object.assign({id:draft.id},await seal(key,{meta:m,pages:draft.pages})));
+      const saved={id:draft.id,meta:m,pages:draft.pages};
       docs=docs.filter(d=>d.id!==saved.id);docs.push(saved);sortDocs();
-      done();srcs={};renderDetail(saved);toast('Saved');
+      done();srcs=[];isNew?renderList():renderDetail(saved);toast('Saved');
     }catch(err){done();toast('Could not save: '+err.message);}
   };
-}
-function pickImage(camera){
-  return new Promise(res=>{
-    const i=document.createElement('input');i.type='file';i.accept='image/*';if(camera)i.setAttribute('capture','environment');
-    i.onchange=()=>{picking=false;res(i.files[0]||null);};
-    i.addEventListener('cancel',()=>{picking=false;res(null);});
-    picking=true;i.click();
-  });
-}
-async function addSide(side,camera){
-  const f=await pickImage(camera);if(!f||!key)return;
-  busy('Finding the edges…');await nextFrame();
-  let c;try{c=await fileToCanvas(f);}catch(e){done();return toast(e.message);}
-  const det=detectQuad(c);done();
-  const q=await cropEditor(c,det.quad);if(!q)return;
-  srcs[side]={c,quad:q,rot:0};await reprocess(side);renderEdit();
-}
-async function reprocess(side){
-  const s=srcs[side];busy('Straightening and sizing…');await nextFrame();
-  try{draft[side]=processSide(s.c,s.quad,draft.meta.fmt,s.rot,draft.meta.enhance!==false).toDataURL('image/jpeg',0.92);}
-  finally{done();}
+  if(isNew&&!m.label)setTimeout(()=>$('#label')&&$('#label').focus(),150);
 }
 
 /* detail */
 function renderDetail(d){
   if(!d)return renderList();
-  current=d;const m=d.meta;let shown=false;
-  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${esc(docTitle(m))}</h1><div class="muted small">${esc(typeName(m))} · ${esc(FORMATS[m.fmt]?.label||'')}</div></div>${expiryBadge(m)}</div>
-    ${d.front?`<div class="side-label">Front</div><img class="docimg" src="${d.front}" alt="Front">`:''}
-    ${d.back?`<div class="side-label">Back</div><img class="docimg" src="${d.back}" alt="Back">`:''}
+  current=d;const m=d.meta,pg=pagesOf(d),n=pg.length;let shown=false;
+  app.innerHTML=`<div class="top"><button class="icon-btn" id="bk" aria-label="Back">${I.back}</button><div class="grow"><h1>${esc(docTitle(m))}</h1>${n>1?`<div class="muted small">${n} pages</div>`:''}</div>${expiryBadge(m)}</div>
+    ${pg.map((u,i)=>`${n>1?`<div class="side-label"><span>${pageLabel(i,n)}</span><button class="mini" data-one="${i}" aria-label="Share ${pageLabel(i,n)}">${I.share}</button></div>`:''}<img class="docimg" src="${u}" alt="" style="margin-bottom:${n>1?4:0}px">`).join('')}
     ${m.holder||m.number||m.expiry||m.notes?`<h2>Details</h2><div class="card" style="padding:4px 20px">
       ${m.holder?`<div class="field"><span class="k">Name</span><span class="v">${esc(m.holder)}</span></div>`:''}
       ${m.number?`<div class="field"><span class="k">Number</span><span class="v mono" id="num">${esc(maskNum(m.number))}</span><button class="icon-btn" id="eye" aria-label="Show number">${I.eye}</button><button class="icon-btn" id="cp" aria-label="Copy number">${I.copy}</button></div>`:''}
@@ -812,9 +859,8 @@ function renderDetail(d){
     </div>`:''}
     <h2>Share</h2><div class="card">
       <div class="grid2">
-        ${d.front?`<button class="btn" data-sh="front">${I.share} Front</button>`:''}
-        ${d.back?`<button class="btn" data-sh="back">${I.share} Back</button>`:''}
-        ${d.front&&d.back?`<button class="btn primary" data-sh="pdf">${I.share} Both · PDF</button><button class="btn" data-sh="image">${I.share} Both · Image</button>`:`<button class="btn primary" data-sh="pdf">${I.share} PDF</button>`}
+        <button class="btn" data-sh="image">${I.share} Image</button>
+        <button class="btn primary" data-sh="pdf">${I.share} PDF</button>
       </div>
       <details class="more" style="margin-top:10px"><summary>+ Add watermark</summary>
         <input id="wm" placeholder="e.g. For HDFC Bank KYC only" style="margin-top:8px">
@@ -828,21 +874,22 @@ function renderDetail(d){
   if($('#eye'))$('#eye').onclick=()=>{shown=!shown;$('#num').textContent=shown?m.number:maskNum(m.number);};
   if($('#cp'))$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(m.number);toast('Number copied');}catch(e){shown=true;$('#num').textContent=m.number;toast('Copy blocked here. Number shown instead');}};
   $$('[data-sh]').forEach(b=>b.onclick=()=>shareDoc(d,b.dataset.sh));
+  $$('[data-one]').forEach(b=>b.onclick=()=>shareDoc(d,'one',+b.dataset.one));
   scrollTo(0,0);
 }
-async function shareDoc(d,kind){
+async function shareDoc(d,kind,idx){
   const t=($('#wm')&&$('#wm').value||'').trim();
   const wm=t?(t+($('#wmd').checked?' · '+new Date().toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'')):'';
-  const base=slug(docTitle(d.meta));busy('Preparing…');await nextFrame();
+  const pg=pagesOf(d),base=slug(docTitle(d.meta));busy('Preparing…');await nextFrame();
   try{
     let files;
-    if(kind==='front'||kind==='back'){
-      files=[new File([await toBlob(await sideCanvas(d[kind],wm))],`${base}-${kind}.jpg`,{type:'image/jpeg'})];
+    if(kind==='one'){
+      files=[new File([await toBlob(await sideCanvas(pg[idx],wm))],`${base}-${slug(pageLabel(idx,pg.length))}.jpg`,{type:'image/jpeg'})];
     }else{
-      const cs=[];for(const s of[d.front,d.back])if(s)cs.push(await sideCanvas(s,wm));
-      if(kind==='image'){files=[new File([await toBlob(combinedImage(cs,d.meta.fmt))],`${base}.jpg`,{type:'image/jpeg'})];}
+      const cs=[];for(const u of pg)cs.push(await sideCanvas(u,wm));
+      if(kind==='image'){files=[new File([await toBlob(cs.length===1?cs[0]:combinedImage(cs))],`${base}.jpg`,{type:'image/jpeg'})];}
       else{
-        const pages=[];for(const p of a4Pages(cs,d.meta.fmt))pages.push({bytes:new Uint8Array(await (await toBlob(p,0.9)).arrayBuffer()),w:p.width,h:p.height});
+        const pages=[];for(const p of a4Pages(cs))pages.push({bytes:new Uint8Array(await (await toBlob(p,0.9)).arrayBuffer()),w:p.width,h:p.height});
         files=[new File([makePDF(pages)],`${base}.pdf`,{type:'application/pdf'})];
       }
     }
