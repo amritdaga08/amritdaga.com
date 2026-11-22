@@ -27,6 +27,7 @@
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
+<link rel="icon" href="../../favicon-32.png">
 <script>addEventListener("DOMContentLoaded",function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400..700&display=swap";document.head.appendChild(l)})</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -471,9 +472,9 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   /* meal maths */
   const ovOf = (d,sid) => { const r = DY()[d]; return (r && r.ov && r.ov[sid]) || {}; };
   // The meal's own recipe, or the version you saved as your default.
-  const PORTION = {a:1, p:0.75};
+  const PORTION = {a:1, p:1.2}, PROTEIN_CUT = 0.6;
   const CU = () => prof==="p" ? (state.pcustom ||= {}) : (state.custom ||= {});
-  const scaled = parts => { const f = PORTION[prof]||1; if(f===1) return parts; return parts.map(([i,q])=>{ const g = ING[i]; if(!g) return [i,q]; const v = q*f; return [i, (g.u==="g"||g.u==="ml") ? Math.max(5, Math.round(v/5)*5) : Math.max(0.5, Math.round(v*2)/2)]; }); };
+  const scaled = parts => { const f = PORTION[prof]||1; if(f===1) return parts; return parts.map(([i,q])=>{ const g = ING[i]; if(!g) return [i,q]; const v = q*f*(f!==1 && g.p*4>=0.45*g.k && g.u==='g' ? PROTEIN_CUT : 1); return [i, (g.u==="g"||g.u==="ml") ? Math.max(5, Math.round(v/5)*5) : Math.max(0.5, Math.round(v*2)/2)]; }); };
   const defOf = m => CU()[m.id] || scaled(m.parts || []);
   const defMap = m => { const o = {}; defOf(m).forEach(([i,q])=>o[i]=q); return o; };
   // Order is stable: default items first, then anything added, in the order it was added.
@@ -503,10 +504,14 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   const isEgg = m => (m.parts||[]).some(a=>a[0]==="egg"||a[0]==="white") || /\begg|omelet/i.test(m.n);
   const okFor = m => !(prof==="p" && isEgg(m));
   const POOLP = {brunch:["b9-paneer-cheese-toasts-coffee","b12-paneer-bhurji-toasts-coffee","b8-skyr-bowl-coffee","b6-beans-cheese-toast-omelette","b13-achari-paratha-paneer-bhurji","b9-paneer-cheese-toasts-coffee","b8-skyr-bowl-coffee"], snack2:["s21-paneer-feta-cup","s6-apple-skyr","s16-paneer-jalapeno-dip","s21-paneer-feta-cup","s16-paneer-jalapeno-dip","s6-apple-skyr","s21-paneer-feta-cup"], snack:["s6-apple-skyr","s16-paneer-jalapeno-dip","s6-apple-skyr","s1-yoghurt-bowl","s21-paneer-feta-cup","s19-strawberry-whey-icecream","s16-paneer-jalapeno-dip"]};
+  const hasYog = m => /yoghurt|raita/i.test(m.n) || (m.parts||[]).some(a=>ING[a[0]] && /yoghurt/i.test(ING[a[0]].n));
   function suggested(d, slot){
     const pool = (prof==="p" && POOLP[slot.id]) || POOL[slot.id] || [], n = epochDay(d);
-    for(let i=0;i<pool.length;i++){ const m = byId(pool[(((n+i)%pool.length)+pool.length)%pool.length]); if(m && okFor(m)) return m; }
-    return lib.find(x=>x.cat===slot.cat && !x.bahar && !x.lib && okFor(x)) || null;
+    // No yoghurt in two meals in a row.
+    const order = slotsBase(d), ix = order.findIndex(x=>x.id===slot.id), prev = ix>0 ? order[ix-1] : null, pm = prev && chosen(d, prev), noYog = !!(pm && hasYog(pm));
+    const ok = m => okFor(m) && !(noYog && hasYog(m));
+    for(let i=0;i<pool.length;i++){ const m = byId(pool[(((n+i)%pool.length)+pool.length)%pool.length]); if(m && ok(m)) return m; }
+    return lib.find(x=>x.cat===slot.cat && !x.bahar && !x.lib && ok(x)) || lib.find(x=>x.cat===slot.cat && !x.bahar && !x.lib && okFor(x)) || null;
   }
   function chosen(d, slot){
     const r = DY()[d]; let id = r && r.picks && r.picks[slot.id];
