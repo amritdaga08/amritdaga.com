@@ -22,6 +22,7 @@
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
 <link rel="icon" href="../../favicon-32.png">
+<link rel="icon" href="../../favicon-32.png">
 <script>addEventListener("DOMContentLoaded",function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400..700&display=swap";document.head.appendChild(l)})</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -64,6 +65,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bark);outline-o
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
 h1{font:400 28px/1 var(--display);letter-spacing:-.01em;margin:0}
 .sync{font-size:13px;color:var(--bark-soft)}
+.profs{display:flex;margin-left:auto;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--paper)}
+.profs button{font:inherit;font-size:14px;min-height:36px;padding:0 14px;border:0;border-radius:999px;background:none;color:var(--bark-soft);cursor:pointer}
+.profs button[aria-pressed=true]{background:var(--bark);color:var(--paper)}
+.tgbtn{width:44px;height:44px;border:1px solid var(--rule);border-radius:999px;background:var(--paper);color:var(--bark);display:grid;place-items:center;cursor:pointer;flex:none}
+.tgbtn svg{width:20px;height:20px}
+.tgrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
+.tgrow input{width:110px;min-height:44px;font:inherit;font-size:16px;text-align:right;border:1px solid var(--rule);border-radius:12px;padding:0 12px;background:var(--paper);color:var(--bark)}
 .nav{flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--rule);background:var(--paper);color:var(--bark);cursor:pointer;transition:border-color .2s,background .2s}
 .nav:hover:not(:disabled){border-color:var(--moss);background:var(--linen)}
 .nav:disabled{opacity:.35;cursor:default}
@@ -293,7 +301,7 @@ html.kb #addSheet .sh-foot,html.kb #sheet .sh-foot{display:none}
 <body>
 <div id="err" hidden style="margin:12px 16px;padding:12px 16px;border-radius:12px;background:#FDECEA;color:#7A1A12;font:14px/1.4 system-ui,sans-serif"></div>
 <div class="wrap">
-  <header><h1><svg class="logo" viewBox="80 80 864 864" fill="none" aria-hidden="true"><defs></defs><circle cx="512" cy="512" r="404" stroke="var(--bark-soft)" stroke-width="42"/><circle cx="512" cy="512" r="296" stroke="var(--bark-soft)" stroke-width="38"/><circle cx="512" cy="512" r="250" stroke="var(--bark-soft)" stroke-width="8"/><path d="M833.6 368.8A352 352 0 0 1 677.3 822.8" stroke="var(--bark-soft)" stroke-width="14" stroke-linecap="round" stroke-opacity=".8"/></svg>Plate</h1><span class="sync" id="sync" hidden></span></header>
+  <header><h1><svg class="logo" viewBox="80 80 864 864" fill="none" aria-hidden="true"><defs></defs><circle cx="512" cy="512" r="404" stroke="var(--bark-soft)" stroke-width="42"/><circle cx="512" cy="512" r="296" stroke="var(--bark-soft)" stroke-width="38"/><circle cx="512" cy="512" r="250" stroke="var(--bark-soft)" stroke-width="8"/><path d="M833.6 368.8A352 352 0 0 1 677.3 822.8" stroke="var(--bark-soft)" stroke-width="14" stroke-linecap="round" stroke-opacity=".8"/></svg>Plate</h1><div class="profs" id="profs" role="group" aria-label="Profile"><button data-prof="a"></button><button data-prof="p"></button></div><button class="tgbtn" id="tgBtn" aria-label="Daily targets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button><span class="sync" id="sync" hidden></span></header>
 
   <section id="todayView">
     <div class="datebar">
@@ -320,6 +328,11 @@ html.kb #addSheet .sh-foot,html.kb #sheet .sh-foot{display:none}
 <dialog id="calSheet" class="sheet" aria-label="Pick a day">
   <div class="sh-top"></div>
   <div class="sh-list" id="calBody"></div>
+</dialog>
+<dialog id="tgSheet" class="sheet" aria-labelledby="tgTitle">
+  <div class="sh-top"><h2 id="tgTitle">Daily targets</h2><p class="hint" id="tgHint" style="margin:0 0 4px"></p></div>
+  <div class="sh-list" style="padding:0 20px"><label class="tgrow">Energy (kcal)<input id="tgK" type="number" inputmode="numeric"></label><label class="tgrow">Protein goal (g)<input id="tgP" type="number" inputmode="numeric"></label><label class="tgrow">Protein minimum (g)<input id="tgF" type="number" inputmode="numeric"></label></div>
+  <div class="sh-foot"><button class="btn ghost" id="tgCancel">Cancel</button><button class="btn go" id="tgOk">Save</button></div>
 </dialog>
 <dialog id="dupSheet" class="sheet" aria-labelledby="dupTitle">
   <div class="sh-top"><h2 id="dupTitle">Copy to which meal?</h2><p class="hint" id="dupHint" style="margin:0 0 12px"></p></div>
@@ -361,7 +374,12 @@ html.kb #addSheet .sh-foot,html.kb #sheet .sh-foot{display:none}
 addEventListener("error",function(e){var b=document.getElementById("err");if(b){b.hidden=false;b.textContent="Plate hit an error: "+(e.message||"unknown")}});
 (function(){
   const yr = t => t.replace(/\b20(\d\d)\b/, "\u2019$1");
-  const TARGET = {kcal:1800, protein:150, floor:140};
+  const NAMES = {a:"Me", p:"Partner"};
+  const TARGETS = {a:{kcal:1800, protein:150, floor:140}, p:{kcal:1450, protein:100, floor:90}};
+  const TARGET = Object.assign({}, TARGETS.a);
+  let prof = "a"; try{ if(localStorage.getItem("plate-prof")==="p") prof = "p"; }catch(e){}
+  const DY = () => prof==="p" ? (state.pdays ||= {}) : state.days;
+  function applyProf(){ const t = Object.assign({}, TARGETS[prof], (state.tg||{})[prof]||{}); Object.assign(TARGET, t); }
   const SLOTS = [
     {id:"brunch", label:"Brunch", when:"Brunch", cat:"Brunch"},
     {id:"snack", label:"Snack", when:"Snack, 4:30 to 7 pm", cat:"Snack"},
@@ -376,12 +394,12 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   const dynSlot = (a) => { const P = SLOTS.find(x=>x.id===a.p); return P ? {id:a.id, label:P.label, when:P.when, cat:P.cat, opt:true, dyn:true, parent:a.p} : null; };
   function slotById(id, d){
     const b = SLOTS.find(x=>x.id===id); if(b) return b;
-    const r = state.days[d||cur], a = r && (r.adds||[]).find(x=>x.id===id);
+    const r = DY()[d||cur], a = r && (r.adds||[]).find(x=>x.id===id);
     return a ? dynSlot(a) : null;
   }
-  const slotsFor = d => (slotsBase(d)).concat(((state.days[d]||{}).adds||[]).map(dynSlot).filter(Boolean));
+  const slotsFor = d => (slotsBase(d)).concat(((DY()[d]||{}).adds||[]).map(dynSlot).filter(Boolean));
   const slotsBase = d => {
-    const on = (state.days[d] && state.days[d].on) || {};
+    const on = (DY()[d] && DY()[d].on) || {};
     return SLOTS.filter(s=>!s.opt || on[s.id]===true);
   };
   const POOL = {
@@ -410,11 +428,12 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   const byId = id => lib.find(x=>x.id===id);
 
   const LS = "plate-v3";
-  let state = {days:{}, custom:{}, pantry:{}, shop:{}, v:3};
+  let state = {days:{}, pdays:{}, tg:{}, custom:{}, pantry:{}, shop:{}, v:3};
   try{ const s = localStorage.getItem(LS); if(s) state = Object.assign(state, JSON.parse(s)); else { const o = localStorage.getItem("plate-v2") || localStorage.getItem("plate-v1"); if(o){ state = Object.assign(state, JSON.parse(o)); Object.keys(state.days||{}).forEach(d=>{ delete state.days[d].ov; }); } } }catch(e){}
   // Toblerone White moved from grams to pieces (1 piece ≈ 8.3 g): convert any saved quantities.
   function migTob(o){ if(Array.isArray(o)){ if(o[0]==="tobw" && typeof o[1]==="number"){ o[0]="tobwp"; o[1]=Math.max(1,Math.round(o[1]/8.33)); } else o.forEach(migTob); } else if(o && typeof o==="object"){ Object.keys(o).forEach(k=>{ if(o[k]==="o4-soya-chaap-rumali") o[k]="o4a-goila-soya-chaap"; else if(k==="tobw"){ o.tobwp = Math.max(1,Math.round(o.tobw/8.33)); delete o.tobw; } else migTob(o[k]); }); } }
-  migTob([state.custom, state.days]);
+  migTob([state.custom, state.days, state.pdays]);
+  applyProf();
   let db = null, dbP = null, saveTimer = null;
   let view = "today", cur = null, openSlot = null, calMonth = null, pick = null, editSlot = null, moreSlot = null;
 
@@ -425,15 +444,15 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   const addDays = (s,n) => { const d = new Date(s+"T00:00"); d.setDate(d.getDate()+n); return iso(d); };
   const epochDay = s => Math.floor(new Date(s+"T00:00").getTime()/864e5);
   const nice = d => new Date(d+"T00:00").toLocaleDateString(undefined,{weekday:"long"});
-  const rec = d => (state.days[d] ||= {picks:{}, logged:{}, extra:[], ov:{}});
-  const hasRec = d => { const r = state.days[d]; return r && (Object.keys(r.logged||{}).length || (r.extra||[]).length); };
+  const rec = d => (DY()[d] ||= {picks:{}, logged:{}, extra:[], ov:{}});
+  const hasRec = d => { const r = DY()[d]; return r && (Object.keys(r.logged||{}).length || (r.extra||[]).length); };
   const fq = q => String(Math.round(q*10)/10);
   const UNITS = ["g","ml","tsp","tbsp","scoop"];
   const qtxt = (g,q) => UNITS.includes(g.u) ? fq(q)+" "+g.u : fq(q)+" ×";
   const qshort = (g,q) => UNITS.includes(g.u) ? fq(q)+(g.u==="g"||g.u==="ml"?g.u:" "+g.u) : fq(q);
 
   /* meal maths */
-  const ovOf = (d,sid) => { const r = state.days[d]; return (r && r.ov && r.ov[sid]) || {}; };
+  const ovOf = (d,sid) => { const r = DY()[d]; return (r && r.ov && r.ov[sid]) || {}; };
   // The meal's own recipe, or the version you saved as your default.
   const defOf = m => ((state.custom||{})[m.id]) || m.parts || [];
   const defMap = m => { const o = {}; defOf(m).forEach(([i,q])=>o[i]=q); return o; };
@@ -467,11 +486,11 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     return lib.find(x=>x.cat===slot.cat && !x.bahar && !x.lib) || null;
   }
   function chosen(d, slot){
-    const r = state.days[d], id = r && r.picks && r.picks[slot.id];
+    const r = DY()[d], id = r && r.picks && r.picks[slot.id];
     return (id && byId(id)) || suggested(d, slot);
   }
   function totals(d){
-    const r = state.days[d] || {logged:{},extra:[]};
+    const r = DY()[d] || {logged:{},extra:[]};
     let planned = {k:0,p:0}, eaten = {k:0,p:0};
     slotsFor(d).forEach(s=>{
       const l = r.logged && r.logged[s.id];
@@ -495,16 +514,16 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
         const lg = await wait(d.doc("plate/log").get(), 8000);
         if(lg.exists){
           const R = JSON.parse(JSON.stringify(lg.data()||{})), rd = R.days||{};
-          const days = Object.assign({}, rd);
-          Object.keys(state.days||{}).forEach(k=>{
-            const L = state.days[k], X = rd[k];
+          const mergeDays = (loc, rem) => { const days = Object.assign({}, rem);
+          Object.keys(loc||{}).forEach(k=>{
+            const L = loc[k], X = rem[k];
             if(!X){ days[k] = L; return; }
-            // a day changed on this device wins whole, so an undo or remove is not brought back by the copy in the cloud
             if(L.t || X.t){ days[k] = (L.t||0) >= (X.t||0) ? L : X; return; }
             days[k] = Object.assign({}, X, L, {logged: Object.assign({}, X.logged||{}, L.logged||{}), picks: Object.assign({}, X.picks||{}, L.picks||{}), ov: Object.assign({}, X.ov||{}, L.ov||{}), blank: Object.assign({}, X.blank||{}, L.blank||{}), on: Object.assign({}, X.on||{}, L.on||{}), extra: (L.extra||[]).length >= (X.extra||[]).length ? (L.extra||[]) : (X.extra||[])});
-          });
-          state = {days, custom: Object.assign({}, R.custom||{}, state.custom||{}), pantry: Object.assign({}, R.pantry||{}, state.pantry||{}), shop: Object.assign({}, R.shop||{}, state.shop||{}), v:3};
-          migTob([state.custom, state.days]);
+          }); return days; };
+          const days = mergeDays(state.days, rd), pdays = mergeDays(state.pdays, R.pdays||{});
+          state = {days, pdays, tg: Object.assign({}, R.tg||{}, state.tg||{}), custom: Object.assign({}, R.custom||{}, state.custom||{}), pantry: Object.assign({}, R.pantry||{}, state.pantry||{}), shop: Object.assign({}, R.shop||{}, state.shop||{}), v:3};
+          migTob([state.custom, state.days, state.pdays]); applyProf();
           try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){}
         }
         db = d; return d;
@@ -512,7 +531,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     })());
   }
   function persist(){
-    if(state.days && state.days[cur]) state.days[cur].t = Date.now();
+    if(DY() && DY()[cur]) DY()[cur].t = Date.now();
     try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){}
     clearTimeout(saveTimer);
     saveTimer = setTimeout(async ()=>{
@@ -557,7 +576,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
   }
 
   function renderList(){
-    const d = cur, r = state.days[d] || {logged:{},extra:[]};
+    const d = cur, r = DY()[d] || {logged:{},extra:[]};
     let h = "";
     const all = slotsFor(d);
     SLOTS.filter(b=>!b.opt).forEach(b=>{
@@ -801,7 +820,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     persist(); renderDay(); toast("Removed");
   }
   function tapSlot(sid){
-    const l = (state.days[cur]||{}).logged; if(l && l[sid] && l[sid].skip) return toast("Marked as missed. Undo it to change this meal.");
+    const l = (DY()[cur]||{}).logged; if(l && l[sid] && l[sid].skip) return toast("Marked as missed. Undo it to change this meal.");
     openEditor(sid);
   }
   function go(d){ cur = d; openSlot = null; show("today"); }
@@ -823,7 +842,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(t.id==="edAdd") return openAdd();
     if(t.dataset.pntab){ pnTab = t.dataset.pntab; return renderPantry(); }
     if(t.dataset.pnadd){
-      slotFor = t.dataset.pnadd; const g = ING[slotFor], r = state.days[cur]||{};
+      slotFor = t.dataset.pnadd; const g = ING[slotFor], r = DY()[cur]||{};
       $("#slHint").textContent = `Which meal did you have ${g.n} with?`;
       $("#slList").innerHTML = slotsFor(cur).map(sl=>{ const m = chosen(cur,sl), sk = r.logged && r.logged[sl.id] && r.logged[sl.id].skip; return `<button class="mrow" data-slpick="${sl.id}" ${sk?"disabled":""}><span class="nm">${esc(sl.label)}<small style="display:block;font-weight:500;font-size:12px;color:var(--bark-soft)">${esc(titleOf(m,ovOf(cur,sl.id)))}${sk?" · missed":""}</small></span></button>`; }).join("");
       return $("#slotSheet").showModal();
@@ -885,7 +904,7 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     if(act==="additem"){ editSlot = sid; return openAdd(); }
     if(act==="open") return tapSlot(sid);
     if(act==="how") return openRecipe(sid);
-    if(act==="more"){ moreSlot = sid; const lg = !!((state.days[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; const so = slotById(sid); $("#moreSheet").querySelector("[data-more=remove]").hidden = !(so && so.opt); return $("#moreSheet").showModal(); }
+    if(act==="more"){ moreSlot = sid; const lg = !!((DY()[cur]||{}).logged||{})[sid]; $("#moreSheet").querySelector("[data-more=skip]").hidden = lg; const so = slotById(sid); $("#moreSheet").querySelector("[data-more=remove]").hidden = !(so && so.opt); return $("#moreSheet").showModal(); }
     if(act==="ate"){
       const s = slotById(sid), m = chosen(cur,s), v = macOf(m, ovOf(cur,sid));
       rec(cur).logged[sid] = {id:m.id,n:titleOf(m,ovOf(cur,sid)),k:v.k,p:v.p}; persist(); return renderDay();
@@ -913,6 +932,12 @@ addEventListener("error",function(e){var b=document.getElementById("err");if(b){
     };
     vv.addEventListener("resize", sync); vv.addEventListener("scroll", sync); sync();
   })();
+  function paintProf(){ document.querySelectorAll("#profs button").forEach(b=>{ b.textContent = NAMES[b.dataset.prof]; b.setAttribute("aria-pressed", String(b.dataset.prof===prof)); }); }
+  $("#profs").addEventListener("click", e=>{ const b = e.target.closest("button"); if(!b || b.dataset.prof===prof) return; prof = b.dataset.prof; try{ localStorage.setItem("plate-prof", prof); }catch(_){} applyProf(); paintProf(); renderDay(); try{ if(typeof renderWeek==="function") renderWeek(); }catch(_){} toast("Showing "+NAMES[prof]+"'s log"); });
+  $("#tgBtn").addEventListener("click", ()=>{ $("#tgTitle").textContent = NAMES[prof]+"'s daily targets"; $("#tgK").value = TARGET.kcal; $("#tgP").value = TARGET.protein; $("#tgF").value = TARGET.floor; $("#tgSheet").showModal(); });
+  $("#tgCancel").addEventListener("click", ()=>$("#tgSheet").close());
+  $("#tgOk").addEventListener("click", ()=>{ const k = Math.round(+$("#tgK").value), p = Math.round(+$("#tgP").value), f = Math.round(+$("#tgF").value); if(!(k>500 && p>0 && f>0 && f<=p)) return toast("Check the numbers: the minimum can't be above the goal."); (state.tg ||= {})[prof] = {kcal:k, protein:p, floor:f}; applyProf(); persist(); $("#tgSheet").close(); renderDay(); });
+  paintProf();
   ["calSheet","moreSheet","recipeSheet","dupSheet","slotSheet"].forEach(id=>{ const dlg = $("#"+id); dlg.addEventListener("click", e=>{ const r = dlg.getBoundingClientRect(); if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) dlg.close(); }); });
   $("#pantryView").addEventListener("focusin", e=>{ if(e.target.id==="pnq") setTimeout(()=>{ try{ e.target.scrollIntoView({block:"start",behavior:"smooth"}); }catch(_){} }, 320); });
 
