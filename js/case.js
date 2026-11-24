@@ -16,7 +16,7 @@
   function setTheme(mode, btn) {
     if ((mode === 'dark') === isDark()) return;
     root.setAttribute('data-theme', mode);
-    try { localStorage.setItem('ad-theme', mode); } catch (e) {}
+    try { sessionStorage.setItem('ad-theme', mode); } catch (e) {}
     theme.classList.add('moving');
     btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop');
     setTimeout(function () { theme.classList.remove('moving'); btn.classList.remove('pop'); }, 750);
