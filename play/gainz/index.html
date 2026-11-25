@@ -512,7 +512,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     <label>Tags <span style="font-weight:400">(the days it shows up on)</span></label><div class="tagpick" id="tagPick"></div>
     <div class="tagadd"><input id="fNewTag" placeholder="New tag, e.g. Core" aria-label="New tag"><button type="button" class="btn ghost" id="addTagBtn">Add</button></div>
     <label for="fUnit">Measured in</label>
-    <select id="fUnit"><option value="kg">kg (0 for bodyweight)</option><option value="kg/side">kg per side</option><option value="min">minutes</option><option value="km">km</option></select>
+    <select id="fUnit"><option value="kg">kg (0 for bodyweight)</option><option value="kg/side">kg per side</option><option value="sec">seconds</option><option value="min">minutes</option><option value="km">km</option></select>
     <label for="fMax" id="fMaxLabel">Your current max (PR)</label><input id="fMax" type="number" inputmode="decimal" step="0.5" min="0" placeholder="Optional">
     <div class="hint2" id="fMaxHint">Sets your starting point without logging a workout.</div>
 
@@ -535,7 +535,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   const niceDate = d => new Date(d+"T00:00").toLocaleDateString(undefined,{day:"numeric",month:"short"});
   const longDate = d => new Date(d+"T00:00").toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"short"});
   const esc = s => { const d=document.createElement("div"); d.textContent=s??""; return d.innerHTML; };
-  const unitLabel = u => ({"kg/side":"kg/side","min":"min","km":"km"})[u] || "kg";
+  const unitLabel = u => ({"kg/side":"kg/side","sec":"sec","min":"min","km":"km"})[u] || "kg";
   let activeDate = null, em = null, showAll = false;
   let archOpen = {};
   const ad = () => em ? em.orig : (activeDate || today());
@@ -844,6 +844,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     "back extensions":"glutes.max lowerback.erectors | hamstrings.*",
     "hamstring curl":"hamstrings.* | calves.gastroc",
     "hip abduction":"glutes.med",
+  "plank":"abs.rectus abs.obliques | shoulders.front glutes.max",
   "side-lying leg raise":"glutes.med",
     "monster walks":"glutes.med | glutes.max",
     "lateral walks":"glutes.med",
@@ -1520,7 +1521,7 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
     $("#fMaxLabel").textContent = `${prof().name}'s current max (PR)`;
     ["#fName","#fUnit","#fNewTag","#addTagBtn"].forEach(k=>$(k).disabled = !role.all);
     $("#dlgTitle").textContent = !role.all ? `${prof().name}'s PR` : ex ? "Edit exercise" : "Add exercise";
-    $("#fUnit").value = ex && ["kg/side","min","km"].includes(ex.unit) ? ex.unit : (!ex && filter==="Cardio" ? "min" : "kg");
+    $("#fUnit").value = ex && ["kg/side","sec","min","km"].includes(ex.unit) ? ex.unit : (!ex && filter==="Cardio" ? "min" : "kg");
     $("#dlg").showModal();
   }
   let pickTags = [];
