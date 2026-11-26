@@ -682,9 +682,9 @@ body.nodir .add,body.nodir .handle,body.nodir [data-act=delete]{display:none !im
   const listProf = () => state.profiles.find(x=>x.id===listOf(prof().id)) || prof();
   const hiddenSet = () => new Set(listProf().hidden || []);
   const visible = e => !hiddenSet().has(e.id);
-  // permissions: owner edits everything; others edit only Anshul's log
+  // permissions: owner edits everything; others edit only Anshul's and Pooja's logs
   const role = { all: true, known: false };
-  const canWriteProfile = id => role.all || id === "anshul";
+  const canWriteProfile = id => role.all || id === "anshul" || id === "wife";
   const ro = () => !canWriteProfile(prof().id);
   const myExercises = () => state.exercises.filter(visible);
 
